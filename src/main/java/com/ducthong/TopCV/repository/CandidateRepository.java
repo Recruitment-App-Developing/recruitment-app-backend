@@ -1,0 +1,16 @@
+package com.ducthong.TopCV.repository;
+
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import com.ducthong.TopCV.domain.entity.Candidate;
+
+@Repository
+public interface CandidateRepository extends JpaRepository<Candidate, Integer> {
+    @Query(value = "SELECT c FROM Candidate c " + "JOIN FETCH c.avatar " + "JOIN FETCH c.address " + "WHERE c.id = :id")
+    Optional<Candidate> findById(@Param(value = "id") Integer id);
+}

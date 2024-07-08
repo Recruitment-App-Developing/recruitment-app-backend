@@ -1,0 +1,46 @@
+package com.ducthong.TopCV.domain.entity;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.*;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "companies")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Company {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "company_id")
+    private Integer id;
+
+    private String name;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "logo_id", referencedColumnName = "image_id")
+    private Image logo;
+
+    private String urlCom;
+
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Address> addressList = new ArrayList<>();
+
+    private Integer employeeScale;
+
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Job> jobList = new ArrayList<>();
+
+    private Integer numberOfFollow;
+
+    private String briefIntro;
+
+    private String detailIntro;
+}
