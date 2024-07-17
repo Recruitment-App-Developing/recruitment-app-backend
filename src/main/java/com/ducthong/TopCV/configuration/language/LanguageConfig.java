@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 @Configuration
-public class LanguageConfiguration {
+public class LanguageConfig {
     @Value("${spring.messages.basename}")
     private String baseName;
 

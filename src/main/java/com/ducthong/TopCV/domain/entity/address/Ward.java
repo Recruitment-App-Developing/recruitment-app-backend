@@ -1,6 +1,4 @@
-package com.ducthong.TopCV.domain.entity.location;
-
-import java.util.List;
+package com.ducthong.TopCV.domain.entity.address;
 
 import jakarta.persistence.*;
 
@@ -11,12 +9,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "districts")
+@Table(name = "wards")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class District {
+public class Ward {
     @Id
+    @Column(name = "ward_code")
     private String code;
 
     private String name;
@@ -25,17 +24,13 @@ public class District {
     private String fullNameEn;
     private String codeName;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "province_code")
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "district_code")
     @JsonIgnore
-    private Province province;
+    private District district;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "administrative_unit_id")
     @JsonIgnore
     private AdministrativeUnit administrativeUnit;
-
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "district")
-    @JsonIgnore
-    private List<Ward> wards;
 }

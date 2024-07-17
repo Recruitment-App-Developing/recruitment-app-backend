@@ -1,4 +1,4 @@
-package com.ducthong.TopCV.domain.entity.location;
+package com.ducthong.TopCV.domain.entity.address;
 
 import java.util.List;
 

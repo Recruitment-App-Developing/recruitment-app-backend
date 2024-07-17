@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "images")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Image {
     @Id
@@ -23,7 +23,11 @@ public class Image {
     @Column(name = "image_id")
     private Integer id;
 
-    private String urlImg;
+    private String name;
+
+    private String imageUrl;
+
+    private String imagePublicId;
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")

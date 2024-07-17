@@ -3,6 +3,8 @@ package com.ducthong.TopCV.domain.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ducthong.TopCV.domain.entity.address.Address;
+import com.ducthong.TopCV.domain.entity.address.CompanyAddress;
 import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -31,7 +33,7 @@ public class Company {
     private String urlCom;
 
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Address> addressList = new ArrayList<>();
+    private List<CompanyAddress> addressList = new ArrayList<>();
 
     private Integer employeeScale;
 

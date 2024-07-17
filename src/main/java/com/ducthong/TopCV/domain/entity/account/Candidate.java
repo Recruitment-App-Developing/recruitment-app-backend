@@ -1,9 +1,11 @@
-package com.ducthong.TopCV.domain.entity;
+package com.ducthong.TopCV.domain.entity.account;
 
+import com.ducthong.TopCV.domain.entity.account.Account;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

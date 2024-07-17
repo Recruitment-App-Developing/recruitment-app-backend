@@ -1,7 +1,9 @@
-package com.ducthong.TopCV.domain.entity;
+package com.ducthong.TopCV.domain.entity.address;
 
 import java.util.Date;
 
+import com.ducthong.TopCV.domain.entity.Company;
+import com.ducthong.TopCV.domain.entity.account.Account;
 import jakarta.persistence.*;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,17 +43,4 @@ public class Address {
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date lastUpdated;
-
-    private Boolean isMain;
-
-    private Boolean isBranch;
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "company_id", referencedColumnName = "company_id")
-    private Company company;
-
-    @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "address")
-    private Account account;
 }
