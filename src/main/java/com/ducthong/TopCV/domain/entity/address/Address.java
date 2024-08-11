@@ -2,16 +2,11 @@ package com.ducthong.TopCV.domain.entity.address;
 
 import java.util.Date;
 
-import com.ducthong.TopCV.domain.entity.Company;
-import com.ducthong.TopCV.domain.entity.account.Account;
 import jakarta.persistence.*;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

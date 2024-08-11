@@ -5,24 +5,23 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import com.ducthong.TopCV.domain.entity.address.Address;
-import com.ducthong.TopCV.domain.entity.Image;
-import com.ducthong.TopCV.domain.entity.address.PersonAddress;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 
-import lombok.Builder;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import com.ducthong.TopCV.domain.entity.Image;
+import com.ducthong.TopCV.domain.entity.address.PersonAddress;
 import com.ducthong.TopCV.domain.enums.Gender;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "accounts")
@@ -30,7 +29,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
-@Builder
+@SuperBuilder
 public class Account implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,19 +67,19 @@ public class Account implements UserDetails {
     @JoinColumn(name = "address_id", referencedColumnName = "address_id")
     private PersonAddress address;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date lastUpdated;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date lastLogIn;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date whenCreated;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date whenDeleted;
 

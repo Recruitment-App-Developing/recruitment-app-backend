@@ -17,20 +17,19 @@ import lombok.RequiredArgsConstructor;
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
-    private final MessageSourceUtil messageSourceUtil;
+    private final MessageSourceUtil messageUtil;
 
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<Response<String>> handlingAppException(AppException ex) {
         return ResponseEntity.badRequest()
                 .body(Response.failedResponse(
-                        HttpStatus.BAD_REQUEST.value(), messageSourceUtil.getMessage(ex.getMessage(), ex.getArgs())));
+                        HttpStatus.BAD_REQUEST.value(), messageUtil.getMessage(ex.getMessage(), ex.getArgs())));
     }
 
     @ExceptionHandler(value = RuntimeException.class)
     ResponseEntity<Response<String>> handlingRuntimeException(RuntimeException ex) {
         return ResponseEntity.badRequest()
-                .body(Response.failedResponse(
-                        HttpStatus.BAD_REQUEST.value(), messageSourceUtil.getMessage(ex.getMessage())));
+                .body(Response.failedResponse(HttpStatus.BAD_REQUEST.value(), messageUtil.getMessage(ex.getMessage())));
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)

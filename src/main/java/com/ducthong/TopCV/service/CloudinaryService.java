@@ -7,4 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface CloudinaryService {
     Map upload(MultipartFile multipartFile, String folder) throws IOException;
+
+    Map delete(String id) throws IOException;
 }

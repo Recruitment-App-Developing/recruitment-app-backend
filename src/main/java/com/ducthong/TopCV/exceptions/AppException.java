@@ -1,26 +1,28 @@
 package com.ducthong.TopCV.exceptions;
 
-import com.ducthong.TopCV.utility.MessageSourceUtil;
 import lombok.Getter;
 
 public class AppException extends RuntimeException {
     @Getter
     private Object[] args;
+
     public AppException() {
         super();
     }
-    public AppException(String message){
+
+    public AppException(String message) {
         super(message);
     }
-    public AppException(String message, Object... args){
+
+    public AppException(String message, Object... args) {
         super(message);
         this.args = args;
     }
-//    public AppException(String message, Throwable cause) {
-//        super(message, cause);
-//    }
-//
-//    public AppException(Throwable cause) {
-//        super(cause);
-//    }
+    //    public AppException(String message, Throwable cause) {
+    //        super(message, cause);
+    //    }
+    //
+    //    public AppException(Throwable cause) {
+    //        super(cause);
+    //    }
 }

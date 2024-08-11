@@ -1,8 +1,10 @@
 package com.ducthong.TopCV.domain.entity.address;
 
+import jakarta.persistence.*;
+
 import com.ducthong.TopCV.domain.entity.Company;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompanyAddress extends Address{
+public class CompanyAddress extends Address {
     private Boolean isVerified;
     private Boolean isMain;
     private Boolean isBranch;

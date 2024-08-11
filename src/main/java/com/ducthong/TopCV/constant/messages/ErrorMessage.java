@@ -10,6 +10,7 @@ public class ErrorMessage {
         public static final String UNSUPPORTED = "auth.error.token.unsupported";
         public static final String SIGNATURE = "auth.error.token.signature";
     }
+
     public static class Account {
         public static final String EMPTY_LIST = "account.error.empty-list";
         public static final String NOT_FOUND = "account.error.not-found";
@@ -17,7 +18,16 @@ public class ErrorMessage {
         public static final String EMAIL_EXISTED = "account.error.email-existed";
         public static final String GET_DETAIL = "account.error.get-one-fail";
         public static final String UPDATE = "account.error.update-fail";
+        public static final String DELETE_TEMP = "account.error.delete-temp";
+        public static final String DELETE_PERM = "account.error.delete-perm";
     }
 
     public static class Image {}
+
+    public static class Industry {
+        public static final String EMPTY_LIST = "industry.error.empty-list";
+        public static final String NOT_FOUND = "industry.error.not-found";
+        public static final String EXISTED = "industry.error.existed";
+        public static final String ADD_ONE = "industry.error.add-one";
+    }
 }

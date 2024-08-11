@@ -3,7 +3,6 @@ package com.ducthong.TopCV.domain.mapper;
 import java.util.Date;
 import java.util.List;
 
-import com.ducthong.TopCV.domain.dto.account.UpdCandidateRequestDTO;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
@@ -12,7 +11,6 @@ import com.ducthong.TopCV.domain.dto.account.AddCandidateRequestDTO;
 import com.ducthong.TopCV.domain.dto.account.CandidateResponseDTO;
 import com.ducthong.TopCV.domain.entity.account.Account;
 import com.ducthong.TopCV.domain.entity.account.Candidate;
-import org.springframework.transaction.annotation.Transactional;
 
 @Mapper
 public interface AccountMapper {
@@ -21,7 +19,7 @@ public interface AccountMapper {
 
     // ==================================================
     @Mapping(target = "avatar", ignore = true)
-    @Mapping(source = "accountEntity",  target = "fullName", qualifiedByName = "fullnameDto")
+    @Mapping(source = "accountEntity", target = "fullName", qualifiedByName = "fullnameDto")
     AccountResponseDTO toAccountResponseDto(Account accountEntity);
 
     @Named("fullnameDto")
@@ -43,10 +41,10 @@ public interface AccountMapper {
     CandidateResponseDTO toCandidateResponseDto(Candidate entity);
 
     // ====================================================
-//    @Mapping(target = "password", ignore = true)
-//    @Mapping(target = "avatar", ignore = true)
-//    @Mapping(target = "address", ignore = true)
-//    Candidate addCandidateDtoToCandidateEntity(AddCandidateRequestDTO request);
+    //    @Mapping(target = "password", ignore = true)
+    //    @Mapping(target = "avatar", ignore = true)
+    //    @Mapping(target = "address", ignore = true)
+    //    Candidate addCandidateDtoToCandidateEntity(AddCandidateRequestDTO request);
 
     @AfterMapping
     default void editAddCandidateReuqestDto(@MappingTarget Candidate candidateEntity, AddCandidateRequestDTO request) {

@@ -7,6 +7,4 @@ public record AddPersonAddressRequestDTO(
         String districtName,
         String districtCode,
         String wardName,
-        String wardCode
-) {
-}
+        String wardCode) {}

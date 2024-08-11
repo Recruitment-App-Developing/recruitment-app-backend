@@ -1,8 +1,10 @@
 package com.ducthong.TopCV.domain.entity.address;
 
+import jakarta.persistence.*;
+
 import com.ducthong.TopCV.domain.entity.account.Account;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PersonAddress extends Address{
+public class PersonAddress extends Address {
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "address")
     private Account account;

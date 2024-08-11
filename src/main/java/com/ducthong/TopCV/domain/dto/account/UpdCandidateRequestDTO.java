@@ -1,9 +1,8 @@
 package com.ducthong.TopCV.domain.dto.account;
 
-import com.ducthong.TopCV.domain.enums.Gender;
-import lombok.Getter;
-
 import java.util.Date;
+
+import com.ducthong.TopCV.domain.enums.Gender;
 
 public record UpdCandidateRequestDTO(
         String firstName,
@@ -12,6 +11,4 @@ public record UpdCandidateRequestDTO(
         Date dateOfBirth,
         String email,
         String phoneNumber,
-        Boolean isFindJob
-) {
-}
+        Boolean isFindJob) {}
