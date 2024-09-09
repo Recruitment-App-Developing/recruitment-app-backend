@@ -46,15 +46,16 @@ public class JobMapperImpl implements JobMapper {
     }
     @Override
     public DetailJobResponseDTO toDetailJobResponseDto(Job entity) {
-//        List<String> addressCompany = entity.getAddress().stream().map(
-//                item -> AddressUtil.toStringJobAddress(item)
-//        ).toList();
+        List<String> addressCompany = entity.getAddresses().stream().map(
+                item -> AddressUtil.toStringJobAddress(item)
+        ).toList();
         List<ImageResponseDTO> imageList = entity.getImageList().stream().map(
                 item -> imageMapper.toImageResponseDto(item)
         ).toList();
         return DetailJobResponseDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())
+                .address(addressCompany)
                 .jobPosition(entity.getJobPosition().name())
                 .numberOfVacancy(entity.getNumberOfVacancy())
                 .workMethod(entity.getWorkMethod().name())
@@ -74,7 +75,7 @@ public class JobMapperImpl implements JobMapper {
                 .numberOfView(entity.getNumberOfView())
                 .applicationMethod(entity.getApplicationMethod().name())
                 .imageList(imageList)
-                .industryId(entity.getId())
+                .industryId(entity.getIndustry().getId())
                 .build();
     }
 

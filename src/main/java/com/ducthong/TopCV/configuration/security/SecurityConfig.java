@@ -30,6 +30,8 @@ public class SecurityConfig {
         Endpoint.V1.HealthCheck.BASE + CATCH_ALL_WILDCARDS,
         Endpoint.V1.Authentication.BASE + CATCH_ALL_WILDCARDS,
         Endpoint.V1.Admin.Auth.LOGIN,
+        Endpoint.V1.Job.GET_LIST_JOB,
+        Endpoint.V1.Job.GET_DETAIL,
         Endpoint.V1.Company.GET_BRIEF_COMPANY,
     };
 

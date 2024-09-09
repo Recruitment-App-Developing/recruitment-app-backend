@@ -19,10 +19,8 @@ public class CompanyMapperImpl implements CompanyMapper {
     private final CompanyRepository companyRepo;
     @Override
     public BriefCompanyResponseDTO toBriefCompanyResponseDto(Company entity) {
-        System.out.println("Ok1");
         Optional<Address> address = companyRepo.getHeadquartersAddress(entity.getId());
         if (address.isEmpty()) throw new AppException("This company has not headquarters");
-        System.out.println("Ok2");
         return BriefCompanyResponseDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())

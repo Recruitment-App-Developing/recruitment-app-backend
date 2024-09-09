@@ -71,6 +71,8 @@ public class Endpoint {
         }
         public static final class Job{
             public static final String BASE = V1.PREFIX + "/job";
+            public static final String GET_LIST_JOB = BASE;
+            public static final String GET_DETAIL = BASE + "/{jobId}";
             public static final String ADD_ONE = BASE;
         }
         public static final class Company{
