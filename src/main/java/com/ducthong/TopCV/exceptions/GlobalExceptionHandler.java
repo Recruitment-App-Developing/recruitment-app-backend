@@ -23,13 +23,15 @@ public class GlobalExceptionHandler {
     ResponseEntity<Response<String>> handlingAppException(AppException ex) {
         return ResponseEntity.badRequest()
                 .body(Response.failedResponse(
-                        HttpStatus.BAD_REQUEST.value(), messageUtil.getMessage(ex.getMessage(), ex.getArgs())));
+                        //HttpStatus.BAD_REQUEST.value(), messageUtil.getMessage(ex.getMessage(), ex.getArgs())));
+                        HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
     }
 
     @ExceptionHandler(value = RuntimeException.class)
     ResponseEntity<Response<String>> handlingRuntimeException(RuntimeException ex) {
         return ResponseEntity.badRequest()
-                .body(Response.failedResponse(HttpStatus.BAD_REQUEST.value(), messageUtil.getMessage(ex.getMessage())));
+                //.body(Response.failedResponse(HttpStatus.BAD_REQUEST.value(), messageUtil.getMessage(ex.getMessage())));
+                .body(Response.failedResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)

@@ -151,7 +151,6 @@ public class AccountServiceImpl implements AccountService {
                                 .build())
                         .build(),
                 li);
-        // return Response.successfulResponse(messageUtil.getMessage(SuccessMessage.Account.GET_LIST), li);
     }
 
     @Override

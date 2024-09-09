@@ -1,7 +1,7 @@
 package com.ducthong.TopCV.domain.entity.account;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.ducthong.TopCV.domain.entity.Company;
+import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +16,10 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class Employer extends Account {
     private Integer verifiedLevel;
+
+    @ManyToOne(targetEntity = Company.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "company_id")
+    private Company company;
 
     // Company id
 

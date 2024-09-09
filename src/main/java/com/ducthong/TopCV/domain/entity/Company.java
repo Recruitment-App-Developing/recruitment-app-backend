@@ -3,6 +3,7 @@ package com.ducthong.TopCV.domain.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ducthong.TopCV.domain.entity.account.Employer;
 import jakarta.persistence.*;
 
 import com.ducthong.TopCV.domain.entity.address.CompanyAddress;
@@ -39,6 +40,9 @@ public class Company {
 
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Job> jobList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
+    private List<Employer> employerList = new ArrayList<>();
 
     private Integer numberOfFollow;
 

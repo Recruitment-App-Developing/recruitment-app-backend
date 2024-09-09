@@ -69,7 +69,10 @@ public class Endpoint {
             public static final String ADD_ONE = BASE;
             public static final String UPDATE_CANDIDATE = BASE + "/{id}";
         }
-
+        public static final class Job{
+            public static final String BASE = V1.PREFIX + "/job";
+            public static final String ADD_ONE = BASE;
+        }
         public static final class HealthCheck {
             public static final String BASE = V1.PREFIX + "/actuator/health";
         }

@@ -1,16 +1,17 @@
 package com.ducthong.TopCV.domain.entity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.ducthong.TopCV.constant.TimeFormatConstant;
+import com.ducthong.TopCV.domain.entity.address.CompanyAddress;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
+import lombok.Builder;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.ducthong.TopCV.domain.enums.ApplicationMethod;
@@ -27,6 +28,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Job {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,15 +38,21 @@ public class Job {
     @NotBlank(message = "{job.valid.name}")
     private String name;
 
-    @Valid
-    @NotNull(message = "Address list cannot null")
-    @Size(min = 1, max = 10, message = "Address list must contain at least one and at most 10 addresses")
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
+//    @Valid
+//    @NotNull(message = "Address list cannot null")
+//    @Size(min = 1, max = 10, message = "Address list must contain at least one and at most 10 addresses")
+//    @ElementCollection(fetch = FetchType.EAGER)
+//    @CollectionTable(
+//            name = "job_address",
+//            joinColumns = @JoinColumn(name = "job_id", nullable = false),
+//            uniqueConstraints = @UniqueConstraint(columnNames = {"job_id", "address"}))
+//    List<@Valid @NotBlank(message = "Address cannot blank") String> address = new ArrayList<>();
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @JoinTable(
             name = "job_address",
-            joinColumns = @JoinColumn(name = "job_id", nullable = false),
-            uniqueConstraints = @UniqueConstraint(columnNames = {"job_id"}))
-    List<@Valid @NotBlank(message = "Address cannot blank") String> address = new ArrayList<>();
+            joinColumns = @JoinColumn(name = "job_id"),
+            inverseJoinColumns = @JoinColumn(name = "address_id"))
+    private List<CompanyAddress> addresses = new ArrayList<>();
 
     @Valid
     @NotNull(message = "Company cannot null")
@@ -52,19 +60,17 @@ public class Job {
     @JoinColumn(name = "company_id", referencedColumnName = "company_id")
     private Company company;
 
-    @NotBlank(message = "The position of job cannot blank")
     @Enumerated(EnumType.STRING)
     private JobPosition jobPosition;
 
-    @Size(min = 1, max = 100, message = "The number of vacancy must be greater than 0 and less than 100")
+    @Min(value = 1, message = "The number of vacancy must be greater than 0")
+    @Max(value = 100, message = "The number of vacancy must less than 100")
     @PositiveOrZero(message = "The number of vacancy must be a positive integer")
     private Integer numberOfVacancy;
 
-    @NotBlank(message = "The work method cannot blank")
     @Enumerated(EnumType.STRING)
     private WorkMethod workMethod;
 
-    @NotBlank(message = "The sex required of job cannot blank")
     @Enumerated(EnumType.STRING)
     private Gender sexRequired;
 
@@ -74,17 +80,13 @@ public class Job {
     @NotBlank(message = "The experience of cannot blank")
     private String jobExp;
 
-    @NotBlank(message = "The posting time cannot blank")
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
-    private Date postingTime;
+    @DateTimeFormat(pattern = TimeFormatConstant.DATETIME_FORMAT)
+    private LocalDateTime postingTime;
 
-    @NotBlank(message = "The application due time cannot blank")
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
-    private Date applicationDueTime;
+    @DateTimeFormat(pattern = TimeFormatConstant.DATETIME_FORMAT)
+    private LocalDateTime applicationDueTime;
 
-    @Size(min = 0, max = 100, message = "The number of applicated must be greater than or equal 0 and less than 100")
+    @Min(value = 0, message = "The number of applicated must be at least 0")
     @PositiveOrZero(message = "The number of applicated must be a positive integer")
     private Integer numberOfApplicated;
 
@@ -98,17 +100,15 @@ public class Job {
 
     private String addApplicationInfor;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
-    private Date lastUpdated;
+    @DateTimeFormat(pattern = TimeFormatConstant.DATETIME_FORMAT)
+    private LocalDateTime lastUpdated;
 
     private Boolean isActive;
 
     private Boolean isTempDeleted;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
-    private Date tempDeletedTime;
+    @DateTimeFormat(pattern = TimeFormatConstant.DATETIME_FORMAT)
+    private LocalDateTime tempDeletedTime;
 
     private Integer numberOfLike;
 
@@ -121,7 +121,7 @@ public class Job {
     @JoinColumn(name = "job_id")
     private List<Image> imageList = new ArrayList<>();
 
-    @ManyToOne(targetEntity = Industry.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = Industry.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "industry_id", referencedColumnName = "industry_id")
     private Industry industry;
 }

@@ -25,6 +25,13 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     @Value("${cloudinary.folder.default}")
     private String defaultFolder;
 
+    @Override
+    public Map uploadFileBase64(String base64String, String folder) throws IOException {
+        if (folder == null) folder = defaultFolder;
+        Map result = cloudinary.uploader().upload(base64String, ObjectUtils.asMap("folder", folder));
+        return result;
+    }
+
     public Map upload(MultipartFile multipartFile, String folder) throws IOException {
         File file = convert(multipartFile);
         if (folder == null) folder = defaultFolder;
