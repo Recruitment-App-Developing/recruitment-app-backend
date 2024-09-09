@@ -3,6 +3,8 @@ package com.ducthong.TopCV.domain.mapper.impl;
 import com.ducthong.TopCV.domain.dto.image.ImageResponseDTO;
 import com.ducthong.TopCV.domain.dto.job.DetailJobResponseDTO;
 import com.ducthong.TopCV.domain.dto.job.JobRequestDTO;
+import com.ducthong.TopCV.domain.dto.job.JobResponseDTO;
+import com.ducthong.TopCV.domain.entity.Company;
 import com.ducthong.TopCV.domain.entity.Job;
 import com.ducthong.TopCV.domain.enums.ApplicationMethod;
 import com.ducthong.TopCV.domain.enums.Gender;
@@ -17,11 +19,31 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
 public class JobMapperImpl implements JobMapper {
     private final ImageMapper imageMapper;
+    @Override
+    public JobResponseDTO toJobResponseDto(Job entity) {
+        Company company = entity.getCompany();
+
+        return JobResponseDTO.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .cities(AddressUtil.toCities(entity.getAddresses()))
+                .comapny(
+                    Map.of(
+                            "id", company.getId().toString(),
+                            "name", company.getName(),
+                            "urlCom", company.getUrlCom(),
+                            "logo", company.getLogo().getImageUrl()
+                    )
+                )
+                .salary(entity.getSalary())
+                .build();
+    }
     @Override
     public DetailJobResponseDTO toDetailJobResponseDto(Job entity) {
 //        List<String> addressCompany = entity.getAddress().stream().map(
@@ -33,7 +55,6 @@ public class JobMapperImpl implements JobMapper {
         return DetailJobResponseDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())
-                //.address(entity.getAddress())
                 .jobPosition(entity.getJobPosition().name())
                 .numberOfVacancy(entity.getNumberOfVacancy())
                 .workMethod(entity.getWorkMethod().name())

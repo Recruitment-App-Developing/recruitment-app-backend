@@ -29,7 +29,8 @@ public class SecurityConfig {
         "/v3/api-docs" + CATCH_ALL_WILDCARDS,
         Endpoint.V1.HealthCheck.BASE + CATCH_ALL_WILDCARDS,
         Endpoint.V1.Authentication.BASE + CATCH_ALL_WILDCARDS,
-        Endpoint.V1.Admin.Auth.LOGIN
+        Endpoint.V1.Admin.Auth.LOGIN,
+        Endpoint.V1.Company.GET_BRIEF_COMPANY,
     };
 
     @Bean

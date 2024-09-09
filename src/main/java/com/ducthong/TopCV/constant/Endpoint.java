@@ -73,6 +73,10 @@ public class Endpoint {
             public static final String BASE = V1.PREFIX + "/job";
             public static final String ADD_ONE = BASE;
         }
+        public static final class Company{
+            public static final String BASE = V1.PREFIX + "/company";
+            public static final String GET_BRIEF_COMPANY = BASE + "/brief-company/{companyId}";
+        }
         public static final class HealthCheck {
             public static final String BASE = V1.PREFIX + "/actuator/health";
         }
