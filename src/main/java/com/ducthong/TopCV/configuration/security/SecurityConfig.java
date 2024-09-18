@@ -14,6 +14,9 @@ import com.ducthong.TopCV.constant.Endpoint;
 import com.ducthong.TopCV.repository.AccountRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -32,6 +35,7 @@ public class SecurityConfig {
         Endpoint.V1.Admin.Auth.LOGIN,
         Endpoint.V1.Job.GET_LIST_JOB,
         Endpoint.V1.Job.GET_DETAIL,
+            Endpoint.V1.Job.ADD_ONE,
         Endpoint.V1.Company.GET_BRIEF_COMPANY,
     };
 
@@ -49,5 +53,16 @@ public class SecurityConfig {
                 .authenticated());
         httpSecurity.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
+    }
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
     }
 }

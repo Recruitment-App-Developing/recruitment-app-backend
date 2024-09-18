@@ -10,12 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "Address")
-@Table(name = "addresses")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,11 +25,11 @@ public class Address {
     private String wardName;
     private String wardCode;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
-    private Date whenCreated;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
-    private Date lastUpdated;
+//    @Temporal(TemporalType.TIMESTAMP)
+//    @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+//    private Date whenCreated;
+//
+//    @Temporal(TemporalType.TIMESTAMP)
+//    @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+//    private Date lastUpdated;
 }

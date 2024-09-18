@@ -38,8 +38,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public Response<LoginResponseDTO> login(LoginRequestDTO requestDTO) {
         Optional<Account> accountResult = accountRepository.findByUsername(requestDTO.username());
-        if (accountResult.get() instanceof Employer) System.out.println("Employer");
-        if (accountResult.get() instanceof Candidate) System.out.println("Candidate");
+//        if (accountResult.get() instanceof Employer) System.out.println("Employer");
+//        if (accountResult.get() instanceof Candidate) System.out.println("Candidate");
 
         if (accountResult.isEmpty()) throw new AppException(ErrorMessage.Auth.NOT_EXISTED_USERNAME);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
