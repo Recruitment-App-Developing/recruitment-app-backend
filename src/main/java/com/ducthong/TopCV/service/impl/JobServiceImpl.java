@@ -13,9 +13,10 @@ import com.ducthong.TopCV.domain.entity.Job;
 import com.ducthong.TopCV.domain.entity.account.Employer;
 import com.ducthong.TopCV.domain.entity.address.Address;
 import com.ducthong.TopCV.domain.entity.address.CompanyAddress;
+import com.ducthong.TopCV.domain.entity.address.JobAddress;
+import com.ducthong.TopCV.domain.mapper.AddressMapper;
 import com.ducthong.TopCV.domain.mapper.JobMapper;
 import com.ducthong.TopCV.exceptions.AppException;
-import com.ducthong.TopCV.repository.AddressRepository;
 import com.ducthong.TopCV.repository.IndustryRepository;
 import com.ducthong.TopCV.repository.JobRepository;
 import com.ducthong.TopCV.responses.MetaResponse;
@@ -44,11 +45,11 @@ public class JobServiceImpl implements JobService {
     // Repository
     private final IndustryRepository industryRepo;
     private final JobRepository jobRepo;
-    private final AddressRepository addressRepo;
     // Service
     private final ImageService imageService;
     // Mapper
     private final JobMapper jobMapper;
+    private final AddressMapper addressMapper;
     // Varient
     @Value("${cloudinary.folder.job}")
     private String JOB_FOLDER;
@@ -102,19 +103,27 @@ public class JobServiceImpl implements JobService {
         List<Image> imageList = imageService.uploadListBase64Image(requestDTO.imageList(), JOB_FOLDER);
         newJob.setImageList(imageList);
         // Address
-        List<CompanyAddress> addresses = new ArrayList<>();
-        requestDTO.addressIdList().forEach(
-            item -> {
-                Optional<Address> address = addressRepo.findById(item);
-                if (address.isEmpty()) throw new AppException("This address is not exsited");
-                if (address.get() instanceof CompanyAddress) {
-                    addresses.add((CompanyAddress) address.get());
-                } else {
-                    throw new AppException("This address is not a CompanyAddress");
+        List<JobAddress> jobAddressList = requestDTO.addressList().stream().map(
+                item -> {
+                    JobAddress temp = addressMapper.toJobAddress(item);
+                    temp.setJob(newJob);
+                    return temp;
                 }
-            }
-        );
-        newJob.setAddresses(addresses);
+        ).toList();
+        newJob.setAddresses(jobAddressList);
+//        List<CompanyAddress> addresses = new ArrayList<>();
+//        requestDTO.addressIdList().forEach(
+//            item -> {
+//                Optional<Address> address = addressRepo.findById(item);
+//                if (address.isEmpty()) throw new AppException("This address is not exsited");
+//                if (address.get() instanceof CompanyAddress) {
+//                    addresses.add((CompanyAddress) address.get());
+//                } else {
+//                    throw new AppException("This address is not a CompanyAddress");
+//                }
+//            }
+//        );
+        //newJob.setAddresses(addresses);
 
         try {
             Job saveJob = jobRepo.save(newJob);

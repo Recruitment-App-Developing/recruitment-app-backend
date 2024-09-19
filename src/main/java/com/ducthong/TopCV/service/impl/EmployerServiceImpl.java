@@ -43,6 +43,7 @@ public class EmployerServiceImpl implements EmployerService {
     private final MessageSourceUtil messageUtil;
     // Mapper
     private final EmployerMapper employerMapper;
+    private final AddressMapper addressMapper;
     // Variable
     @Value("${cloudinary.folder.avatar}")
     private String folderAvatar;
@@ -65,7 +66,7 @@ public class EmployerServiceImpl implements EmployerService {
 
         Employer addEmployer = employerMapper.addEmployerDtoToEmployerEntity(requestDTO);
         // Set Address
-        addEmployer.setAddress(AddressMapper.INSTANCE.addRequestToPersonAddressEntity(requestDTO.address()));
+        addEmployer.setAddress(addressMapper.addRequestToPersonAddressEntity(requestDTO.address()));
         // Set password
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         addEmployer.setPassword(passwordEncoder.encode(requestDTO.password()));

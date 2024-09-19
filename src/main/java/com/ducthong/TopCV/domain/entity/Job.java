@@ -2,11 +2,10 @@ package com.ducthong.TopCV.domain.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.ducthong.TopCV.constant.TimeFormatConstant;
-import com.ducthong.TopCV.domain.entity.address.CompanyAddress;
+import com.ducthong.TopCV.domain.entity.address.JobAddress;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -47,12 +46,8 @@ public class Job {
 //            joinColumns = @JoinColumn(name = "job_id", nullable = false),
 //            uniqueConstraints = @UniqueConstraint(columnNames = {"job_id", "address"}))
 //    List<@Valid @NotBlank(message = "Address cannot blank") String> address = new ArrayList<>();
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "job_address",
-            joinColumns = @JoinColumn(name = "job_id"),
-            inverseJoinColumns = @JoinColumn(name = "address_id"))
-    private List<CompanyAddress> addresses = new ArrayList<>();
+    @OneToMany(mappedBy = "job", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<JobAddress> addresses = new ArrayList<>();
 
     @Valid
     @NotNull(message = "Company cannot null")

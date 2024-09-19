@@ -64,7 +64,7 @@ public class Account implements UserDetails {
     private String phoneNumber;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "address_id", referencedColumnName = "address_id")
+    @JoinColumn(name = "address_id")
     private PersonAddress address;
 
     @Temporal(TemporalType.TIMESTAMP)

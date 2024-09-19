@@ -32,22 +32,22 @@ public class JobMapperImpl implements JobMapper {
         return JobResponseDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())
-                .cities(AddressUtil.toCities(entity.getAddresses()))
-                .comapny(
-                    Map.of(
-                            "id", company.getId().toString(),
-                            "name", company.getName(),
-                            "urlCom", company.getUrlCom(),
-                            "logo", company.getLogo().getImageUrl()
-                    )
-                )
+                //.cities(AddressUtil.toCities(entity.getAddresses()))
+//                .comapny(
+//                    Map.of(
+//                            "id", company.getId().toString(),
+//                            "name", company.getName(),
+//                            "urlCom", company.getUrlCom(),
+//                            "logo", company.getLogo().getImageUrl()
+//                    )
+//                )
                 .salary(entity.getSalary())
                 .build();
     }
     @Override
     public DetailJobResponseDTO toDetailJobResponseDto(Job entity) {
-        List<String> addressCompany = entity.getAddresses().stream().map(
-                item -> AddressUtil.toStringJobAddress(item)
+        List<String> jobAddress = entity.getAddresses().stream().map(
+                item -> item.toString()
         ).toList();
         List<ImageResponseDTO> imageList = entity.getImageList().stream().map(
                 item -> imageMapper.toImageResponseDto(item)
@@ -55,7 +55,7 @@ public class JobMapperImpl implements JobMapper {
         return DetailJobResponseDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())
-                .address(addressCompany)
+                .address(jobAddress)
                 .jobPosition(entity.getJobPosition().name())
                 .numberOfVacancy(entity.getNumberOfVacancy())
                 .workMethod(entity.getWorkMethod().name())

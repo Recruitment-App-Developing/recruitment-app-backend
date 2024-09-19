@@ -1,23 +1,17 @@
 package com.ducthong.TopCV.domain.entity.address;
 
-import java.util.Date;
-
 import jakarta.persistence.*;
-
-import org.springframework.format.annotation.DateTimeFormat;
-
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
-public class Address {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "address_id")
-    private Integer id;
-
+@MappedSuperclass
+@AllArgsConstructor
+@Getter
+@Setter
+public abstract class Address {
     private String detail;
-
     private String provinceName;
     private String provinceCode;
     private String districtName;

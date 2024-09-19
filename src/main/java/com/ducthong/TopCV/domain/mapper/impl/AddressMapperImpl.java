@@ -1,0 +1,43 @@
+package com.ducthong.TopCV.domain.mapper.impl;
+
+import com.ducthong.TopCV.domain.dto.address.AddPersonAddressRequestDTO;
+import com.ducthong.TopCV.domain.entity.address.Address;
+import com.ducthong.TopCV.domain.entity.address.JobAddress;
+import com.ducthong.TopCV.domain.entity.address.PersonAddress;
+import com.ducthong.TopCV.domain.entity.address.Ward;
+import com.ducthong.TopCV.domain.mapper.AddressMapper;
+import com.ducthong.TopCV.exceptions.AppException;
+import com.ducthong.TopCV.repository.address.WardRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
+
+@Component
+@RequiredArgsConstructor
+public class AddressMapperImpl implements AddressMapper {
+    private final WardRepository wardRepo;
+    @Override
+    public PersonAddress addRequestToPersonAddressEntity(AddPersonAddressRequestDTO requestDTO) {
+        return null;
+    }
+
+    @Override
+    public JobAddress toJobAddress(String address) {
+        String[] temp = address.split(";");
+
+        Optional<Ward> wardOptional = wardRepo.findById(temp[1]);
+        if (wardOptional.isEmpty()) throw new AppException("This address is invalid");
+        Ward ward = wardOptional.get();
+
+        return JobAddress.builder()
+                .detail(temp[0])
+                .wardCode(ward.getCode())
+                .wardName(ward.getName())
+                .provinceCode(ward.getDistrict().getProvince().getCode())
+                .provinceName(ward.getDistrict().getProvince().getName())
+                .districtCode(ward.getDistrict().getCode())
+                .districtName(ward.getDistrict().getName())
+                .build();
+    }
+}

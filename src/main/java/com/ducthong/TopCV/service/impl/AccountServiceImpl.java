@@ -57,6 +57,7 @@ public class AccountServiceImpl implements AccountService {
     private final MessageSourceUtil messageUtil;
     // Mapper
     private final Account2Mapper account2Mapper;
+    private final AddressMapper addressMapper;
     // Variable
 
     @Value("${cloudinary.folder.avatar}")
@@ -79,7 +80,7 @@ public class AccountServiceImpl implements AccountService {
 
         Candidate addCandidate = account2Mapper.addCandidateDtoToCandidateEntity(requestDTO);
         // Set Address
-        addCandidate.setAddress(AddressMapper.INSTANCE.addRequestToPersonAddressEntity(requestDTO.address()));
+        addCandidate.setAddress(addressMapper.addRequestToPersonAddressEntity(requestDTO.address()));
         // Encode password
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         addCandidate.setPassword(passwordEncoder.encode(requestDTO.password()));

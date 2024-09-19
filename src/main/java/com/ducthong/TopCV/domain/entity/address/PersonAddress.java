@@ -5,17 +5,23 @@ import jakarta.persistence.*;
 import com.ducthong.TopCV.domain.entity.account.Account;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity(name = "PersonAddress")
 @Table(name = "person_addresses")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class PersonAddress extends Address {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
+
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "address")
     private Account account;
+
+    public PersonAddress(String detail, String provinceName, String provinceCode, String districtName, String districtCode, String wardName, String wardCode) {
+        super(detail, provinceName, provinceCode, districtName, districtCode, wardName, wardCode);
+    }
 }

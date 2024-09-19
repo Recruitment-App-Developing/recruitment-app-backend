@@ -19,15 +19,17 @@ public class CompanyMapperImpl implements CompanyMapper {
     private final CompanyRepository companyRepo;
     @Override
     public BriefCompanyResponseDTO toBriefCompanyResponseDto(Company entity) {
-        Optional<Address> address = companyRepo.getHeadquartersAddress(entity.getId());
-        if (address.isEmpty()) throw new AppException("This company has not headquarters");
-        return BriefCompanyResponseDTO.builder()
-                .id(entity.getId())
-                .name(entity.getName())
-                .logo(entity.getLogo().getImageUrl())
-                .urlCom(entity.getUrlCom())
-                .headquarters(AddressUtil.toString(address.get()))
-                .employeeScale(entity.getEmployeeScale())
-                .build();
+//        Optional<Address> address = companyRepo.getHeadquartersAddress(entity.getId());
+//        if (address.isEmpty()) throw new AppException("This company has not headquarters");
+//        return BriefCompanyResponseDTO.builder()
+//                .id(entity.getId())
+//                .name(entity.getName())
+//                .logo(entity.getLogo().getImageUrl())
+//                .urlCom(entity.getUrlCom())
+//                .headquarters(AddressUtil.toString(address.get()))
+//                .employeeScale(entity.getEmployeeScale())
+//                .build();
+        // TODO
+        return null;
     }
 }

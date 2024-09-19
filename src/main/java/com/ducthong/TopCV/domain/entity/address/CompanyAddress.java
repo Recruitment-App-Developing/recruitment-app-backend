@@ -6,18 +6,20 @@ import jakarta.persistence.*;
 import com.ducthong.TopCV.domain.entity.Company;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Entity(name = "CompanyAddress")
 @Table(name = "company_addresses")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class CompanyAddress extends Address {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
+
     private Boolean isVerified;
     private Boolean isMain;
     private Boolean isBranch;
@@ -27,6 +29,7 @@ public class CompanyAddress extends Address {
     @JoinColumn(name = "company_id", referencedColumnName = "company_id")
     private Company company;
 
-    @ManyToMany(mappedBy = "addresses")
-    private List<Job> jobs;
+    public CompanyAddress(String detail, String provinceName, String provinceCode, String districtName, String districtCode, String wardName, String wardCode) {
+        super(detail, provinceName, provinceCode, districtName, districtCode, wardName, wardCode);
+    }
 }

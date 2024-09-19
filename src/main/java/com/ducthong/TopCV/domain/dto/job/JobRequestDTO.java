@@ -13,7 +13,7 @@ import java.util.List;
 
 public record JobRequestDTO(
         String name,
-        List<Integer> addressIdList,
+        List<String> addressList,
         @EnumValid(name = "jobPosition", enumClass = JobPosition.class)
         String jobPosition,
         @Min(value = 1, message = "The number of vacancy must be greater than 0")
