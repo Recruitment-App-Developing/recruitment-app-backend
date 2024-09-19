@@ -9,6 +9,7 @@ import lombok.*;
 @Table(name = "job_address")
 @Getter
 @Setter
+@NoArgsConstructor
 public class JobAddress extends Address{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

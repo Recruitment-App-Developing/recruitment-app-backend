@@ -1,12 +1,10 @@
 package com.ducthong.TopCV.domain.entity.address;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @MappedSuperclass
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter

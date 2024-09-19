@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,19 +29,23 @@ public class JobMapperImpl implements JobMapper {
     @Override
     public JobResponseDTO toJobResponseDto(Job entity) {
         Company company = entity.getCompany();
-
+        
+        StringBuilder address = new StringBuilder();
+        entity.getAddresses().forEach(item -> address.append(item.getProvinceName()).append(", "));
+        if (entity.getAddresses().size() > 0) address.setLength(address.length() - 2);
+        
         return JobResponseDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())
-                //.cities(AddressUtil.toCities(entity.getAddresses()))
-//                .comapny(
-//                    Map.of(
-//                            "id", company.getId().toString(),
-//                            "name", company.getName(),
-//                            "urlCom", company.getUrlCom(),
-//                            "logo", company.getLogo().getImageUrl()
-//                    )
-//                )
+                .cities(address.toString())
+                .comapny(
+                    Map.of(
+                            "id", company.getId().toString(),
+                            "name", company.getName(),
+                            "urlCom", company.getUrlCom(),
+                            "logo", company.getLogo().getImageUrl()
+                    )
+                )
                 .salary(entity.getSalary())
                 .build();
     }
@@ -52,6 +57,21 @@ public class JobMapperImpl implements JobMapper {
         List<ImageResponseDTO> imageList = entity.getImageList().stream().map(
                 item -> imageMapper.toImageResponseDto(item)
         ).toList();
+        // Industry
+        Map<String, Object> industry = new HashMap<>();
+        List<Map<String, String>> subItems = new ArrayList<>();
+
+        entity.getIndustries().forEach(
+            item -> {
+                if (item.getIsMain()) industry.put("isMain",
+                        Map.of("id", item.getId().toString(),
+                                "name", item.getIndustry().getName()));
+                else subItems.add(Map.of("id", item.getId().toString(),
+                        "name", item.getIndustry().getName()));
+            }
+        );
+        industry.put("subItems", subItems);
+
         return DetailJobResponseDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())
@@ -75,7 +95,7 @@ public class JobMapperImpl implements JobMapper {
                 .numberOfView(entity.getNumberOfView())
                 .applicationMethod(entity.getApplicationMethod().name())
                 .imageList(imageList)
-                .industryId(entity.getIndustry().getId())
+                .industry(industry)
                 .build();
     }
 

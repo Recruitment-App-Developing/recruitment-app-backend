@@ -4,6 +4,7 @@ import com.ducthong.TopCV.domain.dto.image.ImageResponseDTO;
 import lombok.Builder;
 
 import java.util.List;
+import java.util.Map;
 
 @Builder
 public record DetailJobResponseDTO(
@@ -29,6 +30,6 @@ public record DetailJobResponseDTO(
     Integer numberOfView,
     String applicationMethod,
     List<ImageResponseDTO> imageList,
-    Integer industryId
+    Map<String, Object> industry
 ) {
 }

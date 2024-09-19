@@ -9,7 +9,7 @@ public record JobResponseDTO(
     Integer id,
     String name,
     String cities,
-    //Map<String, String> comapny,
+    Map<String, String> comapny,
     String salary
 ) {
 }

@@ -7,7 +7,7 @@ import com.ducthong.TopCV.domain.entity.address.CompanyAddress;
 import java.util.List;
 
 public class AddressUtil {
-    public static String toCities(List<CompanyAddress> addresses){
+    public static String toCities(List<String> addresses){
 //        StringBuilder cities = new StringBuilder();
 //        addresses.forEach(
 //                item -> {

@@ -116,7 +116,6 @@ public class Job {
     @JoinColumn(name = "job_id")
     private List<Image> imageList = new ArrayList<>();
 
-    @ManyToOne(targetEntity = Industry.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "industry_id", referencedColumnName = "industry_id")
-    private Industry industry;
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<IndustryJob> industries = new ArrayList<>();
 }
