@@ -4,21 +4,21 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ducthong.TopCV.constant.TimeFormatConstant;
-import com.ducthong.TopCV.domain.entity.address.JobAddress;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
-import lombok.Builder;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.ducthong.TopCV.constant.TimeFormatConstant;
+import com.ducthong.TopCV.domain.entity.address.JobAddress;
 import com.ducthong.TopCV.domain.enums.ApplicationMethod;
 import com.ducthong.TopCV.domain.enums.Gender;
 import com.ducthong.TopCV.domain.enums.JobPosition;
 import com.ducthong.TopCV.domain.enums.WorkMethod;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -37,15 +37,15 @@ public class Job {
     @NotBlank(message = "{job.valid.name}")
     private String name;
 
-//    @Valid
-//    @NotNull(message = "Address list cannot null")
-//    @Size(min = 1, max = 10, message = "Address list must contain at least one and at most 10 addresses")
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    @CollectionTable(
-//            name = "job_address",
-//            joinColumns = @JoinColumn(name = "job_id", nullable = false),
-//            uniqueConstraints = @UniqueConstraint(columnNames = {"job_id", "address"}))
-//    List<@Valid @NotBlank(message = "Address cannot blank") String> address = new ArrayList<>();
+    //    @Valid
+    //    @NotNull(message = "Address list cannot null")
+    //    @Size(min = 1, max = 10, message = "Address list must contain at least one and at most 10 addresses")
+    //    @ElementCollection(fetch = FetchType.EAGER)
+    //    @CollectionTable(
+    //            name = "job_address",
+    //            joinColumns = @JoinColumn(name = "job_id", nullable = false),
+    //            uniqueConstraints = @UniqueConstraint(columnNames = {"job_id", "address"}))
+    //    List<@Valid @NotBlank(message = "Address cannot blank") String> address = new ArrayList<>();
     @OneToMany(mappedBy = "job", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<JobAddress> addresses = new ArrayList<>();
 

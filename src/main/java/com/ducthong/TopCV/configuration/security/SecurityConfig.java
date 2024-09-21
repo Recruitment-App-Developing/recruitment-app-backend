@@ -9,14 +9,14 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import com.ducthong.TopCV.constant.Endpoint;
 import com.ducthong.TopCV.repository.AccountRepository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -35,7 +35,7 @@ public class SecurityConfig {
         Endpoint.V1.Admin.Auth.LOGIN,
         Endpoint.V1.Job.GET_LIST_JOB,
         Endpoint.V1.Job.GET_DETAIL,
-            Endpoint.V1.Job.ADD_ONE,
+        Endpoint.V1.Job.ADD_ONE,
         Endpoint.V1.Company.GET_BRIEF_COMPANY,
     };
 
@@ -54,6 +54,7 @@ public class SecurityConfig {
         httpSecurity.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
+
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

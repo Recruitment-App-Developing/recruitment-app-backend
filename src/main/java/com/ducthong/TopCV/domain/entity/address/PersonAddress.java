@@ -21,7 +21,14 @@ public class PersonAddress extends Address {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "address")
     private Account account;
 
-    public PersonAddress(String detail, String provinceName, String provinceCode, String districtName, String districtCode, String wardName, String wardCode) {
+    public PersonAddress(
+            String detail,
+            String provinceName,
+            String provinceCode,
+            String districtName,
+            String districtCode,
+            String wardName,
+            String wardCode) {
         super(detail, provinceName, provinceCode, districtName, districtCode, wardName, wardCode);
     }
 }

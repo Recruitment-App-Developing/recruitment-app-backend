@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.ducthong.TopCV.domain.dto.cloudinary.CloudinaryResponseDTO;
 import com.ducthong.TopCV.service.CloudinaryService;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,17 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         if (folder == null) folder = defaultFolder;
         Map result = cloudinary.uploader().upload(base64String, ObjectUtils.asMap("folder", folder));
         return result;
+    }
+
+    @Override
+    public CloudinaryResponseDTO uploadFileBase64_v2(String base64String, String folder) throws IOException {
+        if (folder == null) folder = defaultFolder;
+        Map result = cloudinary.uploader().upload(base64String, ObjectUtils.asMap("folder", folder));
+        return CloudinaryResponseDTO.builder()
+                .name((String) result.get("original_filename"))
+                .url((String) result.get("url"))
+                .public_id((String) result.get("public_id"))
+                .build();
     }
 
     public Map upload(MultipartFile multipartFile, String folder) throws IOException {

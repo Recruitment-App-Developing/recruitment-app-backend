@@ -1,6 +1,7 @@
 package com.ducthong.TopCV.domain.entity.address;
 
 import jakarta.persistence.*;
+
 import lombok.*;
 
 @MappedSuperclass
@@ -17,11 +18,11 @@ public abstract class Address {
     private String wardName;
     private String wardCode;
 
-//    @Temporal(TemporalType.TIMESTAMP)
-//    @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
-//    private Date whenCreated;
-//
-//    @Temporal(TemporalType.TIMESTAMP)
-//    @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
-//    private Date lastUpdated;
+    //    @Temporal(TemporalType.TIMESTAMP)
+    //    @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+    //    private Date whenCreated;
+    //
+    //    @Temporal(TemporalType.TIMESTAMP)
+    //    @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
+    //    private Date lastUpdated;
 }

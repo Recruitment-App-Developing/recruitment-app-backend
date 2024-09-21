@@ -1,15 +1,17 @@
 package com.ducthong.TopCV.service.impl;
 
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.ducthong.TopCV.domain.dto.company.BriefCompanyResponseDTO;
 import com.ducthong.TopCV.domain.entity.Company;
 import com.ducthong.TopCV.domain.mapper.CompanyMapper;
 import com.ducthong.TopCV.exceptions.AppException;
 import com.ducthong.TopCV.repository.CompanyRepository;
 import com.ducthong.TopCV.service.CompanyService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +21,7 @@ public class CompanyServiceImpl implements CompanyService {
     // Service
     // Mapper
     private final CompanyMapper companyMapper;
+
     @Override
     public BriefCompanyResponseDTO getBriefCompany(Integer companyId) {
         Optional<Company> findCompany = companyRepo.findById(companyId);

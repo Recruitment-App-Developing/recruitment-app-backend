@@ -31,10 +31,10 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.OK).body(authenticationService.login(requestDTO));
     }
 
-//    @PostMapping()
-//    public ResponseEntity<Response<LoginResponseDTO>> register(){
-//
-//    }
+    //    @PostMapping()
+    //    public ResponseEntity<Response<LoginResponseDTO>> register(){
+    //
+    //    }
 
     @PostMapping(Endpoint.V1.Authentication.INTROSPECT)
     public ResponseEntity<Response<IntrospectTokenResponseDTO>> introspectToken(

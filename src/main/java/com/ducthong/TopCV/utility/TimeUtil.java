@@ -1,15 +1,16 @@
 package com.ducthong.TopCV.utility;
 
-import com.ducthong.TopCV.constant.TimeFormatConstant;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class TimeUtil {
-    private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern(TimeFormatConstant.DATETIME_FORMAT);
+import com.ducthong.TopCV.constant.TimeFormatConstant;
 
-    public static LocalDateTime getDateTimeNow(){
+public class TimeUtil {
+    private static final DateTimeFormatter DATETIME_FORMATTER =
+            DateTimeFormatter.ofPattern(TimeFormatConstant.DATETIME_FORMAT);
+
+    public static LocalDateTime getDateTimeNow() {
         return LocalDateTime.now();
     }
 

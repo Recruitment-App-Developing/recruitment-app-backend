@@ -1,14 +1,11 @@
 package com.ducthong.TopCV.domain.entity.address;
 
-import com.ducthong.TopCV.domain.entity.Job;
 import jakarta.persistence.*;
 
 import com.ducthong.TopCV.domain.entity.Company;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.*;
-
-import java.util.List;
 
 @Entity(name = "CompanyAddress")
 @Table(name = "company_addresses")
@@ -29,7 +26,14 @@ public class CompanyAddress extends Address {
     @JoinColumn(name = "company_id", referencedColumnName = "company_id")
     private Company company;
 
-    public CompanyAddress(String detail, String provinceName, String provinceCode, String districtName, String districtCode, String wardName, String wardCode) {
+    public CompanyAddress(
+            String detail,
+            String provinceName,
+            String provinceCode,
+            String districtName,
+            String districtCode,
+            String wardName,
+            String wardCode) {
         super(detail, provinceName, provinceCode, districtName, districtCode, wardName, wardCode);
     }
 }

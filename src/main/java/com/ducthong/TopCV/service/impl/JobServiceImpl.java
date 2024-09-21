@@ -1,5 +1,18 @@
 package com.ducthong.TopCV.service.impl;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.ducthong.TopCV.constant.meta.MetaConstant;
 import com.ducthong.TopCV.domain.dto.job.DetailJobResponseDTO;
 import com.ducthong.TopCV.domain.dto.job.JobRequestDTO;
@@ -12,8 +25,6 @@ import com.ducthong.TopCV.domain.entity.Industry;
 import com.ducthong.TopCV.domain.entity.IndustryJob;
 import com.ducthong.TopCV.domain.entity.Job;
 import com.ducthong.TopCV.domain.entity.account.Employer;
-import com.ducthong.TopCV.domain.entity.address.Address;
-import com.ducthong.TopCV.domain.entity.address.CompanyAddress;
 import com.ducthong.TopCV.domain.entity.address.JobAddress;
 import com.ducthong.TopCV.domain.mapper.AddressMapper;
 import com.ducthong.TopCV.domain.mapper.JobMapper;
@@ -24,20 +35,8 @@ import com.ducthong.TopCV.responses.MetaResponse;
 import com.ducthong.TopCV.service.ImageService;
 import com.ducthong.TopCV.service.JobService;
 import com.ducthong.TopCV.utility.GetRoleUtil;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -63,6 +62,7 @@ public class JobServiceImpl implements JobService {
 
         return jobMapper.toDetailJobResponseDto(findJob.get());
     }
+
     @Override
     public MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJob(MetaRequestDTO metaRequestDTO, String name) {
         Sort sort = metaRequestDTO.sortDir().equals(MetaConstant.Sorting.DEFAULT_DIRECTION)
@@ -88,6 +88,7 @@ public class JobServiceImpl implements JobService {
                         .build(),
                 li);
     }
+
     @Override
     @Transactional
     public DetailJobResponseDTO addJob(JobRequestDTO requestDTO, Integer accountId) throws IOException {
@@ -95,18 +96,18 @@ public class JobServiceImpl implements JobService {
 
         Job newJob = jobMapper.jobRequestDtoToJobEntity(requestDTO);
         // Industry
-        List<IndustryJob> industryJobs = requestDTO.industryList().stream().map(
-            item -> {
-                Optional<Industry> temp = industryRepo.findById(item);
-                if (temp.isEmpty()) throw new AppException("This industry is not existed");
-                Boolean isMain = requestDTO.industryList().indexOf(item) == 0;
-                return IndustryJob.builder()
-                        .industry(temp.get())
-                        .job(newJob)
-                        .isMain(isMain)
-                        .build();
-            }
-        ).toList();
+        List<IndustryJob> industryJobs = requestDTO.industryList().stream()
+                .map(item -> {
+                    Optional<Industry> temp = industryRepo.findById(item);
+                    if (temp.isEmpty()) throw new AppException("This industry is not existed");
+                    Boolean isMain = requestDTO.industryList().indexOf(item) == 0;
+                    return IndustryJob.builder()
+                            .industry(temp.get())
+                            .job(newJob)
+                            .isMain(isMain)
+                            .build();
+                })
+                .toList();
         newJob.setIndustries(industryJobs);
         // Company
         newJob.setCompany(employer.getCompany());
@@ -114,13 +115,13 @@ public class JobServiceImpl implements JobService {
         List<Image> imageList = imageService.uploadListBase64Image(requestDTO.imageList(), JOB_FOLDER);
         newJob.setImageList(imageList);
         // Address
-        List<JobAddress> jobAddressList = requestDTO.addressList().stream().map(
-                item -> {
+        List<JobAddress> jobAddressList = requestDTO.addressList().stream()
+                .map(item -> {
                     JobAddress temp = addressMapper.toJobAddress(item);
                     temp.setJob(newJob);
                     return temp;
-                }
-        ).toList();
+                })
+                .toList();
         newJob.setAddresses(jobAddressList);
         try {
             Job saveJob = jobRepo.save(newJob);

@@ -3,9 +3,9 @@ package com.ducthong.TopCV.domain.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ducthong.TopCV.domain.entity.account.Employer;
 import jakarta.persistence.*;
 
+import com.ducthong.TopCV.domain.entity.account.Employer;
 import com.ducthong.TopCV.domain.entity.address.CompanyAddress;
 
 import lombok.AllArgsConstructor;

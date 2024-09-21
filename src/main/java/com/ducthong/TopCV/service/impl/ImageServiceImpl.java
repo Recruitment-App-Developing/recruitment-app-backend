@@ -1,21 +1,24 @@
 package com.ducthong.TopCV.service.impl;
 
-import com.ducthong.TopCV.domain.entity.Image;
-import com.ducthong.TopCV.service.CloudinaryService;
-import com.ducthong.TopCV.service.ImageService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
+import com.ducthong.TopCV.domain.entity.Image;
+import com.ducthong.TopCV.service.CloudinaryService;
+import com.ducthong.TopCV.service.ImageService;
+
+import lombok.RequiredArgsConstructor;
+
 @Service
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
     private final CloudinaryService cloudinaryService;
+    // TODO
     @Override
     public List<Image> uploadListBase64Image(List<String> base64StringList, String folder) throws IOException {
         List<Image> res = new ArrayList<>();

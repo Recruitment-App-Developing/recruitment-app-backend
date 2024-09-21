@@ -1,34 +1,31 @@
 package com.ducthong.TopCV.domain.mapper.impl;
 
-import com.ducthong.TopCV.domain.dto.company.BriefCompanyResponseDTO;
-import com.ducthong.TopCV.domain.entity.Company;
-import com.ducthong.TopCV.domain.entity.address.Address;
-import com.ducthong.TopCV.domain.entity.address.CompanyAddress;
-import com.ducthong.TopCV.domain.mapper.CompanyMapper;
-import com.ducthong.TopCV.exceptions.AppException;
-import com.ducthong.TopCV.repository.CompanyRepository;
-import com.ducthong.TopCV.utility.AddressUtil;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import com.ducthong.TopCV.domain.dto.company.BriefCompanyResponseDTO;
+import com.ducthong.TopCV.domain.entity.Company;
+import com.ducthong.TopCV.domain.mapper.CompanyMapper;
+import com.ducthong.TopCV.repository.CompanyRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class CompanyMapperImpl implements CompanyMapper {
     private final CompanyRepository companyRepo;
+
     @Override
     public BriefCompanyResponseDTO toBriefCompanyResponseDto(Company entity) {
-//        Optional<Address> address = companyRepo.getHeadquartersAddress(entity.getId());
-//        if (address.isEmpty()) throw new AppException("This company has not headquarters");
-//        return BriefCompanyResponseDTO.builder()
-//                .id(entity.getId())
-//                .name(entity.getName())
-//                .logo(entity.getLogo().getImageUrl())
-//                .urlCom(entity.getUrlCom())
-//                .headquarters(AddressUtil.toString(address.get()))
-//                .employeeScale(entity.getEmployeeScale())
-//                .build();
+        //        Optional<Address> address = companyRepo.getHeadquartersAddress(entity.getId());
+        //        if (address.isEmpty()) throw new AppException("This company has not headquarters");
+        //        return BriefCompanyResponseDTO.builder()
+        //                .id(entity.getId())
+        //                .name(entity.getName())
+        //                .logo(entity.getLogo().getImageUrl())
+        //                .urlCom(entity.getUrlCom())
+        //                .headquarters(AddressUtil.toString(address.get()))
+        //                .employeeScale(entity.getEmployeeScale())
+        //                .build();
         // TODO
         return null;
     }

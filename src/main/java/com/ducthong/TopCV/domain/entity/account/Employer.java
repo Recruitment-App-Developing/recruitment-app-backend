@@ -1,7 +1,8 @@
 package com.ducthong.TopCV.domain.entity.account;
 
-import com.ducthong.TopCV.domain.entity.Company;
 import jakarta.persistence.*;
+
+import com.ducthong.TopCV.domain.entity.Company;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

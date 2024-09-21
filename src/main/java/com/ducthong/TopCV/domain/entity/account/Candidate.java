@@ -1,7 +1,11 @@
 package com.ducthong.TopCV.domain.entity.account;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.*;
+
+import com.ducthong.TopCV.domain.entity.CV;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,6 +18,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Candidate extends Account {
     private Boolean isFindJob;
+
+    @OneToMany(mappedBy = "candidate", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CV> cvs = new ArrayList<>();
 
     // apply Job List
 

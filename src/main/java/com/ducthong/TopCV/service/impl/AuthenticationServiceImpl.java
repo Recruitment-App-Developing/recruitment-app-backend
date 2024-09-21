@@ -13,8 +13,6 @@ import com.ducthong.TopCV.domain.dto.authentication.IntrospectTokenResponseDTO;
 import com.ducthong.TopCV.domain.dto.authentication.LoginRequestDTO;
 import com.ducthong.TopCV.domain.dto.authentication.LoginResponseDTO;
 import com.ducthong.TopCV.domain.entity.account.Account;
-import com.ducthong.TopCV.domain.entity.account.Candidate;
-import com.ducthong.TopCV.domain.entity.account.Employer;
 import com.ducthong.TopCV.domain.mapper.AccountMapper;
 import com.ducthong.TopCV.exceptions.AppException;
 import com.ducthong.TopCV.repository.AccountRepository;
@@ -38,8 +36,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public Response<LoginResponseDTO> login(LoginRequestDTO requestDTO) {
         Optional<Account> accountResult = accountRepository.findByUsername(requestDTO.username());
-//        if (accountResult.get() instanceof Employer) System.out.println("Employer");
-//        if (accountResult.get() instanceof Candidate) System.out.println("Candidate");
+        //        if (accountResult.get() instanceof Employer) System.out.println("Employer");
+        //        if (accountResult.get() instanceof Candidate) System.out.println("Candidate");
 
         if (accountResult.isEmpty()) throw new AppException(ErrorMessage.Auth.NOT_EXISTED_USERNAME);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
