@@ -3,6 +3,7 @@ package com.ducthong.TopCV.domain.entity.account;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ducthong.TopCV.domain.entity.Application;
 import jakarta.persistence.*;
 
 import com.ducthong.TopCV.domain.entity.CV;
@@ -22,7 +23,8 @@ public class Candidate extends Account {
     @OneToMany(mappedBy = "candidate", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CV> cvs = new ArrayList<>();
 
-    // apply Job List
+    @OneToMany(mappedBy = "candidate", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = false)
+    private List<Application> applications = new ArrayList<>();
 
     // like Job List
 

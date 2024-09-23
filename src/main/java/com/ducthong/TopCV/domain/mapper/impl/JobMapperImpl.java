@@ -110,7 +110,6 @@ public class JobMapperImpl implements JobMapper {
     public Job jobRequestDtoToJobEntity(JobRequestDTO requestDTO) {
         return Job.builder()
                 .name(requestDTO.name())
-                // .address(requestDTO.address())
                 .jobPosition(JobPosition.valueOf(requestDTO.jobPosition()))
                 .numberOfVacancy(requestDTO.numberOfVacancy())
                 .workMethod(WorkMethod.valueOf(requestDTO.workMethod()))

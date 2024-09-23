@@ -90,6 +90,11 @@ public class Endpoint {
             public static final String GET_BRIEF_COMPANY = BASE + "/brief-company/{companyId}";
         }
 
+        public static final class Application {
+            public static final String BASE = V1.PREFIX + "/application";
+            public static final String APPLY = BASE + "/apply";
+        }
+
         public static final class HealthCheck {
             public static final String BASE = V1.PREFIX + "/actuator/health";
         }
