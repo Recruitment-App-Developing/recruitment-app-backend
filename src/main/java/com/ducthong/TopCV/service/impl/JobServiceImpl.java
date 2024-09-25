@@ -1,6 +1,7 @@
 package com.ducthong.TopCV.service.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,12 +65,31 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJob(MetaRequestDTO metaRequestDTO, String name) {
+    public MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJobSpecification(MetaRequestDTO metaRequestDTO) {
+        List<Job> jobList = jobRepo.findAll();
+
+        List<JobResponseDTO> res = jobList.stream().map(
+                item -> jobMapper.toJobResponseDto(item)
+        ).toList();
+        return MetaResponse.successfulResponse(
+                "Get list job success",
+                MetaResponseDTO.builder()
+                        .totalItems(null)
+                        .totalPages(null)
+                        .currentPage(metaRequestDTO.currentPage())
+                        .pageSize(metaRequestDTO.pageSize())
+                        .sorting(null)
+                        .build(),
+                res);
+    }
+
+    @Override
+    public MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJob(MetaRequestDTO metaRequestDTO) {
         Sort sort = metaRequestDTO.sortDir().equals(MetaConstant.Sorting.DEFAULT_DIRECTION)
                 ? Sort.by(metaRequestDTO.sortField()).ascending()
                 : Sort.by(metaRequestDTO.sortField()).descending();
         Pageable pageable = PageRequest.of(metaRequestDTO.currentPage(), metaRequestDTO.pageSize(), sort);
-        Page<Job> page = jobRepo.getListJob(pageable, name);
+        Page<Job> page = jobRepo.findAll(pageable);
         if (page.getContent().isEmpty()) throw new AppException("List car is empty");
         List<JobResponseDTO> li = page.getContent().stream()
                 .map(temp -> jobMapper.toJobResponseDto(temp))
@@ -96,18 +116,29 @@ public class JobServiceImpl implements JobService {
 
         Job newJob = jobMapper.jobRequestDtoToJobEntity(requestDTO);
         // Industry
-        List<IndustryJob> industryJobs = requestDTO.industryList().stream()
-                .map(item -> {
+        List<IndustryJob> industryJobs = new ArrayList<>();
+
+        Optional<Industry> mainIndustryFind = industryRepo.findById(requestDTO.mainIndustry());
+        if (mainIndustryFind.isEmpty()) throw new AppException("This main industry is not existed");
+        IndustryJob mainIndustryJob = IndustryJob.builder()
+                .industry(mainIndustryFind.get())
+                .job(newJob)
+                .isMain(true)
+                .build();
+        industryJobs.add(mainIndustryJob);
+        requestDTO.subIndustries().forEach(
+                item -> {
                     Optional<Industry> temp = industryRepo.findById(item);
                     if (temp.isEmpty()) throw new AppException("This industry is not existed");
-                    Boolean isMain = requestDTO.industryList().indexOf(item) == 0;
-                    return IndustryJob.builder()
+                    IndustryJob industryJob = IndustryJob.builder()
                             .industry(temp.get())
                             .job(newJob)
-                            .isMain(isMain)
+                            .isMain(false)
                             .build();
-                })
-                .toList();
+                    industryJobs.add(industryJob);
+                }
+        );
+        industryJobs.add(mainIndustryJob);
         newJob.setIndustries(industryJobs);
         // Company
         newJob.setCompany(employer.getCompany());

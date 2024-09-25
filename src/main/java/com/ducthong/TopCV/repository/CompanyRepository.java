@@ -1,12 +1,20 @@
 package com.ducthong.TopCV.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.ducthong.TopCV.domain.entity.Company;
 
+import java.util.List;
+
 @Repository
 public interface CompanyRepository extends JpaRepository<Company, Integer> {
+    @Query("SELECT c FROM Company c WHERE :nameCom IS NULL OR c.name LIKE %:nameCom% ")
+    Page<Company> getListCompany(Pageable pageable, @Param("nameCom") String nameCom);
     //    @Query(value = "SELECT ad.* FROM companies c " +
     //            "INNER JOIN company_addresses ca ON c.company_id = ca.company_id " +
     //            "INNER JOIN addresses ad ON ca.address_id = ad.address_id " +

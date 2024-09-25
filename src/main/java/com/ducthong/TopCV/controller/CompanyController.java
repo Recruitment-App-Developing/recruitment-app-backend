@@ -1,5 +1,10 @@
 package com.ducthong.TopCV.controller;
 
+import com.ducthong.TopCV.domain.dto.company.CompanyResponseDTO;
+import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
+import com.ducthong.TopCV.domain.dto.meta.MetaResponseDTO;
+import com.ducthong.TopCV.responses.MetaResponse;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +21,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Tag(name = "Company Controller", description = "APIs related to Company operations")
 @RestApiV1
@@ -25,6 +34,14 @@ import lombok.experimental.FieldDefaults;
 public class CompanyController {
     private final CompanyService companyService;
 
+    @GetMapping(Endpoint.V1.Company.GET_LIST)
+    public ResponseEntity<MetaResponse<MetaResponseDTO, List<CompanyResponseDTO>>> getListCompany(
+            @ParameterObject MetaRequestDTO metaRequestDTO,
+            @RequestParam(name = "company_name", required = false) String nameCom
+    ){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(companyService.getListCompany(metaRequestDTO, nameCom));
+    }
     @GetMapping(Endpoint.V1.Company.GET_BRIEF_COMPANY)
     public ResponseEntity<Response<BriefCompanyResponseDTO>> getBriefCompany(
             @PathVariable(name = "companyId") Integer companyId) {
@@ -32,4 +49,5 @@ public class CompanyController {
                 .body(Response.successfulResponse(
                         "Get brief company successful", companyService.getBriefCompany(companyId)));
     }
+
 }

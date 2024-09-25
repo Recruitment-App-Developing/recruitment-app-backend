@@ -12,8 +12,7 @@ import com.ducthong.TopCV.responses.MetaResponse;
 
 public interface JobService {
     DetailJobResponseDTO getDetailJob(Integer jobId);
-
-    MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJob(MetaRequestDTO metaRequestDTO, String name);
-
+    MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJobSpecification(MetaRequestDTO metaRequestDTO);
+    MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJob(MetaRequestDTO metaRequestDTO);
     DetailJobResponseDTO addJob(JobRequestDTO requestDTO, Integer userId) throws IOException;
 }

@@ -39,8 +39,14 @@ public class JobController {
 
     @GetMapping(Endpoint.V1.Job.GET_LIST_JOB)
     public ResponseEntity<MetaResponse<MetaResponseDTO, List<JobResponseDTO>>> getListJob(
-            @ParameterObject MetaRequestDTO metaRequestDTO, @RequestParam(name = "name") String name) {
-        return ResponseEntity.status(HttpStatus.OK).body(jobService.getListJob(metaRequestDTO, name));
+            @ParameterObject MetaRequestDTO metaRequestDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(jobService.getListJob(metaRequestDTO));
+    }
+
+    @GetMapping(Endpoint.V1.Job.GET_LIST_JOB_SPEC)
+    public ResponseEntity<MetaResponse<MetaResponseDTO, List<JobResponseDTO>>> getListJobSpecification(
+            @ParameterObject MetaRequestDTO metaRequestDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(jobService.getListJobSpecification(metaRequestDTO));
     }
 
     @GetMapping(Endpoint.V1.Job.GET_DETAIL)

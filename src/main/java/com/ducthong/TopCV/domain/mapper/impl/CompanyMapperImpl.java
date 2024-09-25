@@ -1,5 +1,6 @@
 package com.ducthong.TopCV.domain.mapper.impl;
 
+import com.ducthong.TopCV.domain.dto.company.CompanyResponseDTO;
 import org.springframework.stereotype.Component;
 
 import com.ducthong.TopCV.domain.dto.company.BriefCompanyResponseDTO;
@@ -13,6 +14,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CompanyMapperImpl implements CompanyMapper {
     private final CompanyRepository companyRepo;
+
+    @Override
+    public CompanyResponseDTO toCompanyResponseDto(Company entity) {
+        return CompanyResponseDTO.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .logo(entity.getLogo().getImageUrl())
+                //.banner(entity.get)
+                .briefIntro(entity.getBriefIntro())
+                .urlCom(entity.getUrlCom())
+                .build();
+    }
 
     @Override
     public BriefCompanyResponseDTO toBriefCompanyResponseDto(Company entity) {

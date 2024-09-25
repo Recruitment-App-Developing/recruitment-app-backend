@@ -41,7 +41,7 @@ public class JobMapperImpl implements JobMapper {
                 .id(entity.getId())
                 .name(entity.getName())
                 .cities(address.toString())
-                .comapny(Map.of(
+                .company(Map.of(
                         "id", company.getId().toString(),
                         "name", company.getName(),
                         "urlCom", company.getUrlCom(),
@@ -67,21 +67,27 @@ public class JobMapperImpl implements JobMapper {
                         "isMain",
                         Map.of(
                                 "id",
-                                item.getId().toString(),
+                                item.getIndustry().getId(),
                                 "name",
                                 item.getIndustry().getName()));
             else
                 subItems.add(Map.of(
                         "id",
-                        item.getId().toString(),
+                        item.getIndustry().getId().toString(),
                         "name",
                         item.getIndustry().getName()));
         });
         industry.put("subItems", subItems);
-
+        // Company
+        Company company = entity.getCompany();
         return DetailJobResponseDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())
+                .company(Map.of(
+                        "id", company.getId().toString(),
+                        "name", company.getName(),
+                        "urlCom", company.getUrlCom(),
+                        "logo", company.getLogo().getImageUrl()))
                 .address(jobAddress)
                 .jobPosition(entity.getJobPosition().name())
                 .numberOfVacancy(entity.getNumberOfVacancy())

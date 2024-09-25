@@ -11,6 +11,7 @@ import lombok.Builder;
 public record DetailJobResponseDTO(
         Integer id,
         String name,
+        Map<String, String> company,
         List<String> address,
         String jobPosition,
         Integer numberOfVacancy,

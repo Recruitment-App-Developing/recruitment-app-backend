@@ -34,4 +34,5 @@ public record JobRequestDTO(
         Boolean isActive,
         @EnumValid(name = "applicationMethod", enumClass = ApplicationMethod.class) String applicationMethod,
         List<String> imageList,
-        List<Integer> industryList) {}
+        Integer mainIndustry,
+        List<Integer> subIndustries) {}
