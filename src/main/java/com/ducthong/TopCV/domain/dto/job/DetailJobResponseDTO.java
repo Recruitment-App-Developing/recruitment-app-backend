@@ -3,6 +3,7 @@ package com.ducthong.TopCV.domain.dto.job;
 import java.util.List;
 import java.util.Map;
 
+import com.ducthong.TopCV.domain.dto.company.BriefCompanyResponseDTO;
 import com.ducthong.TopCV.domain.dto.image.ImageResponseDTO;
 
 import lombok.Builder;
@@ -11,7 +12,7 @@ import lombok.Builder;
 public record DetailJobResponseDTO(
         Integer id,
         String name,
-        Map<String, String> company,
+        BriefCompanyResponseDTO company,
         List<String> address,
         String jobPosition,
         Integer numberOfVacancy,

@@ -29,7 +29,6 @@ public class Industry {
     @NotBlank(message = "The name of Industry cannot be empty!")
     private String name;
 
-    @NotBlank(message = "The description of Industry cannot be empty!")
     private String description;
 
     @OneToMany(mappedBy = "industry", cascade = CascadeType.ALL, orphanRemoval = true)

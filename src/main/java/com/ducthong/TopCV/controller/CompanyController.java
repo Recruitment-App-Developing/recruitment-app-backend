@@ -1,6 +1,7 @@
 package com.ducthong.TopCV.controller;
 
 import com.ducthong.TopCV.domain.dto.company.CompanyResponseDTO;
+import com.ducthong.TopCV.domain.dto.company.DetailCompanyResponseDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaResponseDTO;
 import com.ducthong.TopCV.responses.MetaResponse;
@@ -49,5 +50,13 @@ public class CompanyController {
                 .body(Response.successfulResponse(
                         "Get brief company successful", companyService.getBriefCompany(companyId)));
     }
-
+    @GetMapping(Endpoint.V1.Company.GET_DETAIL)
+    public ResponseEntity<Response<DetailCompanyResponseDTO>> getDetailCompany(
+            @PathVariable(name = "companyId") Integer companyId
+    ){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.successfulResponse(
+                        "Get detail company successful", companyService.getDetailCompany(companyId)
+                ));
+    }
 }

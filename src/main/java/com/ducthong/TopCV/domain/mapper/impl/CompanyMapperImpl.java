@@ -1,6 +1,8 @@
 package com.ducthong.TopCV.domain.mapper.impl;
 
 import com.ducthong.TopCV.domain.dto.company.CompanyResponseDTO;
+import com.ducthong.TopCV.domain.dto.company.DetailCompanyResponseDTO;
+import com.ducthong.TopCV.domain.mapper.ImageMapper;
 import org.springframework.stereotype.Component;
 
 import com.ducthong.TopCV.domain.dto.company.BriefCompanyResponseDTO;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class CompanyMapperImpl implements CompanyMapper {
+    private final ImageMapper imageMapper;
     private final CompanyRepository companyRepo;
 
     @Override
@@ -21,8 +24,7 @@ public class CompanyMapperImpl implements CompanyMapper {
                 .id(entity.getId())
                 .name(entity.getName())
                 .logo(entity.getLogo().getImageUrl())
-                //.banner(entity.get)
-                .briefIntro(entity.getBriefIntro())
+                .detailIntro(entity.getDetailIntro())
                 .urlCom(entity.getUrlCom())
                 .build();
     }
@@ -41,5 +43,18 @@ public class CompanyMapperImpl implements CompanyMapper {
         //                .build();
         // TODO
         return null;
+    }
+
+    @Override
+    public DetailCompanyResponseDTO toDetailCompanyResponseDto(Company entity) {
+        return DetailCompanyResponseDTO.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .logo(imageMapper.toImageResponseDto(entity.getLogo()))
+                .urlCom(entity.getUrlCom())
+                .employeeScale(entity.getEmployeeScale())
+                .numberOfFollow(entity.getNumberOfFollow())
+                .detailIntro(entity.getDetailIntro())
+                .build();
     }
 }

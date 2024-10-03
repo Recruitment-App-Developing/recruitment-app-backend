@@ -72,6 +72,8 @@ public class Job {
     @NotBlank(message = "The salary of job cannot blank")
     private String salary;
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     @NotBlank(message = "The experience of cannot blank")
     private String jobExp;
 
@@ -87,12 +89,20 @@ public class Job {
 
     private Boolean isVerified;
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String jobBenefit;
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String jobDescript;
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String jobRequirement;
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String addApplicationInfor;
 
     @DateTimeFormat(pattern = TimeFormatConstant.DATETIME_FORMAT)

@@ -38,6 +38,7 @@ public class SecurityConfig {
         Endpoint.V1.Job.ADD_ONE,
         Endpoint.V1.Company.GET_LIST,
         Endpoint.V1.Company.GET_BRIEF_COMPANY,
+        Endpoint.V1.Company.GET_DETAIL
     };
 
     @Bean

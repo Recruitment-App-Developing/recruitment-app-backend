@@ -9,6 +9,6 @@ public record CompanyResponseDTO(
         String logo,
         String banner,
         String urlCom,
-        String briefIntro
+        String detailIntro
 ) {
 }

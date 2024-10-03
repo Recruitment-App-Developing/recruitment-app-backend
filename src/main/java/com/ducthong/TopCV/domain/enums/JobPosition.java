@@ -7,9 +7,15 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum JobPosition {
     NHAN_VIEN("Nhân viên"),
-    CONG_TAC_VIEN("Cộng tác viên"),
+    CHUYEN_VIEN("Chuyên viên"),
+    QUAN_LY("Quản lý"),
+    GIAM_DOC("Giám đốc"),
     TRUONG_PHONG("Trưởng phòng"),
-    QUAN_LY("Quản lý");
+    PHO_PHONG("Phó phòng"),
+    TRUONG_NHOM("Trưởng nhóm"),
+    GIAM_SAT("Giám sát"),
+    THUC_TAP_SINH("Thực tập sinh"),
+    FREELANCER("Freelancer");
 
     private final String name;
 }

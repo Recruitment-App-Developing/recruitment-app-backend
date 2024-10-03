@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.ducthong.TopCV.constant.meta.MetaConstant;
 import com.ducthong.TopCV.domain.dto.company.CompanyResponseDTO;
+import com.ducthong.TopCV.domain.dto.company.DetailCompanyResponseDTO;
 import com.ducthong.TopCV.domain.dto.job.JobResponseDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaResponseDTO;
@@ -69,5 +70,14 @@ public class CompanyServiceImpl implements CompanyService {
 
         Company company = findCompany.get();
         return companyMapper.toBriefCompanyResponseDto(company);
+    }
+
+    @Override
+    public DetailCompanyResponseDTO getDetailCompany(Integer companyId) {
+        Optional<Company> findCompany = companyRepo.findById(companyId);
+        if (findCompany.isEmpty()) throw new AppException("This company is not existed");
+
+        Company company = findCompany.get();
+        return companyMapper.toDetailCompanyResponseDto(company);
     }
 }

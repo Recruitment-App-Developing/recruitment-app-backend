@@ -143,7 +143,10 @@ public class JobServiceImpl implements JobService {
         // Company
         newJob.setCompany(employer.getCompany());
         // Job Image
-        List<Image> imageList = imageService.uploadListBase64Image(requestDTO.imageList(), JOB_FOLDER);
+        List<Image> imageList= new ArrayList<>();
+        if (!requestDTO.imageList().isEmpty()){
+            imageList = imageService.uploadListBase64Image(requestDTO.imageList(), JOB_FOLDER);
+        }
         newJob.setImageList(imageList);
         // Address
         List<JobAddress> jobAddressList = requestDTO.addressList().stream()

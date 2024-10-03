@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ducthong.TopCV.domain.entity.address.JobAddress;
+import com.ducthong.TopCV.domain.mapper.CompanyMapper;
 import org.springframework.stereotype.Component;
 
 import com.ducthong.TopCV.domain.dto.image.ImageResponseDTO;
@@ -26,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class JobMapperImpl implements JobMapper {
+    private final CompanyMapper companyMapper;
     private final ImageMapper imageMapper;
 
     @Override
@@ -35,7 +38,7 @@ public class JobMapperImpl implements JobMapper {
         StringBuilder address = new StringBuilder();
         entity.getAddresses()
                 .forEach(item -> address.append(item.getProvinceName()).append(", "));
-        if (entity.getAddresses().size() > 0) address.setLength(address.length() - 2);
+        if (!entity.getAddresses().isEmpty()) address.setLength(address.length() - 2);
 
         return JobResponseDTO.builder()
                 .id(entity.getId())
@@ -53,9 +56,9 @@ public class JobMapperImpl implements JobMapper {
     @Override
     public DetailJobResponseDTO toDetailJobResponseDto(Job entity) {
         List<String> jobAddress =
-                entity.getAddresses().stream().map(item -> item.toString()).toList();
+                entity.getAddresses().stream().map(JobAddress::toString).toList();
         List<ImageResponseDTO> imageList = entity.getImageList().stream()
-                .map(item -> imageMapper.toImageResponseDto(item))
+                .map(imageMapper::toImageResponseDto)
                 .toList();
         // Industry
         Map<String, Object> industry = new HashMap<>();
@@ -83,11 +86,7 @@ public class JobMapperImpl implements JobMapper {
         return DetailJobResponseDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())
-                .company(Map.of(
-                        "id", company.getId().toString(),
-                        "name", company.getName(),
-                        "urlCom", company.getUrlCom(),
-                        "logo", company.getLogo().getImageUrl()))
+                .company(companyMapper.toBriefCompanyResponseDto(company))
                 .address(jobAddress)
                 .jobPosition(entity.getJobPosition().name())
                 .numberOfVacancy(entity.getNumberOfVacancy())

@@ -48,5 +48,7 @@ public class Company {
 
     private String briefIntro;
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String detailIntro;
 }

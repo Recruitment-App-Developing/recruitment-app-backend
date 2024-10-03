@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import com.ducthong.TopCV.domain.entity.Application;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +53,12 @@ public class CvServiceImpl implements CvService {
         Candidate candidate = GetRoleUtil.getCandidate(candidateId);
 
         if (candidate.getCvs().isEmpty()) throw new AppException("This account has not CV");
+
+        List<Application> applicationList = candidate.getApplications();
+        Application latestApplication = applicationList.get(0);
+        for (Application item : applicationList)
+            if (item.getApplicationTime().isAfter(latestApplication.getApplicationTime())) latestApplication = item;
+
 
         List<CvResponseDTO> cvList = candidate.getCvs().stream()
                 .map(item -> cvMapper.toCvResponseDto(item))

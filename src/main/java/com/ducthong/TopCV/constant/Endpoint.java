@@ -90,6 +90,7 @@ public class Endpoint {
             public static final String BASE = V1.PREFIX + "/company";
             public static final String GET_LIST = BASE;
             public static final String GET_BRIEF_COMPANY = BASE + "/brief-company/{companyId}";
+            public static final String GET_DETAIL = BASE + "/detail-company/{companyId}";
         }
 
         public static final class Application {
