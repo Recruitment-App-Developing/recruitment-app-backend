@@ -3,6 +3,7 @@ package com.ducthong.TopCV.controller;
 import java.io.IOException;
 import java.util.List;
 
+import com.ducthong.TopCV.domain.dto.job.EmployerJobResponseDTO;
 import jakarta.validation.Valid;
 
 import org.springdoc.core.annotations.ParameterObject;
@@ -41,6 +42,13 @@ public class JobController {
     public ResponseEntity<MetaResponse<MetaResponseDTO, List<JobResponseDTO>>> getListJob(
             @ParameterObject MetaRequestDTO metaRequestDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(jobService.getListJob(metaRequestDTO));
+    }
+
+    @GetMapping(Endpoint.V1.Job.GET_LIST_BY_COMPANY)
+    public ResponseEntity<MetaResponse<MetaResponseDTO, List<EmployerJobResponseDTO>>> getListJobByCompany(
+            @ParameterObject MetaRequestDTO metaRequestDTO) {
+        Integer accountId = AuthUtil.getRequestedUser().getId();
+        return ResponseEntity.status(HttpStatus.OK).body(jobService.getListJobByCompany(metaRequestDTO, accountId));
     }
 
     @GetMapping(Endpoint.V1.Job.GET_LIST_JOB_SPEC)

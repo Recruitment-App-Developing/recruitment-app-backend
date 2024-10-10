@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.ducthong.TopCV.domain.dto.job.EmployerJobResponseDTO;
+import com.ducthong.TopCV.repository.ApplicationRepository;
+import com.ducthong.TopCV.utility.AuthUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,6 +49,7 @@ public class JobServiceImpl implements JobService {
     // Repository
     private final IndustryRepository industryRepo;
     private final JobRepository jobRepo;
+    private final ApplicationRepository applicationRepo;
     // Service
     private final ImageService imageService;
     // Mapper
@@ -61,7 +65,41 @@ public class JobServiceImpl implements JobService {
         Optional<Job> findJob = jobRepo.findById(jobId);
         if (findJob.isEmpty()) throw new AppException("This job is not existed");
 
-        return jobMapper.toDetailJobResponseDto(findJob.get());
+        Boolean isApply = false;
+        if (AuthUtil.getRequestedUser() != null &&
+                applicationRepo.checkAccountAppliedJob(jobId, AuthUtil.getRequestedUser().getId()))
+            isApply = true;
+
+        return jobMapper.toDetailJobResponseDto(findJob.get(), isApply);
+    }
+
+    @Override
+    public MetaResponse<MetaResponseDTO, List<EmployerJobResponseDTO>> getListJobByCompany(MetaRequestDTO metaRequestDTO, Integer accountId) {
+        Employer employer = GetRoleUtil.getEmployer(accountId);
+        if (employer.getCompany().getId() == null) throw new AppException("This account doesn't register company");
+
+        Sort sort = metaRequestDTO.sortDir().equals(MetaConstant.Sorting.DEFAULT_DIRECTION)
+                ? Sort.by(metaRequestDTO.sortField()).ascending()
+                : Sort.by(metaRequestDTO.sortField()).descending();
+        Pageable pageable = PageRequest.of(metaRequestDTO.currentPage(), metaRequestDTO.pageSize(), sort);
+        Page<Job> page = jobRepo.getListJobByCompany(pageable, employer.getCompany().getId());
+        if (page.getContent().isEmpty()) throw new AppException("List job is empty");
+        List<EmployerJobResponseDTO> li = page.getContent().stream()
+                .map(temp -> jobMapper.toEmployerJobResponseDto(temp))
+                .toList();
+        return MetaResponse.successfulResponse(
+                "Get list job success",
+                MetaResponseDTO.builder()
+                        .totalItems((int) page.getTotalElements())
+                        .totalPages(page.getTotalPages())
+                        .currentPage(metaRequestDTO.currentPage())
+                        .pageSize(metaRequestDTO.pageSize())
+                        .sorting(SortingDTO.builder()
+                                .sortField(metaRequestDTO.sortField())
+                                .sortDir(metaRequestDTO.sortDir())
+                                .build())
+                        .build(),
+                li);
     }
 
     @Override
@@ -159,7 +197,7 @@ public class JobServiceImpl implements JobService {
         newJob.setAddresses(jobAddressList);
         try {
             Job saveJob = jobRepo.save(newJob);
-            return jobMapper.toDetailJobResponseDto(saveJob);
+            return jobMapper.toDetailJobResponseDto(saveJob, false);
         } catch (Exception e) {
             throw new AppException("Add new job is failed");
         }

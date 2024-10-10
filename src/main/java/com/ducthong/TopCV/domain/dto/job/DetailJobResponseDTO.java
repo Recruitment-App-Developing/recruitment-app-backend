@@ -32,5 +32,6 @@ public record DetailJobResponseDTO(
         Integer numberOfLike,
         Integer numberOfView,
         String applicationMethod,
+        Boolean isApply,
         List<ImageResponseDTO> imageList,
         Map<String, Object> industry) {}

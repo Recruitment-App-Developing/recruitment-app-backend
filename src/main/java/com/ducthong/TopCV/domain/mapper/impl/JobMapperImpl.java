@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ducthong.TopCV.domain.dto.job.EmployerJobResponseDTO;
 import com.ducthong.TopCV.domain.entity.address.JobAddress;
 import com.ducthong.TopCV.domain.mapper.CompanyMapper;
 import org.springframework.stereotype.Component;
@@ -54,7 +55,19 @@ public class JobMapperImpl implements JobMapper {
     }
 
     @Override
-    public DetailJobResponseDTO toDetailJobResponseDto(Job entity) {
+    public EmployerJobResponseDTO toEmployerJobResponseDto(Job entity) {
+        return EmployerJobResponseDTO.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .postingTime(TimeUtil.toStringDateTime(entity.getPostingTime()))
+                .numberOfView(entity.getNumberOfView())
+                .numberOfApplicated(entity.getNumberOfApplicated())
+                .applicationRate((float) (entity.getNumberOfApplicated()/ entity.getNumberOfView()))
+                .build();
+    }
+
+    @Override
+    public DetailJobResponseDTO toDetailJobResponseDto(Job entity, Boolean isApply) {
         List<String> jobAddress =
                 entity.getAddresses().stream().map(JobAddress::toString).toList();
         List<ImageResponseDTO> imageList = entity.getImageList().stream()
@@ -105,6 +118,7 @@ public class JobMapperImpl implements JobMapper {
                 .lastUpdated(TimeUtil.toStringDateTime(entity.getLastUpdated()))
                 .numberOfLike(entity.getNumberOfLike())
                 .numberOfView(entity.getNumberOfView())
+                .isApply(isApply)
                 .applicationMethod(entity.getApplicationMethod().name())
                 .imageList(imageList)
                 .industry(industry)

@@ -15,4 +15,6 @@ public interface JobRepository extends JpaRepository<Job, Integer> {
             value =
                     "SELECT j FROM Job j WHERE (:name IS NULL OR :name = '' OR LOWER(j.name) LIKE LOWER(CONCAT('%', :name, '%')))")
     Page<Job> getListJob(Pageable pageable, @Param("name") String name);
+    @Query(value = "SELECT j FROM Job j WHERE j.company.id = :companyId")
+    Page<Job> getListJobByCompany(Pageable pageable, @Param("companyId") Integer companyId);
 }
