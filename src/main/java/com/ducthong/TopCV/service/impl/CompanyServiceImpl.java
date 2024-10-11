@@ -11,7 +11,11 @@ import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaResponseDTO;
 import com.ducthong.TopCV.domain.dto.meta.SortingDTO;
 import com.ducthong.TopCV.domain.entity.Job;
+import com.ducthong.TopCV.domain.entity.account.Account;
+import com.ducthong.TopCV.domain.entity.account.Employer;
+import com.ducthong.TopCV.repository.AccountRepository;
 import com.ducthong.TopCV.responses.MetaResponse;
+import com.ducthong.TopCV.utility.GetRoleUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,10 +35,20 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CompanyServiceImpl implements CompanyService {
     // Repository
+    private  final AccountRepository accountRepo;
     private final CompanyRepository companyRepo;
     // Service
     // Mapper
     private final CompanyMapper companyMapper;
+
+    @Override
+    public Company isVerifyCompanyByAccountId(Integer accountId) {
+        Employer employer = GetRoleUtil.getEmployer(accountId);
+        Company company = employer.getCompany();
+        if (company == null) throw new AppException("This account is register company");
+
+        return company;
+    }
 
     @Override
     public MetaResponse<MetaResponseDTO, List<CompanyResponseDTO>> getListCompany(MetaRequestDTO metaRequestDTO, String nameCom) {

@@ -97,6 +97,7 @@ public class Endpoint {
         public static final class Application {
             public static final String BASE = V1.PREFIX + "/application";
             public static final String APPLY = BASE + "/apply";
+            public static final String STATISTIC_BY_COMPANY = BASE + "/statistic-cv-by-company";
         }
 
         public static final class HealthCheck {

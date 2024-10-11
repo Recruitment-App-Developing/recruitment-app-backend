@@ -4,6 +4,7 @@ import com.ducthong.TopCV.annotation.RestApiV1;
 import com.ducthong.TopCV.constant.Endpoint;
 import com.ducthong.TopCV.domain.dto.application.ApplicationRequestDTO;
 import com.ducthong.TopCV.domain.dto.application.ApplicationResponseDTO;
+import com.ducthong.TopCV.domain.dto.application.StatisticApplicationResponseDTO;
 import com.ducthong.TopCV.responses.Response;
 import com.ducthong.TopCV.service.ApplicationService;
 import com.ducthong.TopCV.utility.AuthUtil;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -32,6 +34,13 @@ public class ApplicationController {
                 Response.successfulResponse("Apply successful",
                         applicationService.addApplication(AuthUtil.getRequestedUser().getId(), requestDTO)
             )
+        );
+    }
+    @GetMapping(Endpoint.V1.Application.STATISTIC_BY_COMPANY)
+    public ResponseEntity<Response<StatisticApplicationResponseDTO>> statisticByCompany(){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                Response.successfulResponse("Get statistic by company successful",
+                        applicationService.statisticCvByCompany(AuthUtil.getRequestedUser().getId()))
         );
     }
 }
