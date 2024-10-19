@@ -77,6 +77,7 @@ public class Endpoint {
             public static final String GET_LIST_JOB_SPEC = BASE + "/spec";
             public static final String GET_DETAIL = BASE + "/{jobId}";
             public static final String ADD_ONE = BASE;
+            public static final String UPDATE_ONE = BASE + "/update/{jobId}";
         }
 
         public static final class Cv {
@@ -97,7 +98,13 @@ public class Endpoint {
         public static final class Application {
             public static final String BASE = V1.PREFIX + "/application";
             public static final String APPLY = BASE + "/apply";
+            public static final String GET_APPLIED_CANDIDATE_BY_JOB = BASE + "/applied-candidate-by-job/{jobId}";
             public static final String STATISTIC_BY_COMPANY = BASE + "/statistic-cv-by-company";
+        }
+
+        public static final class CvProfile {
+            public static final String BASE = V1.PREFIX + "/cv-profile";
+            public static final String GET_ONE = BASE + "/{cvProfileId}";
         }
 
         public static final class HealthCheck {

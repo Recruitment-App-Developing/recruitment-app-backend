@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ducthong.TopCV.domain.entity.Application;
+import com.ducthong.TopCV.domain.entity.CvProfile.CvProfile;
+import com.ducthong.TopCV.domain.entity.CvProfile.Education;
+import com.ducthong.TopCV.domain.entity.CvProfile.Experience;
 import jakarta.persistence.*;
 
 import com.ducthong.TopCV.domain.entity.CV;
@@ -26,6 +29,9 @@ public class Candidate extends Account {
     @OneToMany(mappedBy = "candidate", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = false)
     private List<Application> applications = new ArrayList<>();
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
+    @JoinColumn(name = "cv_profile_id")
+    private CvProfile cvProfile;
     // like Job List
 
     // role

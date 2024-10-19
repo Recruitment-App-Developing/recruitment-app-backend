@@ -1,26 +1,43 @@
 package com.ducthong.TopCV.service.impl;
 
+import com.ducthong.TopCV.constant.messages.ErrorMessage;
+import com.ducthong.TopCV.constant.messages.SuccessMessage;
+import com.ducthong.TopCV.constant.meta.MetaConstant;
+import com.ducthong.TopCV.domain.dto.account.AccountResponseDTO;
 import com.ducthong.TopCV.domain.dto.application.ApplicationRequestDTO;
 import com.ducthong.TopCV.domain.dto.application.ApplicationResponseDTO;
+import com.ducthong.TopCV.domain.dto.application.AppliedCandidateResponseDTO;
 import com.ducthong.TopCV.domain.dto.application.StatisticApplicationResponseDTO;
+import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
+import com.ducthong.TopCV.domain.dto.meta.MetaResponseDTO;
+import com.ducthong.TopCV.domain.dto.meta.SortingDTO;
 import com.ducthong.TopCV.domain.entity.Application;
 import com.ducthong.TopCV.domain.entity.CV;
 import com.ducthong.TopCV.domain.entity.Company;
 import com.ducthong.TopCV.domain.entity.Job;
+import com.ducthong.TopCV.domain.entity.account.Account;
 import com.ducthong.TopCV.domain.entity.account.Candidate;
 import com.ducthong.TopCV.domain.enums.ApplicationStatus;
+import com.ducthong.TopCV.domain.mapper.AccountMapper;
 import com.ducthong.TopCV.domain.mapper.ApplicationMapper;
 import com.ducthong.TopCV.exceptions.AppException;
 import com.ducthong.TopCV.repository.ApplicationRepository;
 import com.ducthong.TopCV.repository.JobRepository;
+import com.ducthong.TopCV.responses.MetaResponse;
 import com.ducthong.TopCV.service.ApplicationService;
 import com.ducthong.TopCV.service.CompanyService;
 import com.ducthong.TopCV.service.CvService;
+import com.ducthong.TopCV.service.JobService;
 import com.ducthong.TopCV.utility.GetRoleUtil;
 import com.ducthong.TopCV.utility.TimeUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,6 +49,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     // Service
     private final CvService cvService;
     private final CompanyService companyService;
+    private final JobService jobService;
     // Mapper
     private final ApplicationMapper applicationMapper;
     @Override
@@ -79,5 +97,31 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .numberOfInterviewCv(numberOfInterviewCv)
                 .numberOfFollowCv(numberOfFollowCv)
                 .build();
+    }
+
+    @Override
+    public MetaResponse<MetaResponseDTO, List<AppliedCandidateResponseDTO>> getAppliedCandidateByJob(Integer jobId, Integer accountId, MetaRequestDTO requestDTO) {
+        Job job = jobService.isVerifiedJob(jobId, accountId);
+
+        Sort sort = requestDTO.sortDir().equals(MetaConstant.Sorting.DEFAULT_DIRECTION)
+                ? Sort.by(requestDTO.sortField()).ascending()
+                : Sort.by(requestDTO.sortField()).descending();
+        Pageable pageable = PageRequest.of(requestDTO.currentPage(), requestDTO.pageSize(), sort);
+        Page<Application> page = applicationRepo.getApplicationByJobId(job.getId() , pageable);
+        List<AppliedCandidateResponseDTO> li = page.getContent().stream().map(
+                item -> applicationMapper.toAppliedCandidateResponseDto(item)).toList();
+        return MetaResponse.successfulResponse(
+                "Get applied candidate by job successful",
+                MetaResponseDTO.builder()
+                        .totalItems((int) page.getTotalElements())
+                        .totalPages(page.getTotalPages())
+                        .currentPage(requestDTO.currentPage())
+                        .pageSize(requestDTO.pageSize())
+                        .sorting(SortingDTO.builder()
+                                .sortField(requestDTO.sortField())
+                                .sortDir(requestDTO.sortDir())
+                                .build())
+                        .build(),
+                li);
     }
 }

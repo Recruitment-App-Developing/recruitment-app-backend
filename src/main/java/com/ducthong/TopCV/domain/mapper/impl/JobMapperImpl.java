@@ -5,15 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.ducthong.TopCV.domain.dto.job.EmployerJobResponseDTO;
+import com.ducthong.TopCV.domain.dto.job.*;
+import com.ducthong.TopCV.domain.entity.IndustryJob;
 import com.ducthong.TopCV.domain.entity.address.JobAddress;
 import com.ducthong.TopCV.domain.mapper.CompanyMapper;
 import org.springframework.stereotype.Component;
 
 import com.ducthong.TopCV.domain.dto.image.ImageResponseDTO;
-import com.ducthong.TopCV.domain.dto.job.DetailJobResponseDTO;
-import com.ducthong.TopCV.domain.dto.job.JobRequestDTO;
-import com.ducthong.TopCV.domain.dto.job.JobResponseDTO;
 import com.ducthong.TopCV.domain.entity.Company;
 import com.ducthong.TopCV.domain.entity.Job;
 import com.ducthong.TopCV.domain.enums.ApplicationMethod;
@@ -74,26 +72,12 @@ public class JobMapperImpl implements JobMapper {
                 .map(imageMapper::toImageResponseDto)
                 .toList();
         // Industry
-        Map<String, Object> industry = new HashMap<>();
-        List<Map<String, String>> subItems = new ArrayList<>();
-
-        entity.getIndustries().forEach(item -> {
-            if (item.getIsMain())
-                industry.put(
-                        "isMain",
-                        Map.of(
-                                "id",
-                                item.getIndustry().getId(),
-                                "name",
-                                item.getIndustry().getName()));
-            else
-                subItems.add(Map.of(
-                        "id",
-                        item.getIndustry().getId().toString(),
-                        "name",
-                        item.getIndustry().getName()));
-        });
-        industry.put("subItems", subItems);
+        Integer mainIndustry = 1;
+        List<Integer> subIndustries = new ArrayList<>();
+        for (IndustryJob item : entity.getIndustries()){
+            if (item.getIsMain()) mainIndustry = item.getIndustry().getId();
+            else subIndustries.add(item.getIndustry().getId());
+        }
         // Company
         Company company = entity.getCompany();
         return DetailJobResponseDTO.builder()
@@ -121,7 +105,8 @@ public class JobMapperImpl implements JobMapper {
                 .isApply(isApply)
                 .applicationMethod(entity.getApplicationMethod().name())
                 .imageList(imageList)
-                .industry(industry)
+                .mainIndustry(mainIndustry)
+                .subIndustries(subIndustries)
                 .build();
     }
 
@@ -151,5 +136,22 @@ public class JobMapperImpl implements JobMapper {
                 .numberOfView(0)
                 .applicationMethod(ApplicationMethod.valueOf(requestDTO.applicationMethod()))
                 .build();
+    }
+
+    @Override
+    public Job updJobRequestDtoToJobEntity(UpdJobRequestDTO requestDTO, Job entity) {
+        entity.setName(requestDTO.name());
+        entity.setJobPosition(JobPosition.valueOf(requestDTO.jobPosition()));
+        entity.setNumberOfVacancy(entity.getNumberOfVacancy());
+        entity.setWorkMethod(entity.getWorkMethod());
+        entity.setSexRequired(entity.getSexRequired());
+        entity.setSalary(entity.getSalary());
+        entity.setJobExp(entity.getJobExp());
+        entity.setApplicationDueTime(entity.getApplicationDueTime());
+        entity.setJobBenefit(entity.getJobBenefit());
+        entity.setJobDescript(entity.getJobDescript());
+        entity.setJobRequirement(entity.getJobRequirement());
+        entity.setAddApplicationInfor(entity.getAddApplicationInfor());
+        return  entity;
     }
 }

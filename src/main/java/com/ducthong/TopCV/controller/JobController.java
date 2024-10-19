@@ -3,7 +3,7 @@ package com.ducthong.TopCV.controller;
 import java.io.IOException;
 import java.util.List;
 
-import com.ducthong.TopCV.domain.dto.job.EmployerJobResponseDTO;
+import com.ducthong.TopCV.domain.dto.job.*;
 import jakarta.validation.Valid;
 
 import org.springdoc.core.annotations.ParameterObject;
@@ -13,9 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.ducthong.TopCV.annotation.RestApiV1;
 import com.ducthong.TopCV.constant.Endpoint;
-import com.ducthong.TopCV.domain.dto.job.DetailJobResponseDTO;
-import com.ducthong.TopCV.domain.dto.job.JobRequestDTO;
-import com.ducthong.TopCV.domain.dto.job.JobResponseDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaResponseDTO;
 import com.ducthong.TopCV.domain.entity.account.Account;
@@ -70,5 +67,15 @@ public class JobController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Response.successfulResponse(
                         "Add new job successfull", jobService.addJob(requestDTO, account.getId())));
+    }
+    @PostMapping(Endpoint.V1.Job.UPDATE_ONE)
+    public ResponseEntity<Response<DetailJobResponseDTO>> updateJob(
+            @PathVariable(name = "jobId") Integer jobId,
+            @RequestBody UpdJobRequestDTO requestDTO){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.successfulResponse(
+                        "Update a job successfull",
+                        jobService.updateJob(requestDTO, AuthUtil.getRequestedUser().getId(), jobId)
+                ));
     }
 }

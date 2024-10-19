@@ -27,4 +27,10 @@ public class IndustryJob {
     private Job job;
 
     private Boolean isMain;
+
+    public IndustryJob(Industry industry, Job job, Boolean isMain) {
+        this.setIndustry(industry);
+        this.setJob(job);
+        this.setIsMain(isMain);
+    }
 }

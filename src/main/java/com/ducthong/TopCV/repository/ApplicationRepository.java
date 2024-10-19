@@ -2,10 +2,14 @@ package com.ducthong.TopCV.repository;
 
 import com.ducthong.TopCV.domain.entity.Application;
 import com.ducthong.TopCV.domain.enums.ApplicationStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, String> {
@@ -14,4 +18,10 @@ public interface ApplicationRepository extends JpaRepository<Application, String
 
     @Query("SELECT COUNT(a) FROM Application a WHERE a.job.company.id = :companyId AND ( :status IS NULL OR a.status = :status)")
     Integer statisticByStatus(@Param("companyId") Integer companyId , @Param("status") ApplicationStatus status);
+
+    @Query("SELECT a FROM Application a " +
+            "JOIN FETCH a.candidate c " +
+            "JOIN FETCH c.cvProfile " +
+            " WHERE a.job.id = :jobId")
+    Page<Application> getApplicationByJobId(@Param("jobId") Integer jobId, Pageable pageable);
 }

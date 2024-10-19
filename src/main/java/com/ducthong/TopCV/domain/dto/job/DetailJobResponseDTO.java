@@ -34,4 +34,5 @@ public record DetailJobResponseDTO(
         String applicationMethod,
         Boolean isApply,
         List<ImageResponseDTO> imageList,
-        Map<String, Object> industry) {}
+        Integer mainIndustry,
+        List<Integer> subIndustries) {}

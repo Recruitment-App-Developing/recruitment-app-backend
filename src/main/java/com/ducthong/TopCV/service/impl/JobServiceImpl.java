@@ -3,10 +3,12 @@ package com.ducthong.TopCV.service.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
-import com.ducthong.TopCV.domain.dto.job.EmployerJobResponseDTO;
+import com.ducthong.TopCV.domain.dto.job.*;
 import com.ducthong.TopCV.repository.ApplicationRepository;
+import com.ducthong.TopCV.repository.IndustryJobRepository;
 import com.ducthong.TopCV.utility.AuthUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -18,9 +20,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ducthong.TopCV.constant.meta.MetaConstant;
-import com.ducthong.TopCV.domain.dto.job.DetailJobResponseDTO;
-import com.ducthong.TopCV.domain.dto.job.JobRequestDTO;
-import com.ducthong.TopCV.domain.dto.job.JobResponseDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaResponseDTO;
 import com.ducthong.TopCV.domain.dto.meta.SortingDTO;
@@ -50,6 +49,7 @@ public class JobServiceImpl implements JobService {
     private final IndustryRepository industryRepo;
     private final JobRepository jobRepo;
     private final ApplicationRepository applicationRepo;
+    private final IndustryJobRepository industryJobRepo;
     // Service
     private final ImageService imageService;
     // Mapper
@@ -58,6 +58,18 @@ public class JobServiceImpl implements JobService {
     // Varient
     @Value("${cloudinary.folder.job}")
     private String JOB_FOLDER;
+
+    @Override
+    public Job isVerifiedJob(Integer jobId, Integer accountId) {
+        Employer employer = GetRoleUtil.getEmployer(accountId);
+
+        Optional<Job> findJob = jobRepo.findById(jobId);
+        if (findJob.isEmpty()) throw new AppException("This job is not existed");
+        Job job = findJob.get();
+
+        if (job.getCompany().getId() != employer.getCompany().getId()) throw new AppException("This account does not have permissions");
+        return job;
+    }
 
     @Override
     @Transactional
@@ -200,6 +212,51 @@ public class JobServiceImpl implements JobService {
             return jobMapper.toDetailJobResponseDto(saveJob, false);
         } catch (Exception e) {
             throw new AppException("Add new job is failed");
+        }
+    }
+
+    @Override
+    @Transactional
+    public DetailJobResponseDTO updateJob(UpdJobRequestDTO requestDTO, Integer accountId, Integer jobId) {
+        Job job = isVerifiedJob(jobId, accountId);
+
+        Job updJob = jobMapper.updJobRequestDtoToJobEntity(requestDTO, job);
+        // Industry
+        List<Integer> updIndustryRequest = requestDTO.subIndustries();
+        updIndustryRequest.add(requestDTO.mainIndustry());
+        List<IndustryJob> oldIndustryJobs = job.getIndustries();
+            // Sub Industry
+        int oldIndustryJobs_Size = oldIndustryJobs.size();
+        if (oldIndustryJobs_Size > updIndustryRequest.size())
+            for (int i=updIndustryRequest.size(); i<oldIndustryJobs_Size; i++){
+                industryJobRepo.deleteById(oldIndustryJobs.getLast().getId());
+                oldIndustryJobs.remove(oldIndustryJobs.getLast());
+            }
+        for (int i=0; i<oldIndustryJobs.size(); i++){
+            if (oldIndustryJobs.get(i).getIndustry().getId() != updIndustryRequest.get(i)){
+                Industry industry = industryRepo.findById(updIndustryRequest.get(i)).get();
+                oldIndustryJobs.get(i).setIndustry(industry);
+            }
+            oldIndustryJobs.get(i).setIsMain(false);
+        }
+        if (oldIndustryJobs.size() < updIndustryRequest.size()){
+            for (int i=oldIndustryJobs.size(); i<updIndustryRequest.size(); i++){
+                Industry industry = industryRepo.findById(updIndustryRequest.get(i)).get();
+                oldIndustryJobs.add(new IndustryJob(industry, updJob, false));
+            }
+        }
+        updJob.setIndustries(oldIndustryJobs);
+            // Main Industry
+        for (IndustryJob item : updJob.getIndustries())
+            if (item.getIndustry().getId() == requestDTO.mainIndustry()){
+                item.setIsMain(true);
+                break;
+            }
+        try {
+            Job saveJob = jobRepo.save(updJob);
+            return jobMapper.toDetailJobResponseDto(saveJob, null);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }
