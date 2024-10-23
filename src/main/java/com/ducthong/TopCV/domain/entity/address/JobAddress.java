@@ -19,7 +19,7 @@ public class JobAddress extends Address {
     private Integer id;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "job_id")
     private Job job;
 

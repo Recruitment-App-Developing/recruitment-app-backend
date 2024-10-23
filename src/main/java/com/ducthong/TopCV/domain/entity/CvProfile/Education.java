@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Education {
-    @JsonIgnore
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "education_id")
     private String id;

@@ -78,6 +78,9 @@ public class Endpoint {
             public static final String GET_DETAIL = BASE + "/{jobId}";
             public static final String ADD_ONE = BASE;
             public static final String UPDATE_ONE = BASE + "/update/{jobId}";
+            public static final String GET_LIST_JOB_ADDRESS = BASE + "/job-address/{jobId}";
+            public static final String UPDATE_JOB_ADDRESS = BASE + "/job-address/update/{jobId}";
+            public static final String DELETE_JOB_ADDRESS = BASE + "/job-address/delete/{jobId}";
         }
 
         public static final class Cv {

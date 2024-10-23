@@ -3,12 +3,14 @@ package com.ducthong.TopCV.service.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import com.ducthong.TopCV.domain.dto.job.*;
+import com.ducthong.TopCV.domain.dto.job.job_address.JobAddressRequestDTO;
+import com.ducthong.TopCV.domain.dto.job.job_address.JobAddressResponseDTO;
 import com.ducthong.TopCV.repository.ApplicationRepository;
 import com.ducthong.TopCV.repository.IndustryJobRepository;
+import com.ducthong.TopCV.repository.address.JobAddressRepository;
 import com.ducthong.TopCV.utility.AuthUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -50,6 +52,7 @@ public class JobServiceImpl implements JobService {
     private final JobRepository jobRepo;
     private final ApplicationRepository applicationRepo;
     private final IndustryJobRepository industryJobRepo;
+    private final JobAddressRepository jobAddressRepo;
     // Service
     private final ImageService imageService;
     // Mapper
@@ -201,9 +204,14 @@ public class JobServiceImpl implements JobService {
         // Address
         List<JobAddress> jobAddressList = requestDTO.addressList().stream()
                 .map(item -> {
-                    JobAddress temp = addressMapper.toJobAddress(item);
-                    temp.setJob(newJob);
-                    return temp;
+                    try {
+                        String[] temp = item.split(";");
+                        JobAddress jobAddress = addressMapper.toJobAddress(temp[0], temp[1]);
+                        jobAddress.setJob(newJob);
+                        return jobAddress;
+                    } catch (Exception e) {
+                        throw new AppException("This address is not valid");
+                    }
                 })
                 .toList();
         newJob.setAddresses(jobAddressList);
@@ -258,5 +266,46 @@ public class JobServiceImpl implements JobService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public List<JobAddressResponseDTO> updateJobAddress(JobAddressRequestDTO requestDTO, Integer accountId, Integer jobId) {
+        Job job = isVerifiedJob(jobId, accountId);
+        JobAddress newJobAddress = addressMapper.toJobAddress(requestDTO.detail(), requestDTO.wardCode());
+        if (requestDTO.jobAddressId() != null) {
+            Optional<JobAddress> jobAddressFind = job.getAddresses().stream()
+                    .filter(item -> item.getId() == requestDTO.jobAddressId()).findFirst();
+            if (jobAddressFind.isEmpty()) throw new AppException("This address does not found");
+            newJobAddress.setId(jobAddressFind.get().getId());
+        }
+        newJobAddress.setJob(job);
+
+        jobAddressRepo.save(newJobAddress);
+
+        return jobRepo.findById(jobId).get().getAddresses().stream().map(
+                jobMapper::toJobAddressResponseDto
+        ).toList();
+    }
+
+    @Override
+    public List<JobAddressResponseDTO> getListJobAddressByJob(Integer accountId, Integer jobId) {
+        Job job = isVerifiedJob(jobId, accountId);
+
+        return job.getAddresses().stream().map(
+                jobMapper::toJobAddressResponseDto
+        ).toList();
+    }
+
+    @Override
+    public List<JobAddressResponseDTO> deleteJobAddressId(Integer accountId, Integer jobId, Integer jobAddressId) {
+        Job job = isVerifiedJob(jobId, accountId);
+        Optional<JobAddress> jobAddressFind = job.getAddresses().stream()
+                .filter(item -> item.getId() == jobAddressId).findFirst();
+        if (jobAddressFind.isEmpty()) throw new AppException("This address does not found");
+        jobAddressRepo.deleteById(jobAddressId);
+
+        return jobRepo.findById(jobId).get().getAddresses().stream().map(
+                jobMapper::toJobAddressResponseDto
+        ).toList();
     }
 }

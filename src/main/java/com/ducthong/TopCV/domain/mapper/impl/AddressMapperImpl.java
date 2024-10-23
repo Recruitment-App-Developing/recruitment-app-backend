@@ -25,15 +25,14 @@ public class AddressMapperImpl implements AddressMapper {
     }
 
     @Override
-    public JobAddress toJobAddress(String address) {
-        String[] temp = address.split(";");
+    public JobAddress toJobAddress(String detail, String wardCode) {
 
-        Optional<Ward> wardOptional = wardRepo.findById(temp[1]);
+        Optional<Ward> wardOptional = wardRepo.findById(wardCode);
         if (wardOptional.isEmpty()) throw new AppException("This address is invalid");
         Ward ward = wardOptional.get();
 
         return JobAddress.builder()
-                .detail(temp[0])
+                .detail(detail)
                 .wardCode(ward.getCode())
                 .wardName(ward.getName())
                 .provinceCode(ward.getDistrict().getProvince().getCode())

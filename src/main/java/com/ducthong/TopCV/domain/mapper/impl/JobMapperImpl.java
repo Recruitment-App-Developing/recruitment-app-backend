@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ducthong.TopCV.domain.dto.job.*;
+import com.ducthong.TopCV.domain.dto.job.job_address.JobAddressResponseDTO;
 import com.ducthong.TopCV.domain.entity.IndustryJob;
 import com.ducthong.TopCV.domain.entity.address.JobAddress;
 import com.ducthong.TopCV.domain.mapper.CompanyMapper;
@@ -153,5 +154,19 @@ public class JobMapperImpl implements JobMapper {
         entity.setJobRequirement(entity.getJobRequirement());
         entity.setAddApplicationInfor(entity.getAddApplicationInfor());
         return  entity;
+    }
+
+    @Override
+    public JobAddressResponseDTO toJobAddressResponseDto(JobAddress entity) {
+        return JobAddressResponseDTO.builder()
+                .jobAddressId(entity.getId())
+                .detail(entity.getDetail())
+                .provinceCode(entity.getProvinceCode())
+                .provinceName(entity.getProvinceName())
+                .districtCode(entity.getDistrictCode())
+                .districtName(entity.getDistrictName())
+                .wardCode(entity.getWardCode())
+                .wardName(entity.getWardName())
+                .build();
     }
 }

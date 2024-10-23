@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.List;
 
 import com.ducthong.TopCV.domain.dto.job.*;
+import com.ducthong.TopCV.domain.dto.job.job_address.JobAddressRequestDTO;
+import com.ducthong.TopCV.domain.dto.job.job_address.JobAddressResponseDTO;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 
 import org.springdoc.core.annotations.ParameterObject;
@@ -77,5 +80,34 @@ public class JobController {
                         "Update a job successfull",
                         jobService.updateJob(requestDTO, AuthUtil.getRequestedUser().getId(), jobId)
                 ));
+    }
+    @GetMapping(Endpoint.V1.Job.GET_LIST_JOB_ADDRESS)
+    public ResponseEntity<Response<List<JobAddressResponseDTO>>> getListJobAddressByJob(
+            @PathVariable(name = "jobId") Integer jobId
+    ){
+        return ResponseEntity.status(HttpStatus.OK).body(Response.successfulResponse(
+                "Get list job address successful",
+                jobService.getListJobAddressByJob(AuthUtil.getRequestedUser().getId(), jobId)
+        ));
+    }
+    @PostMapping(Endpoint.V1.Job.UPDATE_JOB_ADDRESS)
+    public ResponseEntity<Response<List<JobAddressResponseDTO>>> updateJobAddress(
+            @PathVariable(name = "jobId") Integer jobId,
+            @RequestBody JobAddressRequestDTO requestDTO
+            ){
+        return ResponseEntity.status(HttpStatus.OK).body(Response.successfulResponse(
+                "Update job address successfull",
+                jobService.updateJobAddress(requestDTO, AuthUtil.getRequestedUser().getId(), jobId)
+        ));
+    }
+    @DeleteMapping(Endpoint.V1.Job.DELETE_JOB_ADDRESS)
+    public ResponseEntity<Response<List<JobAddressResponseDTO>>> deleteJobAddress(
+            @PathVariable(name = "jobId") Integer jobId,
+            @RequestParam(name = "job_address_id", required = true) Integer jobAddressId
+            ){
+        return ResponseEntity.status(HttpStatus.OK).body(Response.successfulResponse(
+                "Delete job address successful",
+                jobService.deleteJobAddressId(AuthUtil.getRequestedUser().getId(), jobId, jobAddressId)
+        ));
     }
 }

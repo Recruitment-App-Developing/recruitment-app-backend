@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Experience {
-    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "experience_id")

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 
 import com.ducthong.TopCV.domain.dto.job.*;
+import com.ducthong.TopCV.domain.dto.job.job_address.JobAddressRequestDTO;
+import com.ducthong.TopCV.domain.dto.job.job_address.JobAddressResponseDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaResponseDTO;
 import com.ducthong.TopCV.domain.entity.Job;
@@ -17,4 +19,7 @@ public interface JobService {
     MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJob(MetaRequestDTO metaRequestDTO);
     DetailJobResponseDTO addJob(JobRequestDTO requestDTO, Integer userId) throws IOException;
     DetailJobResponseDTO updateJob(UpdJobRequestDTO requestDTO, Integer userId, Integer jobId);
+    List<JobAddressResponseDTO> updateJobAddress(JobAddressRequestDTO requestDTO, Integer accountId, Integer jobId);
+    List<JobAddressResponseDTO> getListJobAddressByJob(Integer accountId, Integer jobId);
+    List<JobAddressResponseDTO> deleteJobAddressId(Integer accountId, Integer jobId, Integer jobAddressId);
 }
