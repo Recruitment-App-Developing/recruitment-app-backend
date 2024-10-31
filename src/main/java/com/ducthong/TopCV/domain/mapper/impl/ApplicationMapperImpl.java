@@ -53,14 +53,20 @@ public class ApplicationMapperImpl implements ApplicationMapper {
                 item -> item.getMainIndustry() + " - "+ item.getSchoolName()
         ).toList();
 
+        // Name
+        String name = candidate.getUsername();
+//        if (!candidate.getFirstName().isEmpty() || !candidate.getLastName().isEmpty())
+//            name = candidate.getFirstName() + " " + candidate.getLastName();
+
         return AppliedCandidateResponseDTO.builder()
-                .name(candidate.getFirstName() + " " + candidate.getLastName())
+                .name(name)
                 .email(candidate.getEmail())
                 .phoneNumber(candidate.getPhoneNumber())
                 .applyDay(TimeUtil.toStringDateTime(entity.getApplicationTime()))
                 .experiences(experiences)
                 .education(education)
                 .statusApplication(entity.getStatus().getTitle())
+                .cvLink(entity.getCvLink())
                 .build();
     }
 }

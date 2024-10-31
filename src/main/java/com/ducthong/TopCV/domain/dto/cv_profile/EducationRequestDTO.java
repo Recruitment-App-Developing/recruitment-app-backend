@@ -4,6 +4,7 @@ import com.ducthong.TopCV.constant.TimeFormatConstant;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public record EducationRequestDTO(
+        String educationId,
         String schoolName,
         String mainIndustry,
         @JsonFormat(pattern = TimeFormatConstant.MONTH_YEAR)

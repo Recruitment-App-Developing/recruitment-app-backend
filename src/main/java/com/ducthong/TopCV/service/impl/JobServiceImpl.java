@@ -89,6 +89,20 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @Transactional
+    public DetailJobPageResponseDTO getDetailJobPage(Integer jobId) {
+        Optional<Job> findJob = jobRepo.findById(jobId);
+        if (findJob.isEmpty()) throw new AppException("This job is not existed");
+
+        Boolean isApply = false;
+        if (AuthUtil.getRequestedUser() != null &&
+                applicationRepo.checkAccountAppliedJob(jobId, AuthUtil.getRequestedUser().getId()))
+            isApply = true;
+
+        return jobMapper.toDetailJobPageResponseDto(findJob.get(), isApply);
+    }
+
+    @Override
     public MetaResponse<MetaResponseDTO, List<EmployerJobResponseDTO>> getListJobByCompany(MetaRequestDTO metaRequestDTO, Integer accountId) {
         Employer employer = GetRoleUtil.getEmployer(accountId);
         if (employer.getCompany().getId() == null) throw new AppException("This account doesn't register company");
@@ -97,7 +111,9 @@ public class JobServiceImpl implements JobService {
                 ? Sort.by(metaRequestDTO.sortField()).ascending()
                 : Sort.by(metaRequestDTO.sortField()).descending();
         Pageable pageable = PageRequest.of(metaRequestDTO.currentPage(), metaRequestDTO.pageSize(), sort);
+
         Page<Job> page = jobRepo.getListJobByCompany(pageable, employer.getCompany().getId());
+
         if (page.getContent().isEmpty()) throw new AppException("List job is empty");
         List<EmployerJobResponseDTO> li = page.getContent().stream()
                 .map(temp -> jobMapper.toEmployerJobResponseDto(temp))

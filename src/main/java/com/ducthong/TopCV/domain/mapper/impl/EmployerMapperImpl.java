@@ -55,20 +55,17 @@ public class EmployerMapperImpl implements EmployerMapper {
         return Employer.builder()
                 .username(requestDTO.username())
                 .password(requestDTO.password())
-                .firstName(requestDTO.firstName())
-                .lastName(requestDTO.lastName())
                 .deleted(false)
                 .gender(requestDTO.gender())
-                .dateOfBirth(requestDTO.dateOfBirth())
                 .email(requestDTO.email())
                 .phoneNumber(requestDTO.phoneNumber())
                 .whenCreated(new Date())
-                .verifiedLevel(requestDTO.verifiedLevel() == null ? 0 : requestDTO.verifiedLevel())
                 .lastLogIn(null)
                 .lastUpdated(null)
                 .whenDeleted(null)
                 .address(null)
                 .avatar(null)
+                .company(null)
                 .build();
     }
 

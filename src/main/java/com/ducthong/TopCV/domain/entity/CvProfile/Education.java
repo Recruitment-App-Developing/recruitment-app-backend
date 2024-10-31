@@ -4,6 +4,7 @@ import com.ducthong.TopCV.constant.TimeFormatConstant;
 import com.ducthong.TopCV.domain.entity.account.Candidate;
 import com.ducthong.TopCV.utility.TimeUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 public class Education {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "education_id")
+    @JsonProperty("educationId")
     private String id;
     private String schoolName;
     private String mainIndustry;

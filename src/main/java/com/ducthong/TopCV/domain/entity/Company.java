@@ -36,7 +36,7 @@ public class Company {
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CompanyAddress> addressList = new ArrayList<>();
 
-    private Integer employeeScale;
+    private String employeeScale;
 
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Job> jobList = new ArrayList<>();
@@ -46,6 +46,16 @@ public class Company {
 
     private Integer numberOfFollow;
 
+    private String taxCode;
+
+    private String email;
+
+    private String phoneNumber;
+
+    private String activeFields;
+
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String briefIntro;
 
     @Lob

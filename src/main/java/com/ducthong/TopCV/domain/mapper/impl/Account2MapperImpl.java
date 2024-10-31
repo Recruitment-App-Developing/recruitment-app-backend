@@ -2,6 +2,11 @@ package com.ducthong.TopCV.domain.mapper.impl;
 
 import java.util.Date;
 
+import com.ducthong.TopCV.domain.dto.account.AccountResponseDTO;
+import com.ducthong.TopCV.domain.dto.authentication.LoginResponseDTO;
+import com.ducthong.TopCV.domain.entity.account.Account;
+import com.ducthong.TopCV.utility.JwtTokenUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.ducthong.TopCV.domain.dto.account.AddCandidateRequestDTO;
@@ -16,7 +21,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class Account2MapperImpl implements Account2Mapper {
     private final CandidateRepository candidateRepo;
-
+    private final JwtTokenUtil jwtTokenUtil;
+    //Variant
+    @Value("${cloudinary.folder.default-avatar}")
+    private String DEFAULT_AVATAR;
     @Override
     public Candidate addCandidateDtoToCandidateEntity(AddCandidateRequestDTO requestDTO) {
         Candidate newCandidate = new Candidate();
@@ -36,6 +44,26 @@ public class Account2MapperImpl implements Account2Mapper {
         newCandidate.setIsFindJob(requestDTO.isFindJob());
 
         return newCandidate;
+    }
+
+    @Override
+    public LoginResponseDTO toLoginResponseDto(Account account) {
+        // Avatar
+        String avatar = DEFAULT_AVATAR;
+        if (account.getAvatar() != null) avatar = account.getAvatar().getImageUrl();
+
+        return LoginResponseDTO.builder()
+                .token(jwtTokenUtil.generateToken(account))
+                .authenticated(true)
+                .infor(AccountResponseDTO.builder()
+                        .id(account.getId())
+                        .username(account.getUsername())
+                        .fullName(account.getFirstName() + " "+ account.getLastName())
+                        .avatar(avatar)
+                        .phoneNumber(account.getPhoneNumber())
+                        .email(account.getEmail())
+                        .build())
+                .build();
     }
 
     @Override

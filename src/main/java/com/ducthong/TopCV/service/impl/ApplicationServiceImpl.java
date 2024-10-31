@@ -52,6 +52,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final JobService jobService;
     // Mapper
     private final ApplicationMapper applicationMapper;
+    // Variant
+    private final String CV_LINK = "http://localhost:3000/cv-profile/";
     @Override
     public ApplicationResponseDTO addApplication(Integer accountId, ApplicationRequestDTO requestDTO) {
         // Candidate
@@ -64,10 +66,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         for (Application item : candidate.getApplications())
             if (item.getJob().getId() == requestDTO.jobId()) throw new AppException("You have applied for this job before");
         // CV
-        CV cv = cvService.isCvAccess(requestDTO.cvId(), accountId);
+        //CV cv = cvService.isCvAccess(requestDTO.cvId(), accountId);
 
         Application applicationNew = Application.builder()
-                .cvLink(cv.getCvLink())
+                //.cvLink(cv.getCvLink())
+                .cvLink(CV_LINK + candidate.getCvProfile().getId())
                 .status(ApplicationStatus.NEW)
                 .applicationTime(TimeUtil.getDateTimeNow())
                 .lastUpdated(null)

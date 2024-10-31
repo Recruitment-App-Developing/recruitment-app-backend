@@ -2,6 +2,8 @@ package com.ducthong.TopCV.controller;
 
 import java.io.IOException;
 
+import com.ducthong.TopCV.domain.dto.authentication.LoginResponseDTO;
+import com.ducthong.TopCV.utility.AuthUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
@@ -48,10 +50,13 @@ public class EmployerController {
         return ResponseEntity.status(HttpStatus.OK).body(employerService.getActiveEmployerAccount(id));
     }
 
-    @PostMapping(Endpoint.V1.Employer.Account.ADD_ONE)
-    public ResponseEntity<Response<EmployerResponseDTO>> addEmployerAccount(
-            @ModelAttribute @Valid AddEmployerRequestDTO requestDTO) throws IOException {
-        return ResponseEntity.status(HttpStatus.OK).body(employerService.addEmployerAccount(requestDTO));
+    @PostMapping(Endpoint.V1.Employer.REGISTER_EMPLOYER)
+    public ResponseEntity<Response<LoginResponseDTO>> addEmployerAccount(
+            @RequestBody @Valid AddEmployerRequestDTO requestDTO) throws IOException {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                Response.successfulResponse("Chào mừng "+requestDTO.username(),
+                        employerService.registerEmployerAccount(requestDTO))
+        );
     }
 
     @PutMapping(Endpoint.V1.Employer.Account.UPDATE)
@@ -65,5 +70,13 @@ public class EmployerController {
                     .body(Response.failedResponse(
                             HttpStatus.UNAUTHORIZED.value(), messageUtil.getMessage(ErrorMessage.Account.UPDATE)));
         return ResponseEntity.status(HttpStatus.OK).body(employerService.updEmployerAccount(id, requestDTO));
+    }
+    @PatchMapping(Endpoint.V1.Employer.REGISTER_COMPANY)
+    public ResponseEntity<Response> registerCompany(
+            @PathVariable(name = "companyId") Integer companyId
+    ){
+        employerService.registerCompany(AuthUtil.getRequestedUser().getId(), companyId);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(
+                Response.successfulResponse("Đăng kí công ty thành công"));
     }
 }

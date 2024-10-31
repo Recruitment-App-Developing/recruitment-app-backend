@@ -11,6 +11,7 @@ import lombok.*;
 @Table(name = "company_addresses")
 @Getter
 @Setter
+@NoArgsConstructor
 public class CompanyAddress extends Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +20,6 @@ public class CompanyAddress extends Address {
 
     private Boolean isVerified;
     private Boolean isMain;
-    private Boolean isBranch;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -35,5 +35,16 @@ public class CompanyAddress extends Address {
             String wardName,
             String wardCode) {
         super(detail, provinceName, provinceCode, districtName, districtCode, wardName, wardCode);
+    }
+    public CompanyAddress(String detail, Ward ward){
+        super(detail,
+                ward.getDistrict().getProvince().getName(),
+                ward.getDistrict().getProvince().getCode(),
+                ward.getDistrict().getName(),
+                ward.getDistrict().getCode(),
+                ward.getName(),
+                ward.getCode());
+        this.isVerified = false;
+        this.isMain = false;
     }
 }

@@ -18,6 +18,8 @@ public class Endpoint {
         }
 
         public static final class Candidate {
+            public static final String BASE = V1.PREFIX + "/candidate";
+            public static final String REGISTER_CANDIDATE = BASE + "/register";
             public static final String ROLE = PREFIX + "/candidate";
 
             public static final class Account {
@@ -29,11 +31,13 @@ public class Endpoint {
 
         public static final class Employer {
             public static final String ROLE = PREFIX + "/employer";
+            public static final String BASE = PREFIX + "/employer";
+            public static final String REGISTER_EMPLOYER = BASE + "/register";
+            public static final String REGISTER_COMPANY = BASE + "/register-company/{companyId}";
 
             public static final class Account {
                 public static final String BASE = Employer.ROLE + "/account";
                 public static final String GET_DETAIL = BASE + "/{id}";
-                public static final String ADD_ONE = BASE;
                 public static final String UPDATE = BASE + "/update/{id}";
             }
         }
@@ -76,6 +80,7 @@ public class Endpoint {
             public static final String GET_LIST_BY_COMPANY = BASE + "/byCompany";
             public static final String GET_LIST_JOB_SPEC = BASE + "/spec";
             public static final String GET_DETAIL = BASE + "/{jobId}";
+            public static final String GET_DETAIL_JOB_PAGE = BASE + "/job-page/{jobId}";
             public static final String ADD_ONE = BASE;
             public static final String UPDATE_ONE = BASE + "/update/{jobId}";
             public static final String GET_LIST_JOB_ADDRESS = BASE + "/job-address/{jobId}";
@@ -94,8 +99,11 @@ public class Endpoint {
         public static final class Company {
             public static final String BASE = V1.PREFIX + "/company";
             public static final String GET_LIST = BASE;
+            public static final String GET_LIST_FOR_EMPLOYER = BASE + "/employer";
             public static final String GET_BRIEF_COMPANY = BASE + "/brief-company/{companyId}";
             public static final String GET_DETAIL = BASE + "/detail-company/{companyId}";
+            public static final String ADD_COMPANY = BASE + "/add";
+            public static final String GET_MY_COMPANY = BASE + "/my-company";
         }
 
         public static final class Application {
@@ -108,8 +116,16 @@ public class Endpoint {
         public static final class CvProfile {
             public static final String BASE = V1.PREFIX + "/cv-profile";
             public static final String GET_ONE = BASE + "/{cvProfileId}";
+            public static final String UPDATE_EDUCATION = BASE + "/education/update";
+            public static final String DELETE_EDUCATION = BASE + "/education/delete/{educationId}";
         }
 
+        public static final class Address {
+            public static final String BASE = V1.PREFIX + "/address";
+            public static final String GET_LIST_PROVINCE = BASE + "/provinces";
+            public static final String GET_LIST_DISTRICT_BY_PROVINCE = BASE + "/districts/{provinceId}";
+            public static final String GET_LIST_WARD_BY_DISTRICT = BASE + "/wards/{districtId}";
+        }
         public static final class HealthCheck {
             public static final String BASE = V1.PREFIX + "/actuator/health";
         }

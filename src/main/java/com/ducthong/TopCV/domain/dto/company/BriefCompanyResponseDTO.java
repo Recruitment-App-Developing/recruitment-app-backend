@@ -4,4 +4,9 @@ import lombok.Builder;
 
 @Builder
 public record BriefCompanyResponseDTO(
-        Integer id, String name, String logo, String urlCom, String headquarters, Integer employeeScale) {}
+        Integer id,
+        String name,
+        String logo,
+        String urlCom,
+        //String headquarters,
+        String employeeScale) {}

@@ -1,9 +1,7 @@
 package com.ducthong.TopCV.domain.mapper.impl;
 
-import com.ducthong.TopCV.domain.dto.cv_profile.CvProfileRequestDTO;
 import com.ducthong.TopCV.domain.dto.cv_profile.EducationRequestDTO;
 import com.ducthong.TopCV.domain.dto.cv_profile.ExperienceRequestDTO;
-import com.ducthong.TopCV.domain.entity.CvProfile.CvProfile;
 import com.ducthong.TopCV.domain.entity.CvProfile.Education;
 import com.ducthong.TopCV.domain.entity.CvProfile.Experience;
 import com.ducthong.TopCV.domain.mapper.CvProfileMapper;
@@ -15,6 +13,7 @@ public class CvProfileMapperImpl implements CvProfileMapper {
     @Override
     public Education educationRequestDtoToEducation(EducationRequestDTO requestDTO) {
         return Education.builder()
+                .id(requestDTO.educationId())
                 .schoolName(requestDTO.schoolName())
                 .mainIndustry(requestDTO.mainIndustry())
                 .startTime(TimeUtil.monthYearToDate(requestDTO.startTime()))
@@ -22,7 +21,6 @@ public class CvProfileMapperImpl implements CvProfileMapper {
                 .detail(requestDTO.detail())
                 .build();
     }
-
     @Override
     public Experience experienceRequestDtoToExperience(ExperienceRequestDTO requestDTO) {
         return Experience.builder()
@@ -31,18 +29,6 @@ public class CvProfileMapperImpl implements CvProfileMapper {
                 .startTime(TimeUtil.monthYearToDate(requestDTO.startTime()))
                 .endTime(TimeUtil.monthYearToDate(requestDTO.endTime()))
                 .detail(requestDTO.detail())
-                .build();
-    }
-
-    @Override
-    public CvProfile cVProfileRequestDtoToCvProfile(CvProfileRequestDTO requestDTO) {
-        return CvProfile.builder()
-                .educations(requestDTO.educations().stream().map(
-                        item -> educationRequestDtoToEducation(item)
-                ).toList())
-                .experiences(requestDTO.experiences().stream().map(
-                        item -> experienceRequestDtoToExperience(item)
-                ).toList())
                 .build();
     }
 }

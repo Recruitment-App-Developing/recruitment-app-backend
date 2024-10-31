@@ -9,7 +9,7 @@ public record DetailCompanyResponseDTO(
         String name,
         ImageResponseDTO logo,
         String urlCom,
-        Integer employeeScale,
+        String employeeScale,
         Integer numberOfFollow,
         String detailIntro
 ) {

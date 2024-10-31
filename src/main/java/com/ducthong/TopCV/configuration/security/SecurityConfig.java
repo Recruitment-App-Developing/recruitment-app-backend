@@ -32,14 +32,21 @@ public class SecurityConfig {
         "/v3/api-docs" + CATCH_ALL_WILDCARDS,
         Endpoint.V1.HealthCheck.BASE + CATCH_ALL_WILDCARDS,
         Endpoint.V1.Authentication.BASE + CATCH_ALL_WILDCARDS,
+        Endpoint.V1.Candidate.REGISTER_CANDIDATE,
+        Endpoint.V1.Employer.REGISTER_EMPLOYER,
         Endpoint.V1.Admin.Auth.LOGIN,
         Endpoint.V1.Job.GET_LIST_JOB,
         Endpoint.V1.Job.GET_DETAIL,
+        Endpoint.V1.Job.GET_DETAIL_JOB_PAGE,
         Endpoint.V1.Job.ADD_ONE,
         Endpoint.V1.Company.GET_LIST,
+        Endpoint.V1.Company.GET_LIST_FOR_EMPLOYER,
         Endpoint.V1.Company.GET_BRIEF_COMPANY,
         Endpoint.V1.Company.GET_DETAIL,
-        Endpoint.V1.CvProfile.GET_ONE
+        Endpoint.V1.CvProfile.GET_ONE,
+        Endpoint.V1.Address.GET_LIST_PROVINCE,
+        Endpoint.V1.Address.GET_LIST_DISTRICT_BY_PROVINCE,
+        Endpoint.V1.Address.GET_LIST_WARD_BY_DISTRICT
     };
 
     @Bean

@@ -62,7 +62,11 @@ public class JobController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Response.successfulResponse("Get a detail job successful", jobService.getDetailJob(jobId)));
     }
-
+    @GetMapping(Endpoint.V1.Job.GET_DETAIL_JOB_PAGE)
+    public ResponseEntity<Response<DetailJobPageResponseDTO>> getDetailJobPage(@PathVariable(name = "jobId") Integer jobId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.successfulResponse("Get a detail job successful", jobService.getDetailJobPage(jobId)));
+    }
     @PostMapping(Endpoint.V1.Job.ADD_ONE)
     public ResponseEntity<Response<DetailJobResponseDTO>> addJob(@RequestBody @Valid JobRequestDTO requestDTO)
             throws IOException {

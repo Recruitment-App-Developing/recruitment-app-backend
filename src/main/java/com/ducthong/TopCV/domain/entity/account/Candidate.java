@@ -29,7 +29,7 @@ public class Candidate extends Account {
     @OneToMany(mappedBy = "candidate", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = false)
     private List<Application> applications = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = false)
     @JoinColumn(name = "cv_profile_id")
     private CvProfile cvProfile;
     // like Job List

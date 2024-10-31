@@ -1,12 +1,10 @@
 package com.ducthong.TopCV.domain.mapper.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.ducthong.TopCV.domain.dto.job.*;
 import com.ducthong.TopCV.domain.dto.job.job_address.JobAddressResponseDTO;
+import com.ducthong.TopCV.domain.entity.Image;
 import com.ducthong.TopCV.domain.entity.IndustryJob;
 import com.ducthong.TopCV.domain.entity.address.JobAddress;
 import com.ducthong.TopCV.domain.mapper.CompanyMapper;
@@ -61,7 +59,7 @@ public class JobMapperImpl implements JobMapper {
                 .postingTime(TimeUtil.toStringDateTime(entity.getPostingTime()))
                 .numberOfView(entity.getNumberOfView())
                 .numberOfApplicated(entity.getNumberOfApplicated())
-                .applicationRate((float) (entity.getNumberOfApplicated()/ entity.getNumberOfView()))
+                //.applicationRate((float) (entity.getNumberOfApplicated()/ entity.getNumberOfView()))
                 .build();
     }
 
@@ -108,6 +106,65 @@ public class JobMapperImpl implements JobMapper {
                 .imageList(imageList)
                 .mainIndustry(mainIndustry)
                 .subIndustries(subIndustries)
+                .build();
+    }
+
+    @Override
+    public DetailJobPageResponseDTO toDetailJobPageResponseDto(Job entity, Boolean isApply) {
+        // Address
+        List<String> jobAddress =
+                entity.getAddresses().stream().map(JobAddress::toString).toList();
+        // Image
+        List<String> imageList = new ArrayList<>();
+        if (!entity.getImageList().isEmpty()) {
+            imageList = entity.getImageList().stream()
+                    .map(Image::getImageUrl)
+                    .toList();
+        }
+        // Industry
+            // MainIndstry
+        Map<String, String> mainIndustry = new HashMap<>();
+        Optional<IndustryJob> mainIndustryOptional = entity.getIndustries().stream().filter(IndustryJob::getIsMain).findFirst();
+        if (!mainIndustryOptional.isEmpty())  mainIndustry = Map.of(
+                "id", mainIndustryOptional.get().getIndustry().getId().toString(),
+                "name", mainIndustryOptional.get().getIndustry().getName());
+            // SubIndustry
+        List<Map<String, String>> subIndustry = new ArrayList<>();
+        List<IndustryJob> subIndustryOptional = entity.getIndustries().stream().filter(item -> !item.getIsMain()).toList();
+        if (!subIndustryOptional.isEmpty())
+            subIndustryOptional.
+                forEach(item -> subIndustry.add(Map.of(
+                        "id", item.getIndustry().getId().toString(),
+                        "name", item.getIndustry().getName())));
+        // Company
+        Company company = entity.getCompany();
+        return DetailJobPageResponseDTO.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .company(companyMapper.toBriefCompanyResponseDto(company))
+                .address(jobAddress)
+                .jobPosition(entity.getJobPosition().name())
+                .numberOfVacancy(entity.getNumberOfVacancy())
+                .workMethod(entity.getWorkMethod().name())
+                .sexRequired(entity.getSexRequired().name())
+                .salary(entity.getSalary())
+                .jobExp(entity.getJobExp())
+                .postingTime(TimeUtil.toStringDateTime(entity.getPostingTime()))
+                .applicationDueTime(TimeUtil.toStringDateTime(entity.getApplicationDueTime()))
+                .numberOfApplicated(entity.getNumberOfApplicated())
+                .isVerified(entity.getIsVerified())
+                .jobBenefit(entity.getJobBenefit())
+                .jobDescript(entity.getJobDescript())
+                .jobRequirement(entity.getJobRequirement())
+                .addApplicationInfor(entity.getAddApplicationInfor())
+                .lastUpdated(TimeUtil.toStringDateTime(entity.getLastUpdated()))
+                .numberOfLike(entity.getNumberOfLike())
+                .numberOfView(entity.getNumberOfView())
+                .isApply(isApply)
+                .applicationMethod(entity.getApplicationMethod().name())
+                .imageList(imageList)
+                .mainIndustry(mainIndustry)
+                .subIndustries(subIndustry)
                 .build();
     }
 

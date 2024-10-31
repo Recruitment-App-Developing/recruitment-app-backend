@@ -13,6 +13,7 @@ public record AppliedCandidateResponseDTO(
         String applyDay,
         List<String> experiences,
         List<String> education,
-        String statusApplication
+        String statusApplication,
+        String cvLink
 ) {
 }
