@@ -11,6 +11,7 @@ import lombok.*;
 @Table(name = "person_addresses")
 @Getter
 @Setter
+@NoArgsConstructor
 public class PersonAddress extends Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +21,7 @@ public class PersonAddress extends Address {
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "address")
     private Account account;
-
+    @Builder
     public PersonAddress(
             String detail,
             String provinceName,

@@ -9,8 +9,8 @@ import com.ducthong.TopCV.domain.dto.employer.UpdEmployerRequestDTO;
 import com.ducthong.TopCV.responses.Response;
 
 public interface EmployerService {
-    Response<EmployerResponseDTO> getActiveEmployerAccount(Integer id);
+    Response<EmployerResponseDTO> getActiveEmployerAccount(Integer accountId);
     LoginResponseDTO registerEmployerAccount(AddEmployerRequestDTO requestDTO) throws IOException;
-    Response<EmployerResponseDTO> updEmployerAccount(Integer id, UpdEmployerRequestDTO requestDTO);
+    Response<EmployerResponseDTO> updEmployerAccount(Integer acountId, UpdEmployerRequestDTO requestDTO) throws IOException;
     void registerCompany(Integer accountId, Integer companyId);
 }

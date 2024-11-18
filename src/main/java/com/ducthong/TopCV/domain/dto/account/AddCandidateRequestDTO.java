@@ -16,7 +16,6 @@ public record AddCandidateRequestDTO(
         @NotBlank(message = "Password cannot blank!") String password,
         String firstName,
         String lastName,
-        // @ValidEnum(enumClass = Gender.class, name = "Gender")
         Gender gender,
         @DobConstraint(min = 16) Date dateOfBirth,
         @Email(message = "Invalid email format") String email,

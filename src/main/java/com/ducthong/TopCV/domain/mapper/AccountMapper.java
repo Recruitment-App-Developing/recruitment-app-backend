@@ -46,13 +46,4 @@ public interface AccountMapper {
     //    @Mapping(target = "address", ignore = true)
     //    Candidate addCandidateDtoToCandidateEntity(AddCandidateRequestDTO request);
 
-    @AfterMapping
-    default void editAddCandidateReuqestDto(@MappingTarget Candidate candidateEntity, AddCandidateRequestDTO request) {
-        candidateEntity.setDeleted(false);
-        candidateEntity.setAddress(null);
-        candidateEntity.setLastUpdated(null);
-        candidateEntity.setLastLogIn(null);
-        candidateEntity.setWhenCreated(new Date());
-        candidateEntity.setWhenDeleted(null);
-    }
 }

@@ -41,4 +41,21 @@ public class AddressMapperImpl implements AddressMapper {
                 .districtName(ward.getDistrict().getName())
                 .build();
     }
+
+    @Override
+    public PersonAddress toPersonAddress(String detail, String wardCode) {
+        Optional<Ward> wardOptional = wardRepo.findById(wardCode);
+        if (wardOptional.isEmpty()) throw new AppException("This address is invalid");
+        Ward ward = wardOptional.get();
+
+        return PersonAddress.builder()
+                .detail(detail)
+                .wardCode(ward.getCode())
+                .wardName(ward.getName())
+                .provinceCode(ward.getDistrict().getProvince().getCode())
+                .provinceName(ward.getDistrict().getProvince().getName())
+                .districtCode(ward.getDistrict().getCode())
+                .districtName(ward.getDistrict().getName())
+                .build();
+    }
 }

@@ -71,12 +71,6 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.OK).body(accountService.getActiveCandidateAccount(id));
     }
 
-    @PostMapping(Endpoint.V1.Account.ADD_ONE)
-    public ResponseEntity<Response<CandidateResponseDTO>> addCandidateAccount(
-            @ModelAttribute @Valid AddCandidateRequestDTO request) throws IOException {
-        return ResponseEntity.status(HttpStatus.OK).body(accountService.addCandidateAccount(request));
-    }
-
     @PostMapping(Endpoint.V1.Candidate.Account.UPDATE)
     public ResponseEntity<Response<CandidateResponseDTO>> updCandidateAccount(
             HttpServletRequest request,

@@ -47,4 +47,10 @@ public class CompanyAddress extends Address {
         this.isVerified = false;
         this.isMain = false;
     }
+
+    @Override
+    public String toString() {
+        return super.getDetail()+", "+super.getWardName()+", "
+                +super.getDistrictName()+", "+super.getProvinceName()+", "+super.getProvinceName();
+    }
 }

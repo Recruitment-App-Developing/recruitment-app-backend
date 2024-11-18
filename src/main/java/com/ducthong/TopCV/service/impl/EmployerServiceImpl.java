@@ -3,13 +3,20 @@ package com.ducthong.TopCV.service.impl;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
+import com.ducthong.TopCV.configuration.AppConfig;
 import com.ducthong.TopCV.domain.dto.account.AccountResponseDTO;
 import com.ducthong.TopCV.domain.dto.authentication.LoginResponseDTO;
+import com.ducthong.TopCV.domain.dto.cloudinary.CloudinaryResponseDTO;
 import com.ducthong.TopCV.domain.entity.Company;
+import com.ducthong.TopCV.domain.entity.address.PersonAddress;
+import com.ducthong.TopCV.domain.entity.address.Ward;
 import com.ducthong.TopCV.domain.mapper.Account2Mapper;
 import com.ducthong.TopCV.repository.CompanyRepository;
+import com.ducthong.TopCV.repository.address.PersonAddressRepository;
+import com.ducthong.TopCV.repository.address.WardRepository;
 import com.ducthong.TopCV.utility.GetRoleUtil;
 import com.ducthong.TopCV.utility.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +53,6 @@ public class EmployerServiceImpl implements EmployerService {
     // Repository
     private final AccountRepository accountRepo;
     private final EmployerRepository employerRepo;
-    private final ImageRepository imageRepo;
     private final CompanyRepository companyRepo;
     // Service
     private final CloudinaryService cloudinaryService;
@@ -57,17 +63,14 @@ public class EmployerServiceImpl implements EmployerService {
     private final EmployerMapper employerMapper;
     private final AddressMapper addressMapper;
     // Variable
-    @Value("${cloudinary.folder.avatar}")
-    private String folderAvatar;
+    private final AppConfig appConfig;
 
     @Override
-    public Response<EmployerResponseDTO> getActiveEmployerAccount(Integer id) {
-        Optional<Employer> res = employerRepo.findActiveAccountById(id);
-        if (res.isEmpty()) throw new AppException(ErrorMessage.Account.NOT_FOUND);
-        EmployerResponseDTO responseDTO = employerMapper.toEmployerResponseDto(res.get());
-        return Response.successfulResponse(messageUtil.getMessage(SuccessMessage.Account.GET_ONE), responseDTO);
+    public Response<EmployerResponseDTO> getActiveEmployerAccount(Integer accountId) {
+        Employer employer = GetRoleUtil.getEmployer(accountId);
+        EmployerResponseDTO responseDTO = employerMapper.toEmployerResponseDto(employer);
+        return Response.successfulResponse("", responseDTO);
     }
-
     @Override
     @Transactional
     public LoginResponseDTO registerEmployerAccount(AddEmployerRequestDTO requestDTO) throws IOException {
@@ -77,13 +80,14 @@ public class EmployerServiceImpl implements EmployerService {
             throw new AppException("Email này đã tồn tại");
 
         Employer addEmployer = employerMapper.addEmployerDtoToEmployerEntity(requestDTO);
-        // Set Address
-//        addEmployer.setAddress(addressMapper.addRequestToPersonAddressEntity(requestDTO.address()));
+        // Person Address
+        PersonAddress personAddress = new PersonAddress();
+        addEmployer.setAddress(personAddress);
         // Set password
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         addEmployer.setPassword(passwordEncoder.encode(requestDTO.password()));
         // Avatar
-        Image avatar = new Image();
+        Image avatar = new Image("Defaul Avatar", appConfig.getDEFAULT_AVATAR());
         addEmployer.setAvatar(avatar);
         // Upload Avatar Image to Cloudinary
 //        Image avatarUpload;
@@ -110,16 +114,43 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
-    public Response<EmployerResponseDTO> updEmployerAccount(Integer id, UpdEmployerRequestDTO requestDTO) {
+    @Transactional
+    public Response<EmployerResponseDTO> updEmployerAccount(Integer accountId, UpdEmployerRequestDTO requestDTO) throws IOException {
+        Employer oldEmployer = GetRoleUtil.getEmployer(accountId);
+        Employer newEmployer = employerMapper.updEmployerDtoToEmployerEntity(oldEmployer, requestDTO);
+        // Avatar
+        if (requestDTO.avatar() != null && !requestDTO.avatar().equals("")) {
+            Image avatar = oldEmployer.getAvatar();
+            if (!Objects.equals(avatar.getImageUrl(), appConfig.getDEFAULT_AVATAR())) {
+                cloudinaryService.delete(avatar.getImagePublicId());
+            }
+            CloudinaryResponseDTO uploadResponse = cloudinaryService.uploadFileBase64_v2(requestDTO.avatar(), appConfig.getFOLDER_AVATAR());
+            avatar.setName("The avatar of "+oldEmployer.getUsername());
+            avatar.setImageUrl(uploadResponse.url());
+            avatar.setImagePublicId(uploadResponse.public_id());
+            newEmployer.setAvatar(avatar);
+        }
+        // Address
+        PersonAddress oldPersonAddress = oldEmployer.getAddress();
+        PersonAddress newPersonAddress = new PersonAddress();
         try {
-            Optional<Employer> oldEmployer = employerRepo.findById(id);
-            if (oldEmployer.isEmpty()) throw new AppException(ErrorMessage.Account.NOT_FOUND);
-            Employer newEmployer = employerMapper.updEmployerDtoToEmployerEntity(oldEmployer.get(), requestDTO);
-            return Response.successfulResponse(
-                    messageUtil.getMessage(SuccessMessage.Account.UPDATE),
-                    employerMapper.toEmployerResponseDto(employerRepo.save(newEmployer)));
+            String[] address = requestDTO.address().split(";");
+            if (oldPersonAddress != null &&
+                    (!Objects.equals(oldPersonAddress.getWardCode(), address[1])
+                            || !Objects.equals(oldPersonAddress.getDetail(), address[0]))){
+                newPersonAddress = addressMapper.toPersonAddress(address[0], address[1]);
+                newPersonAddress.setId(oldPersonAddress.getId());
+                newEmployer.setAddress(newPersonAddress);
+            }
         } catch (Exception e) {
-            throw new AppException(ErrorMessage.Account.UPDATE);
+            throw new AppException("Địa chỉ không hợp lệ");
+        }
+        try{
+        return Response.successfulResponse(
+                "Cập nhật thông tin tài khoản thành công",
+                employerMapper.toEmployerResponseDto(employerRepo.save(newEmployer)));
+        } catch (Exception e) {
+            throw new AppException("Cập nhật thông tin cá nhân thất bại");
         }
     }
 

@@ -35,21 +35,11 @@ import lombok.experimental.FieldDefaults;
 public class EmployerController {
     // Service
     EmployerService employerService;
-    // Ultility
-    JwtTokenUtil jwtTokenUtil;
-    MessageSourceUtil messageUtil;
 
-    @GetMapping(Endpoint.V1.Employer.Account.GET_DETAIL)
-    public ResponseEntity<Response<EmployerResponseDTO>> getActiveEmployerAccount(
-            HttpServletRequest request, @PathVariable(name = "id") Integer id) {
-        Integer idToken = Integer.valueOf(jwtTokenUtil.getAccountId(request.getHeader(HttpHeaders.AUTHORIZATION)));
-        if (id != idToken)
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Response.failedResponse(
-                            HttpStatus.UNAUTHORIZED.value(), messageUtil.getMessage(ErrorMessage.Account.GET_DETAIL)));
-        return ResponseEntity.status(HttpStatus.OK).body(employerService.getActiveEmployerAccount(id));
+    @GetMapping(Endpoint.V1.Employer.MY_ACCOUNT)
+    public ResponseEntity<Response<EmployerResponseDTO>> getActiveEmployerAccount() {
+        return ResponseEntity.status(HttpStatus.OK).body(employerService.getActiveEmployerAccount(AuthUtil.getRequestedUser().getId()));
     }
-
     @PostMapping(Endpoint.V1.Employer.REGISTER_EMPLOYER)
     public ResponseEntity<Response<LoginResponseDTO>> addEmployerAccount(
             @RequestBody @Valid AddEmployerRequestDTO requestDTO) throws IOException {
@@ -58,18 +48,11 @@ public class EmployerController {
                         employerService.registerEmployerAccount(requestDTO))
         );
     }
-
-    @PutMapping(Endpoint.V1.Employer.Account.UPDATE)
+    @PutMapping(Endpoint.V1.Employer.UPDATE_EMPLOYER)
     public ResponseEntity<Response<EmployerResponseDTO>> updEmployerAccount(
-            HttpServletRequest request,
-            @PathVariable(name = "id") Integer id,
-            @RequestBody @Valid UpdEmployerRequestDTO requestDTO) {
-        Integer idToken = Integer.valueOf(jwtTokenUtil.getAccountId(request.getHeader(HttpHeaders.AUTHORIZATION)));
-        if (id != idToken)
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Response.failedResponse(
-                            HttpStatus.UNAUTHORIZED.value(), messageUtil.getMessage(ErrorMessage.Account.UPDATE)));
-        return ResponseEntity.status(HttpStatus.OK).body(employerService.updEmployerAccount(id, requestDTO));
+            @RequestBody @Valid UpdEmployerRequestDTO requestDTO) throws IOException {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                employerService.updEmployerAccount(AuthUtil.getRequestedUser().getId(), requestDTO));
     }
     @PatchMapping(Endpoint.V1.Employer.REGISTER_COMPANY)
     public ResponseEntity<Response> registerCompany(

@@ -16,7 +16,7 @@ public interface AccountService {
     // CANDIDATE
     Response<CandidateResponseDTO> getActiveCandidateAccount(Integer id);
 
-    Response<CandidateResponseDTO> addCandidateAccount(AddCandidateRequestDTO request) throws IOException;
+//    Response<CandidateResponseDTO> addCandidateAccount(AddCandidateRequestDTO request) throws IOException;
 
     Response<CandidateResponseDTO> updCandidateAccount(Integer id, UpdCandidateRequestDTO requestDTO);
     // ADMIN

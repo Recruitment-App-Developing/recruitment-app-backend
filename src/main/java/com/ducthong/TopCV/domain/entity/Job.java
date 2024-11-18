@@ -37,15 +37,6 @@ public class Job {
     @NotBlank(message = "{job.valid.name}")
     private String name;
 
-    //    @Valid
-    //    @NotNull(message = "Address list cannot null")
-    //    @Size(min = 1, max = 10, message = "Address list must contain at least one and at most 10 addresses")
-    //    @ElementCollection(fetch = FetchType.EAGER)
-    //    @CollectionTable(
-    //            name = "job_address",
-    //            joinColumns = @JoinColumn(name = "job_id", nullable = false),
-    //            uniqueConstraints = @UniqueConstraint(columnNames = {"job_id", "address"}))
-    //    List<@Valid @NotBlank(message = "Address cannot blank") String> address = new ArrayList<>();
     @OneToMany(mappedBy = "job", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<JobAddress> addresses = new ArrayList<>();
 
@@ -121,6 +112,12 @@ public class Job {
 
     @Enumerated(EnumType.STRING)
     private ApplicationMethod applicationMethod;
+
+    private String receiverName;
+
+    private String receiverPhone;
+
+    private String receiverEmail;
 
     @OneToMany(targetEntity = Image.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "job_id")

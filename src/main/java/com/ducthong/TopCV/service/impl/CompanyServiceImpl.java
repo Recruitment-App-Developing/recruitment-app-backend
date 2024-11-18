@@ -1,11 +1,9 @@
 package com.ducthong.TopCV.service.impl;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
+import com.ducthong.TopCV.configuration.AppConfig;
 import com.ducthong.TopCV.constant.meta.MetaConstant;
 import com.ducthong.TopCV.domain.dto.cloudinary.CloudinaryResponseDTO;
 import com.ducthong.TopCV.domain.dto.company.*;
@@ -26,6 +24,7 @@ import com.ducthong.TopCV.repository.address.WardRepository;
 import com.ducthong.TopCV.responses.MetaResponse;
 import com.ducthong.TopCV.service.CloudinaryService;
 import com.ducthong.TopCV.utility.GetRoleUtil;
+import com.ducthong.TopCV.utility.TimeUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,11 +55,8 @@ public class CompanyServiceImpl implements CompanyService {
     private final CloudinaryService cloudinaryService;
     // Mapper
     private final CompanyMapper companyMapper;
-    // Variable
-    @Value("${cloudinary.folder.company-logo}")
-    private String FOLDER_COMPANY_LOGO;
-    @Value("${cloudinary.folder.default-company-logo}")
-    private String DEFAULT_COMPANY_LOGO;
+    // Varient
+    private final AppConfig appConfig;
     @Override
     public Company isVerifyCompanyByAccountId(Integer accountId) {
         Employer employer = GetRoleUtil.getEmployer(accountId);
@@ -199,20 +195,20 @@ public class CompanyServiceImpl implements CompanyService {
             });
         // Logo
         Image logo;
-        if (requestDTO.logo().isEmpty()){
+        if (requestDTO.logo() != null && !requestDTO.logo().isEmpty()){
+            CloudinaryResponseDTO logoUpload = cloudinaryService.uploadFileBase64_v2(requestDTO.logo(), appConfig.getFOLDER_COMPANY_LOGO());
             logo = Image.builder()
-                    .name("defaul_company_logo")
-                    .imageUrl(DEFAULT_COMPANY_LOGO)
-                    .imagePublicId(null)
-                    .whenCreated(new Date())
-                    .build();
-        } else {
-            CloudinaryResponseDTO logoUpload = cloudinaryService.uploadFileBase64_v2(requestDTO.logo(), FOLDER_COMPANY_LOGO);
-            logo = Image.builder()
-                    .name(logoUpload.name())
+                    .name("The logo of "+requestDTO.name())
                     .imageUrl(logoUpload.url())
                     .imagePublicId(logoUpload.public_id())
-                    .whenCreated(new Date())
+                    .whenCreated(TimeUtil.getDateTimeNow())
+                    .build();
+        } else {
+            logo = Image.builder()
+                    .name("defaul_company_logo")
+                    .imageUrl(appConfig.getDEFAULT_COMPANY_LOGO())
+                    .imagePublicId(null)
+                    .whenCreated(TimeUtil.getDateTimeNow())
                     .build();
         }
         company.setLogo(logo);

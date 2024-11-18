@@ -12,6 +12,7 @@ public record DetailJobPageResponseDTO(
         Integer id,
         String name,
         BriefCompanyResponseDTO company,
+        List<String> provinceList,
         List<String> address,
         String jobPosition,
         Integer numberOfVacancy,

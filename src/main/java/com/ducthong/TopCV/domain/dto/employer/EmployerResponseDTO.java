@@ -1,6 +1,7 @@
 package com.ducthong.TopCV.domain.dto.employer;
 
 import java.util.Date;
+import java.util.Map;
 
 import com.ducthong.TopCV.domain.entity.Image;
 import com.ducthong.TopCV.domain.entity.address.Address;
@@ -10,23 +11,21 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
-@Builder
-public class EmployerResponseDTO {
-    private Integer id;
-    private String username;
-    private String firstName;
-    private String lastName;
-    private Gender gender;
-    private Date dateOfBirth;
-    private String email;
-    private Image avatar;
-    private String phoneNumber;
-    private Address address;
-    private Date lastUpdated;
-    private Date lastLogIn;
-    private Date whenCreated;
-    private Date whenDeleted;
-    private Integer verifiedLevel;
-}
+@Builder 
+public record EmployerResponseDTO (
+     Integer id,
+     String username,
+     String firstName,
+     String lastName,
+     Gender gender,
+     String dateOfBirth,
+     String email,
+     Map<String, String> avatar,
+     String phoneNumber,
+     Address address,
+     String lastUpdated,
+     Date lastLogIn,
+     String whenCreated,
+     Date whenDeleted,
+     Integer verifiedLevel
+){}

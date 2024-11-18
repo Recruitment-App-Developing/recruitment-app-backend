@@ -45,7 +45,7 @@ public class CandidateServiceImpl implements CandidateService {
         Candidate newCandidate = new Candidate();
         newCandidate.setUsername(requestDTO.username());
         newCandidate.setEmail(requestDTO.email());
-        newCandidate.setWhenCreated(new Date());
+        //newCandidate.setWhenCreated(new Date());
         newCandidate.setDeleted(false);
         newCandidate.setIsFindJob(false);
         // Password

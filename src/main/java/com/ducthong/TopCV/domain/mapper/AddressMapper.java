@@ -6,6 +6,6 @@ import com.ducthong.TopCV.domain.entity.address.PersonAddress;
 
 public interface AddressMapper {
     PersonAddress addRequestToPersonAddressEntity(AddPersonAddressRequestDTO requestDTO);
-
     JobAddress toJobAddress(String detail, String wardCode);
+    PersonAddress toPersonAddress(String detail, String wardCode);
 }

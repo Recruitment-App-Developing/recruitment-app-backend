@@ -1,10 +1,12 @@
 package com.ducthong.TopCV.domain.entity.account;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import com.ducthong.TopCV.constant.TimeFormatConstant;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -49,9 +51,8 @@ public class Account implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern = "yyyy/MM/dd")
-    private Date dateOfBirth;
+    @DateTimeFormat(pattern = TimeFormatConstant.DATE_FORMAT)
+    private LocalDateTime dateOfBirth;
 
     @Email(message = "Invalid email format")
     private String email;
@@ -63,21 +64,19 @@ public class Account implements UserDetails {
     @Pattern(regexp = "^(0[3|5|7|8|9])+([0-9]{8})$", message = "Invalid phone format")
     private String phoneNumber;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id")
     private PersonAddress address;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
-    private Date lastUpdated;
+    @DateTimeFormat(pattern = TimeFormatConstant.FULL_DATETIME_FORMAT)
+    private LocalDateTime lastUpdated;
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date lastLogIn;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
-    private Date whenCreated;
+    @DateTimeFormat(pattern = TimeFormatConstant.FULL_DATETIME_FORMAT)
+    private LocalDateTime whenCreated;
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")

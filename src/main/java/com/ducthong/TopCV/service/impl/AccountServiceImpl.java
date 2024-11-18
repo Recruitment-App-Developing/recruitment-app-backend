@@ -72,45 +72,45 @@ public class AccountServiceImpl implements AccountService {
         return Response.successfulResponse(messageUtil.getMessage(SuccessMessage.Account.GET_ONE), response);
     }
 
-    public Response<CandidateResponseDTO> addCandidateAccount(AddCandidateRequestDTO requestDTO) throws IOException {
-        if (!accountRepo.findByUsername(requestDTO.username()).isEmpty())
-            throw new AppException(ErrorMessage.Account.USERNAME_EXISTED, requestDTO.username());
-        if (!accountRepo.findByEmail(requestDTO.email()).isEmpty())
-            throw new AppException(ErrorMessage.Account.EMAIL_EXISTED, requestDTO.email());
-
-        Candidate addCandidate = account2Mapper.addCandidateDtoToCandidateEntity(requestDTO);
-        // Set Address
-        addCandidate.setAddress(addressMapper.addRequestToPersonAddressEntity(requestDTO.address()));
-        // Encode password
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        addCandidate.setPassword(passwordEncoder.encode(requestDTO.password()));
-        // Upload Avatar Image to Cloudinary
-        Image avatarUpload;
-        if (requestDTO.avatar() == null || requestDTO.avatar().isEmpty()) {
-            Image defaultImage = imageRepository.findById(1).get();
-            avatarUpload = Image.builder()
-                    .name(defaultImage.getName())
-                    .imageUrl(defaultImage.getImageUrl())
-                    .imagePublicId(defaultImage.getImagePublicId())
-                    .whenCreated(new Date())
-                    .build();
-        } else {
-            Map uploadImage = cloudinaryService.upload(requestDTO.avatar(), folderAvatar);
-            avatarUpload = Image.builder()
-                    .name((String) uploadImage.get("original_filename"))
-                    .imageUrl((String) uploadImage.get("url"))
-                    .imagePublicId((String) uploadImage.get("public_id"))
-                    .whenCreated(new Date())
-                    .build();
-        }
-        addCandidate.setAvatar(avatarUpload);
-
-        Candidate resCandidate = candidateRepository.save(addCandidate);
-
-        return Response.successfulResponse(
-                messageUtil.getMessage(SuccessMessage.Account.ADD),
-                AccountMapper.INSTANCE.toCandidateResponseDto(resCandidate));
-    }
+//    public Response<CandidateResponseDTO> addCandidateAccount(AddCandidateRequestDTO requestDTO) throws IOException {
+//        if (!accountRepo.findByUsername(requestDTO.username()).isEmpty())
+//            throw new AppException(ErrorMessage.Account.USERNAME_EXISTED, requestDTO.username());
+//        if (!accountRepo.findByEmail(requestDTO.email()).isEmpty())
+//            throw new AppException(ErrorMessage.Account.EMAIL_EXISTED, requestDTO.email());
+//
+//        Candidate addCandidate = account2Mapper.addCandidateDtoToCandidateEntity(requestDTO);
+//        // Set Address
+//        addCandidate.setAddress(addressMapper.addRequestToPersonAddressEntity(requestDTO.address()));
+//        // Encode password
+//        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+//        addCandidate.setPassword(passwordEncoder.encode(requestDTO.password()));
+//        // Upload Avatar Image to Cloudinary
+//        Image avatarUpload;
+//        if (requestDTO.avatar() == null || requestDTO.avatar().isEmpty()) {
+//            Image defaultImage = imageRepository.findById(1).get();
+//            avatarUpload = Image.builder()
+//                    .name(defaultImage.getName())
+//                    .imageUrl(defaultImage.getImageUrl())
+//                    .imagePublicId(defaultImage.getImagePublicId())
+//                    .whenCreated(new Date())
+//                    .build();
+//        } else {
+//            Map uploadImage = cloudinaryService.upload(requestDTO.avatar(), folderAvatar);
+//            avatarUpload = Image.builder()
+//                    .name((String) uploadImage.get("original_filename"))
+//                    .imageUrl((String) uploadImage.get("url"))
+//                    .imagePublicId((String) uploadImage.get("public_id"))
+//                    .whenCreated(new Date())
+//                    .build();
+//        }
+//        addCandidate.setAvatar(avatarUpload);
+//
+//        Candidate resCandidate = candidateRepository.save(addCandidate);
+//
+//        return Response.successfulResponse(
+//                messageUtil.getMessage(SuccessMessage.Account.ADD),
+//                AccountMapper.INSTANCE.toCandidateResponseDto(resCandidate));
+//    }
 
     @Override
     public Response<CandidateResponseDTO> updCandidateAccount(Integer id, UpdCandidateRequestDTO requestDTO) {
@@ -195,8 +195,6 @@ public class AccountServiceImpl implements AccountService {
             return Response.successfulResponse(messageUtil.getMessage(SuccessMessage.Account.DELETE_PERM));
         } catch (AppException e) {
             throw new AppException(ErrorMessage.Account.DELETE_PERM);
-        } catch (IOException e) {
-            throw new AppException();
         }
     }
     //    public Response<CandidateResponseDTO> getDetailAccount(Integer id) {

@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.util.Map;
 import java.util.Objects;
 
+import com.ducthong.TopCV.exceptions.AppException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,8 +55,12 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         return result;
     }
 
-    public Map delete(String id) throws IOException {
-        return cloudinary.uploader().destroy(id, ObjectUtils.emptyMap());
+    public void delete(String id){
+        try {
+            cloudinary.uploader().destroy(id, ObjectUtils.emptyMap());
+        } catch (IOException e) {
+            throw new AppException("Xoá ảnh thất bại");
+        }
     }
 
     private File convert(MultipartFile multipartFile) throws IOException {

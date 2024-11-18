@@ -32,13 +32,13 @@ public class Endpoint {
         public static final class Employer {
             public static final String ROLE = PREFIX + "/employer";
             public static final String BASE = PREFIX + "/employer";
+            public static final String MY_ACCOUNT = BASE + "/my-account";
             public static final String REGISTER_EMPLOYER = BASE + "/register";
+            public static final String UPDATE_EMPLOYER = BASE + "/update";
             public static final String REGISTER_COMPANY = BASE + "/register-company/{companyId}";
 
             public static final class Account {
                 public static final String BASE = Employer.ROLE + "/account";
-                public static final String GET_DETAIL = BASE + "/{id}";
-                public static final String UPDATE = BASE + "/update/{id}";
             }
         }
 

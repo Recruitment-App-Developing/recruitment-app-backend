@@ -1,7 +1,9 @@
 package com.ducthong.TopCV.domain.mapper.impl;
 
-import java.util.Date;
+import java.util.Map;
 
+import com.ducthong.TopCV.domain.dto.employer.DetailEmployerResponseDTO;
+import com.ducthong.TopCV.utility.TimeUtil;
 import org.springframework.stereotype.Component;
 
 import com.ducthong.TopCV.domain.dto.employer.AddEmployerRequestDTO;
@@ -33,15 +35,39 @@ public class EmployerMapperImpl implements EmployerMapper {
                 .firstName(entity.getFirstName())
                 .lastName(entity.getLastName())
                 .gender(entity.getGender())
-                .dateOfBirth(entity.getDateOfBirth())
+                .dateOfBirth(TimeUtil.toStringDate(entity.getDateOfBirth()))
                 .email(entity.getEmail())
-                .avatar(entity.getAvatar())
+                .avatar(Map.of(
+                        "id", entity.getAvatar().getId().toString(),
+                        "imageUrl", entity.getAvatar().getImageUrl()
+                        ))
                 .phoneNumber(entity.getPhoneNumber())
                 .address(entity.getAddress())
-                .lastUpdated(entity.getLastUpdated())
+                .lastUpdated(TimeUtil.toStringFullDateTime(entity.getLastUpdated()))
                 .lastLogIn(entity.getLastLogIn())
-                .whenCreated(entity.getWhenCreated())
+                .whenCreated(TimeUtil.toStringFullDateTime(entity.getWhenCreated()))
                 .whenDeleted(entity.getWhenDeleted())
+                .verifiedLevel(entity.getVerifiedLevel())
+                .build();
+    }
+
+    @Override
+    public DetailEmployerResponseDTO toDetailEmployerResponseDto(Employer entity) {
+        return DetailEmployerResponseDTO.builder()
+                .id(entity.getId())
+                .username(entity.getUsername())
+                .firstName(entity.getFirstName())
+                .lastName(entity.getLastName())
+                .gender(entity.getGender())
+                .dateOfBirth(TimeUtil.toStringDateTime(entity.getDateOfBirth()))
+                .email(entity.getEmail())
+                .avatar(Map.of(
+                        "id", entity.getAvatar().getId().toString(),
+                        "url", entity.getAvatar().getImageUrl()
+                ))
+                .phoneNumber(entity.getPhoneNumber())
+                .address(entity.getAddress())
+                .whenCreated(TimeUtil.toStringFullDateTime(entity.getWhenCreated()))
                 .verifiedLevel(entity.getVerifiedLevel())
                 .build();
     }
@@ -59,7 +85,8 @@ public class EmployerMapperImpl implements EmployerMapper {
                 .gender(requestDTO.gender())
                 .email(requestDTO.email())
                 .phoneNumber(requestDTO.phoneNumber())
-                .whenCreated(new Date())
+                .verifiedLevel(0)
+                .whenCreated(TimeUtil.getDateTimeNow())
                 .lastLogIn(null)
                 .lastUpdated(null)
                 .whenDeleted(null)
@@ -74,11 +101,8 @@ public class EmployerMapperImpl implements EmployerMapper {
         employerEntity.setFirstName(requestDTO.firstName());
         employerEntity.setLastName(requestDTO.lastName());
         employerEntity.setGender(requestDTO.gender());
-        employerEntity.setDateOfBirth(requestDTO.dateOfBirth());
-        employerEntity.setEmail(requestDTO.email());
-        employerEntity.setPhoneNumber(requestDTO.phoneNumber());
-        employerEntity.setLastUpdated(new Date());
-        employerEntity.setVerifiedLevel(requestDTO.verifiedLevel());
+        employerEntity.setDateOfBirth(TimeUtil.convertToDate(requestDTO.dateOfBirth()));
+        employerEntity.setLastUpdated(TimeUtil.getDateTimeNow());
 
         return employerEntity;
     }

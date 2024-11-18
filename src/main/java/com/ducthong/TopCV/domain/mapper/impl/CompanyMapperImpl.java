@@ -14,10 +14,7 @@ import com.ducthong.TopCV.repository.CompanyRepository;
 
 import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -106,17 +103,47 @@ public class CompanyMapperImpl implements CompanyMapper {
 
     @Override
     public BriefCompanyResponseDTO toBriefCompanyResponseDto(Company entity) {
-            return BriefCompanyResponseDTO.builder()
-                    .id(entity.getId())
-                    .name(entity.getName())
-                    .logo(entity.getLogo().getImageUrl())
-                    .urlCom(entity.getUrlCom())
-                    .employeeScale(entity.getEmployeeScale())
-                    .build();
+        // Headquaters
+        Optional<CompanyAddress> headequatersOptional = entity.getAddressList().stream().filter(CompanyAddress::getIsMain).findFirst();
+        String headquaters = headequatersOptional.get().toString();
+        // Active Fields
+        List<Map<String, String>> activeFields = new ArrayList<>();
+        if (entity.getActiveFields() != null)
+            Arrays.stream(entity.getActiveFields().split(";")).forEach(
+                    item -> {
+                        Optional<Industry> industryOptional = industryRepo.findById(Integer.valueOf(item));
+                        activeFields.add(Map.of(
+                                "id", industryOptional.get().getId().toString(),
+                                "name", industryOptional.get().getName()
+                        ));
+                    }
+            );
+
+        return BriefCompanyResponseDTO.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .logo(entity.getLogo().getImageUrl())
+                .headquarters(headquaters)
+                .activeFields(activeFields)
+                .urlCom(entity.getUrlCom())
+                .employeeScale(entity.getEmployeeScale())
+                .build();
     }
 
     @Override
     public DetailCompanyResponseDTO toDetailCompanyResponseDto(Company entity) {
+        // Active Fields
+        List<Map<String, String>> activeFields = new ArrayList<>();
+        if (entity.getActiveFields() != null)
+            Arrays.stream(entity.getActiveFields().split(";")).forEach(
+                    item -> {
+                        Optional<Industry> industryOptional = industryRepo.findById(Integer.valueOf(item));
+                        activeFields.add(Map.of(
+                                "id", industryOptional.get().getId().toString(),
+                                "name", industryOptional.get().getName()
+                        ));
+                    }
+            );
         return DetailCompanyResponseDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())

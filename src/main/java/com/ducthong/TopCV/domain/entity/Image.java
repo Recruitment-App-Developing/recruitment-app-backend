@@ -1,7 +1,10 @@
 package com.ducthong.TopCV.domain.entity;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
+import com.ducthong.TopCV.constant.TimeFormatConstant;
+import com.ducthong.TopCV.utility.TimeUtil;
 import jakarta.persistence.*;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -29,7 +32,12 @@ public class Image {
 
     private String imagePublicId;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss")
-    private Date whenCreated;
+    @DateTimeFormat(pattern = TimeFormatConstant.FULL_DATETIME_FORMAT)
+    private LocalDateTime whenCreated;
+
+    public Image(String name, String url){
+        this.setName(name);
+        this.setImageUrl(url);
+        this.setWhenCreated(TimeUtil.getDateTimeNow());
+    }
 }

@@ -4,15 +4,14 @@ import java.util.*;
 
 import com.ducthong.TopCV.domain.dto.job.*;
 import com.ducthong.TopCV.domain.dto.job.job_address.JobAddressResponseDTO;
-import com.ducthong.TopCV.domain.entity.Image;
-import com.ducthong.TopCV.domain.entity.IndustryJob;
+import com.ducthong.TopCV.domain.entity.*;
+import com.ducthong.TopCV.domain.entity.address.Address;
 import com.ducthong.TopCV.domain.entity.address.JobAddress;
 import com.ducthong.TopCV.domain.mapper.CompanyMapper;
+import com.ducthong.TopCV.repository.IndustryRepository;
 import org.springframework.stereotype.Component;
 
 import com.ducthong.TopCV.domain.dto.image.ImageResponseDTO;
-import com.ducthong.TopCV.domain.entity.Company;
-import com.ducthong.TopCV.domain.entity.Job;
 import com.ducthong.TopCV.domain.enums.ApplicationMethod;
 import com.ducthong.TopCV.domain.enums.Gender;
 import com.ducthong.TopCV.domain.enums.JobPosition;
@@ -101,6 +100,9 @@ public class JobMapperImpl implements JobMapper {
                 .lastUpdated(TimeUtil.toStringDateTime(entity.getLastUpdated()))
                 .numberOfLike(entity.getNumberOfLike())
                 .numberOfView(entity.getNumberOfView())
+                .receiverName(entity.getName())
+                .receiverPhone(entity.getReceiverPhone())
+                .receiverEmail(entity.getReceiverEmail())
                 .isApply(isApply)
                 .applicationMethod(entity.getApplicationMethod().name())
                 .imageList(imageList)
@@ -111,9 +113,10 @@ public class JobMapperImpl implements JobMapper {
 
     @Override
     public DetailJobPageResponseDTO toDetailJobPageResponseDto(Job entity, Boolean isApply) {
-        // Address
+        // Address Job
         List<String> jobAddress =
                 entity.getAddresses().stream().map(JobAddress::toString).toList();
+        List<String> provinceList = entity.getAddresses().stream().map(Address::getProvinceName).toList();
         // Image
         List<String> imageList = new ArrayList<>();
         if (!entity.getImageList().isEmpty()) {
@@ -138,10 +141,12 @@ public class JobMapperImpl implements JobMapper {
                         "name", item.getIndustry().getName())));
         // Company
         Company company = entity.getCompany();
+
         return DetailJobPageResponseDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())
                 .company(companyMapper.toBriefCompanyResponseDto(company))
+                .provinceList(provinceList)
                 .address(jobAddress)
                 .jobPosition(entity.getJobPosition().name())
                 .numberOfVacancy(entity.getNumberOfVacancy())
@@ -187,6 +192,9 @@ public class JobMapperImpl implements JobMapper {
                 .jobRequirement(requestDTO.jobRequirement())
                 .addApplicationInfor(requestDTO.addApplicationInfor())
                 .lastUpdated(null)
+                .receiverName(requestDTO.receiverName())
+                .receiverPhone(requestDTO.receiverPhone())
+                .receiverEmail(requestDTO.receiverEmail())
                 .isActive(requestDTO.isActive())
                 .isTempDeleted(false)
                 .tempDeletedTime(null)
