@@ -65,6 +65,7 @@ public class Endpoint {
             public static final String BASE = V1.PREFIX + "/auth";
             public static final String LOGIN = BASE + "/login";
             public static final String INTROSPECT = BASE + "/introspect";
+            public static final String CHANGE_PASSWORD = BASE + "/change-password";
         }
 
         public static final class Account {

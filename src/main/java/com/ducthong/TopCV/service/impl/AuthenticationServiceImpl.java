@@ -1,17 +1,18 @@
 package com.ducthong.TopCV.service.impl;
 
+import java.util.Map;
 import java.util.Optional;
 
+import com.ducthong.TopCV.constant.MailTemplate;
+import com.ducthong.TopCV.domain.dto.authentication.*;
+import com.ducthong.TopCV.utility.MailSenderUtil;
+import com.ducthong.TopCV.utility.TimeUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ducthong.TopCV.constant.messages.ErrorMessage;
 import com.ducthong.TopCV.constant.messages.SuccessMessage;
-import com.ducthong.TopCV.domain.dto.authentication.IntrospectTokenRequestDTO;
-import com.ducthong.TopCV.domain.dto.authentication.IntrospectTokenResponseDTO;
-import com.ducthong.TopCV.domain.dto.authentication.LoginRequestDTO;
-import com.ducthong.TopCV.domain.dto.authentication.LoginResponseDTO;
 import com.ducthong.TopCV.domain.entity.account.Account;
 import com.ducthong.TopCV.domain.mapper.AccountMapper;
 import com.ducthong.TopCV.exceptions.AppException;
@@ -24,18 +25,22 @@ import com.ducthong.TopCV.utility.MessageSourceUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@EnableTransactionManagement
 public class AuthenticationServiceImpl implements AuthenticationService {
     MessageSourceUtil messageSourceUtil;
-    AccountRepository accountRepository;
+    AccountRepository accountRepo;
     JwtTokenUtil jwtTokenUtil;
+    MailSenderUtil mailSenderUtil;
 
     @Override
     public Response<LoginResponseDTO> login(LoginRequestDTO requestDTO) {
-        Optional<Account> accountResult = accountRepository.findByUsername(requestDTO.username());
+        Optional<Account> accountResult = accountRepo.findByUsername(requestDTO.username());
         //        if (accountResult.get() instanceof Employer) System.out.println("Employer");
         //        if (accountResult.get() instanceof Candidate) System.out.println("Candidate");
 
@@ -66,5 +71,36 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         .verifired(jwtTokenUtil.validateToken(requestDTO.token()))
                         .subject(jwtTokenUtil.getSubject(requestDTO.token()))
                         .build());
+    }
+
+    @Override
+    @Transactional
+    public Response<String> changePassword(Integer accountId, ChangePasswordRequestDTO requestDTO) {
+        Optional<Account> findAccount = accountRepo.findById(accountId);
+        if (findAccount.isEmpty()) throw new AppException("Tài khoản này không tồn tại");
+        Account account = findAccount.get();
+
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        boolean authenticated =
+                passwordEncoder.matches(requestDTO.oldPassword(), account.getPassword());
+        if (!authenticated) throw new AppException("Mật khẩu hiện tại không hợp lệ");
+
+        account.setPassword(passwordEncoder.encode(requestDTO.newPassword()));
+        try {
+            Account saveUser = accountRepo.save(account);
+
+            // Send mail
+            String toMail = account.getEmail();
+            String subject = MailTemplate.CHANGE_PASSWORD.CHANGE_PASSWORD_SUBJECT;
+            String template = MailTemplate.CHANGE_PASSWORD.CHANGE_PASSWORD_TEMPLATE;
+            Map<String, Object> variable = Map.of(
+                    "userName", account.getUsername(),
+                    "newPassword", requestDTO.newPassword(),
+                    "whenChange", TimeUtil.toStringFullDateTime(TimeUtil.getDateTimeNow()));
+            mailSenderUtil.sendMailWithHTML(toMail, subject, template, variable);
+            return Response.successfulResponse("Thay đổi mật khẩu thành công. Hãy kiểm tra Email để nhận mật khẩu mới.");
+        } catch (Exception e) {
+            throw new AppException("Thay đổi mật khẩu thất bại");
+        }
     }
 }

@@ -14,6 +14,8 @@ import com.ducthong.TopCV.utility.MessageSourceUtil;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.*;
+
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
@@ -37,13 +39,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     ResponseEntity<Response<String>> handlingMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        List<String> errors = new ArrayList<>();
+
+        ex.getAllErrors().forEach(err -> errors.add(err.getDefaultMessage()));
+
+        Map<String, String> result = new HashMap<>();
+        result.put("error", errors.getFirst());
         return ResponseEntity.badRequest()
-                .body(Response.failedResponse(
-                        HttpStatus.BAD_REQUEST.value(), ex.getFieldError().getDefaultMessage()));
+                .body(Response.failedResponse(HttpStatus.BAD_REQUEST.value(), result.get("error")));
     }
 
     @ExceptionHandler(value = ValidationException.class)
-    ResponseEntity<Response<String>> handlingMethodArgumentNotValidException(ValidationException ex) {
+    ResponseEntity<Response<String>> handlingValidationException(ValidationException ex) {
         return ResponseEntity.badRequest()
                 .body(Response.failedResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
     }
