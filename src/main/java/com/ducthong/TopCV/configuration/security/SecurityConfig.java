@@ -22,7 +22,8 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final AccountRepository accountRepository;
+
+
     private final JwtTokenFilter jwtTokenFilter;
     private static final String CATCH_ALL_WILDCARDS = "/**";
     public static final String[] PUBLIC_ENDPOINTS = {
