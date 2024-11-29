@@ -55,11 +55,19 @@ public class TimeUtil {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TimeFormatConstant.FULL_DATETIME_FORMAT);
         return  dateTime.format(formatter).toString();
     }
+    public static int getHoursDifferenceNow(LocalDateTime applyTime) {
+        if (applyTime == null) return 0;
+        LocalDateTime now = LocalDateTime.now();
+        if (applyTime.isBefore(now)) return 0;
 
-    public static int getHoursDifference(LocalDateTime startTime, LocalDateTime endTime) {
-        Duration duration = Duration.between(startTime, endTime);
-        System.out.println(duration.toMinutes());
-        Double hours = duration.toMinutes() / 60.0;
-        return (int) Math.round(hours);
+        Duration duration = Duration.between(applyTime, now);
+        return (int) duration.toHours();
+    }
+    public static int getHoursDifferenceUpdate(LocalDateTime updateTime) {
+        if (updateTime == null) return 0;
+        LocalDateTime now = LocalDateTime.now();
+
+        Duration duration = Duration.between(updateTime, now);
+        return (int) duration.toHours();
     }
 }

@@ -2,6 +2,7 @@ package com.ducthong.TopCV.service.impl;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.ducthong.TopCV.domain.entity.Application;
@@ -72,9 +73,11 @@ public class CvServiceImpl implements CvService {
     public CvResponseDTO addCv(Integer candidateId, CvRequestDTO requestDTO) throws IOException {
         Candidate candidate = GetRoleUtil.getCandidate(candidateId);
 
+        for (CV item : candidate.getCvs())
+            if (Objects.equals(item.getName(), requestDTO.name())) throw new AppException("Tên CV này đã tồn tại");
+
         CV cvNew = cvMapper.cvRequestDtoToEntity(requestDTO);
         CloudinaryResponseDTO cvUpload = cloudinaryService.uploadFileBase64_v2(requestDTO.cvFile(), CV_FOLDER);
-        cvNew.setName(cvUpload.name());
         cvNew.setCvLink(cvUpload.url());
         cvNew.setCvPublicId(cvUpload.public_id());
         cvNew.setCandidate(candidate);
@@ -88,18 +91,12 @@ public class CvServiceImpl implements CvService {
     }
 
     @Override
+    @Transactional
     public CvResponseDTO updateCv(Integer accountId, UpdCvRequestDTO requestDTO) throws IOException {
         CV cvTemp = isCvAccess(requestDTO.id(), accountId);
 
-        if (!requestDTO.cvName().isEmpty()) cvTemp.setName(requestDTO.cvName());
-        if (!requestDTO.cvFile().isEmpty()) {
-            CloudinaryResponseDTO cvUpload = cloudinaryService.uploadFileBase64_v2(requestDTO.cvFile(), CV_FOLDER);
-            cvTemp.setCvLink(cvUpload.url());
-            cvTemp.setCvPublicId(cvUpload.public_id());
-        }
-        if (requestDTO.isPublic() != null) cvTemp.setIsPublic(requestDTO.isPublic());
+        cvTemp.setName(requestDTO.cvName());
         cvTemp.setLastUpdated(TimeUtil.getDateTimeNow());
-
         CV cvNew = cvRepo.save(cvTemp);
 
         return cvMapper.toCvResponseDto(cvNew);

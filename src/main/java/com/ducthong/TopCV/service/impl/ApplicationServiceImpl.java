@@ -22,6 +22,7 @@ import com.ducthong.TopCV.domain.mapper.AccountMapper;
 import com.ducthong.TopCV.domain.mapper.ApplicationMapper;
 import com.ducthong.TopCV.exceptions.AppException;
 import com.ducthong.TopCV.repository.ApplicationRepository;
+import com.ducthong.TopCV.repository.CvRepository;
 import com.ducthong.TopCV.repository.JobRepository;
 import com.ducthong.TopCV.responses.MetaResponse;
 import com.ducthong.TopCV.service.ApplicationService;
@@ -46,6 +47,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     // Repository
     private final JobRepository jobRepo;
     private final ApplicationRepository applicationRepo;
+    private final CvRepository cvRepo;
     // Service
     private final CvService cvService;
     private final CompanyService companyService;
@@ -67,10 +69,16 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (item.getJob().getId() == requestDTO.jobId()) throw new AppException("You have applied for this job before");
         // CV
         //CV cv = cvService.isCvAccess(requestDTO.cvId(), accountId);
+        String cvLink = CV_LINK + candidate.getCvProfile().getId();
+        if (requestDTO.cvId() != null && !requestDTO.cvId().equals("")) {
+            Optional<CV> cv = cvRepo.findById(requestDTO.cvId());
+            if (cv.isEmpty()) throw new AppException("CV này không tồn tại");
+            cvLink = cv.get().getCvLink();
+        }
 
         Application applicationNew = Application.builder()
                 //.cvLink(cv.getCvLink())
-                .cvLink(CV_LINK + candidate.getCvProfile().getId())
+                .cvLink(cvLink)
                 .status(ApplicationStatus.NEW)
                 .applicationTime(TimeUtil.getDateTimeNow())
                 .lastUpdated(null)

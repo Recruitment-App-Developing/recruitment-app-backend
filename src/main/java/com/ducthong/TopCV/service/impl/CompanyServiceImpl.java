@@ -140,6 +140,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional
     public DetailCompanyResponseDTO getDetailCompany(Integer companyId) {
         Optional<Company> findCompany = companyRepo.findById(companyId);
         if (findCompany.isEmpty()) throw new AppException("This company is not existed");

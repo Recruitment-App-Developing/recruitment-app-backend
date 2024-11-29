@@ -10,7 +10,10 @@ import java.util.List;
 public record CvProfileResponseDTO(
         String id,
         String avatar,
+        String dateOfBirth,
+        String phoneNumber,
         String candidateName,
+        String email,
         List<Education> educations,
         List<Experience> experiences
 ) {

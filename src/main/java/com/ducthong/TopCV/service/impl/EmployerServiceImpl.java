@@ -10,6 +10,7 @@ import com.ducthong.TopCV.configuration.AppConfig;
 import com.ducthong.TopCV.domain.dto.account.AccountResponseDTO;
 import com.ducthong.TopCV.domain.dto.authentication.LoginResponseDTO;
 import com.ducthong.TopCV.domain.dto.cloudinary.CloudinaryResponseDTO;
+import com.ducthong.TopCV.domain.dto.employer.EmployerHomePageResponseDTO;
 import com.ducthong.TopCV.domain.entity.Company;
 import com.ducthong.TopCV.domain.entity.address.PersonAddress;
 import com.ducthong.TopCV.domain.entity.address.Ward;
@@ -64,6 +65,11 @@ public class EmployerServiceImpl implements EmployerService {
     private final AddressMapper addressMapper;
     // Variable
     private final AppConfig appConfig;
+
+    @Override
+    public EmployerHomePageResponseDTO homePageForEmployer(Integer accountId) {
+        return null; //TODO
+    }
 
     @Override
     public Response<EmployerResponseDTO> getActiveEmployerAccount(Integer accountId) {

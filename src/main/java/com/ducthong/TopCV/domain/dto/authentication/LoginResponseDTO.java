@@ -6,4 +6,6 @@ import lombok.Builder;
 
 @Builder
 public record LoginResponseDTO(
-        Boolean authenticated, String token, AccountResponseDTO infor) {}
+        Boolean authenticated,
+        String token,
+        AccountResponseDTO infor) {}

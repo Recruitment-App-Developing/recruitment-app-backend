@@ -59,7 +59,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         try {
             cloudinary.uploader().destroy(id, ObjectUtils.emptyMap());
         } catch (IOException e) {
-            throw new AppException("Xoá ảnh thất bại");
+            e.printStackTrace();
         }
     }
 

@@ -26,6 +26,7 @@ public class Application {
 
     private String cvLink;
 
+    @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
 
     @DateTimeFormat(pattern = TimeFormatConstant.DATETIME_FORMAT)

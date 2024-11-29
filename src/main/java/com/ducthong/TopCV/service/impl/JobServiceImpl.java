@@ -3,14 +3,18 @@ package com.ducthong.TopCV.service.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.ducthong.TopCV.domain.dto.job.*;
 import com.ducthong.TopCV.domain.dto.job.job_address.JobAddressRequestDTO;
 import com.ducthong.TopCV.domain.dto.job.job_address.JobAddressResponseDTO;
-import com.ducthong.TopCV.repository.ApplicationRepository;
-import com.ducthong.TopCV.repository.IndustryJobRepository;
+import com.ducthong.TopCV.domain.entity.*;
+import com.ducthong.TopCV.domain.entity.account.Account;
+import com.ducthong.TopCV.domain.entity.account.Candidate;
+import com.ducthong.TopCV.repository.*;
 import com.ducthong.TopCV.repository.address.JobAddressRepository;
+import com.ducthong.TopCV.repository.dynamic_query.CustomJobRepository;
 import com.ducthong.TopCV.utility.AuthUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -25,17 +29,11 @@ import com.ducthong.TopCV.constant.meta.MetaConstant;
 import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaResponseDTO;
 import com.ducthong.TopCV.domain.dto.meta.SortingDTO;
-import com.ducthong.TopCV.domain.entity.Image;
-import com.ducthong.TopCV.domain.entity.Industry;
-import com.ducthong.TopCV.domain.entity.IndustryJob;
-import com.ducthong.TopCV.domain.entity.Job;
 import com.ducthong.TopCV.domain.entity.account.Employer;
 import com.ducthong.TopCV.domain.entity.address.JobAddress;
 import com.ducthong.TopCV.domain.mapper.AddressMapper;
 import com.ducthong.TopCV.domain.mapper.JobMapper;
 import com.ducthong.TopCV.exceptions.AppException;
-import com.ducthong.TopCV.repository.IndustryRepository;
-import com.ducthong.TopCV.repository.JobRepository;
 import com.ducthong.TopCV.responses.MetaResponse;
 import com.ducthong.TopCV.service.ImageService;
 import com.ducthong.TopCV.service.JobService;
@@ -53,6 +51,9 @@ public class JobServiceImpl implements JobService {
     private final ApplicationRepository applicationRepo;
     private final IndustryJobRepository industryJobRepo;
     private final JobAddressRepository jobAddressRepo;
+    private final CompanyRepository companyRepo;
+    private final CandidateRepository candidateRepo;
+    private final CustomJobRepository customJobRepo;
     // Service
     private final ImageService imageService;
     // Mapper
@@ -72,6 +73,18 @@ public class JobServiceImpl implements JobService {
 
         if (job.getCompany().getId() != employer.getCompany().getId()) throw new AppException("This account does not have permissions");
         return job;
+    }
+
+    @Override
+    @Transactional
+    public Boolean isApply(Integer jobId, Integer accountId) {
+        if (accountId == null) return false;
+        Optional<Candidate> candidate = candidateRepo.findById(accountId);
+        if (candidate.isEmpty()) return false;
+        for (Application item : candidate.get().getApplications())
+            if (Objects.equals(item.getJob().getId(), jobId)) return true;
+
+        return false;
     }
 
     @Override
@@ -103,6 +116,17 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    public List<RelatedJobResponseDTO> searchJob(SearchJobRequestDTO requestDTO) {
+        List<Job> res = customJobRepo.searchJob(requestDTO);
+        if (AuthUtil.getRequestedUser() != null) {
+            return res.stream().map(item -> jobMapper.toRelatedJobResponseDto(item,
+                    applicationRepo.checkAccountAppliedJob(item.getId(), AuthUtil.getRequestedUser().getId()))).toList();
+        } else {
+            return res.stream().map(item -> jobMapper.toRelatedJobResponseDto(item, false)).toList();
+        }
+    }
+
+    @Override
     public MetaResponse<MetaResponseDTO, List<EmployerJobResponseDTO>> getListJobByCompany(MetaRequestDTO metaRequestDTO, Integer accountId) {
         Employer employer = GetRoleUtil.getEmployer(accountId);
         if (employer.getCompany().getId() == null) throw new AppException("This account doesn't register company");
@@ -118,6 +142,40 @@ public class JobServiceImpl implements JobService {
         List<EmployerJobResponseDTO> li = page.getContent().stream()
                 .map(temp -> jobMapper.toEmployerJobResponseDto(temp))
                 .toList();
+        return MetaResponse.successfulResponse(
+                "Get list job success",
+                MetaResponseDTO.builder()
+                        .totalItems((int) page.getTotalElements())
+                        .totalPages(page.getTotalPages())
+                        .currentPage(metaRequestDTO.currentPage())
+                        .pageSize(metaRequestDTO.pageSize())
+                        .sorting(SortingDTO.builder()
+                                .sortField(metaRequestDTO.sortField())
+                                .sortDir(metaRequestDTO.sortDir())
+                                .build())
+                        .build(),
+                li);
+    }
+
+    @Override
+    public MetaResponse<MetaResponseDTO, List<RelatedJobResponseDTO>> findListJobByCompany(MetaRequestDTO metaRequestDTO, Integer companyId, String name, String address) {
+        Optional<Company> companyOp = companyRepo.findById(companyId);
+        if (companyOp.isEmpty()) throw new AppException("Công ty này không tồn tại");
+
+        Sort sort = metaRequestDTO.sortDir().equals(MetaConstant.Sorting.DEFAULT_DIRECTION)
+                ? Sort.by(metaRequestDTO.sortField()).ascending()
+                : Sort.by(metaRequestDTO.sortField()).descending();
+        Pageable pageable = PageRequest.of(metaRequestDTO.currentPage(), metaRequestDTO.pageSize(), sort);
+
+        Page<Job> page = jobRepo.findListJobByCompany(pageable, companyId, name, address);
+
+        List<RelatedJobResponseDTO> li = new ArrayList<>();
+        if (AuthUtil.getRequestedUser() != null) {
+            li = page.getContent().stream().map(item -> jobMapper.toRelatedJobResponseDto(item, isApply(item.getId(), AuthUtil.getRequestedUser().getId()))).toList();
+        } else {
+            li = page.getContent().stream().map(item -> jobMapper.toRelatedJobResponseDto(item, false)).toList();
+        }
+
         return MetaResponse.successfulResponse(
                 "Get list job success",
                 MetaResponseDTO.builder()
@@ -182,6 +240,7 @@ public class JobServiceImpl implements JobService {
     @Transactional
     public DetailJobResponseDTO addJob(JobRequestDTO requestDTO, Integer accountId) throws IOException {
         Employer employer = GetRoleUtil.getEmployer(accountId);
+        if (employer.getCompany() == null) throw new AppException("Tài khoản này chưa đăng kí công ty");
 
         Job newJob = jobMapper.jobRequestDtoToJobEntity(requestDTO);
         // Industry

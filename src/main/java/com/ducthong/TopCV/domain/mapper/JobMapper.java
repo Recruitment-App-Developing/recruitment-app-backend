@@ -7,6 +7,7 @@ import com.ducthong.TopCV.domain.entity.address.JobAddress;
 
 public interface JobMapper {
     JobResponseDTO toJobResponseDto(Job entity);
+    RelatedJobResponseDTO toRelatedJobResponseDto(Job entity, Boolean isApply);
     EmployerJobResponseDTO toEmployerJobResponseDto(Job entity);
     DetailJobResponseDTO toDetailJobResponseDto(Job entity, Boolean isApply);
     DetailJobPageResponseDTO toDetailJobPageResponseDto(Job entity, Boolean isApply);

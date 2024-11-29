@@ -51,6 +51,26 @@ public class JobMapperImpl implements JobMapper {
     }
 
     @Override
+    public RelatedJobResponseDTO toRelatedJobResponseDto(Job entity, Boolean isApply) {
+        Company company = entity.getCompany();
+
+        // Address Job
+        List<String> jobAddress =
+                entity.getAddresses().stream().map(JobAddress::toString).toList();
+        List<String> provinceList = entity.getAddresses().stream().map(Address::getProvinceName).toList();
+        return RelatedJobResponseDTO.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .provinces(provinceList)
+                .company(companyMapper.toCompanyResponseDto(company))
+                .salary(entity.getSalary())
+                .applyTime(TimeUtil.getHoursDifferenceNow(entity.getApplicationDueTime()))
+                .lastUpdated(TimeUtil.getHoursDifferenceUpdate(entity.getLastUpdated()))
+                .isApply(isApply)
+                .build();
+    }
+
+    @Override
     public EmployerJobResponseDTO toEmployerJobResponseDto(Job entity) {
         return EmployerJobResponseDTO.builder()
                 .id(entity.getId())

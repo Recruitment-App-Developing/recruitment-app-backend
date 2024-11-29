@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.ducthong.TopCV.constant.MailTemplate;
 import com.ducthong.TopCV.domain.dto.authentication.*;
+import com.ducthong.TopCV.domain.mapper.Account2Mapper;
 import com.ducthong.TopCV.utility.MailSenderUtil;
 import com.ducthong.TopCV.utility.TimeUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -37,12 +38,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     AccountRepository accountRepo;
     JwtTokenUtil jwtTokenUtil;
     MailSenderUtil mailSenderUtil;
-
+    Account2Mapper account2Mapper;
     @Override
+    @Transactional
     public Response<LoginResponseDTO> login(LoginRequestDTO requestDTO) {
         Optional<Account> accountResult = accountRepo.findByUsername(requestDTO.username());
-        //        if (accountResult.get() instanceof Employer) System.out.println("Employer");
-        //        if (accountResult.get() instanceof Candidate) System.out.println("Candidate");
 
         if (accountResult.isEmpty()) throw new AppException(ErrorMessage.Auth.NOT_EXISTED_USERNAME);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
@@ -50,17 +50,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 requestDTO.password(), accountResult.get().getPassword());
         if (authenticated == false) throw new AppException(ErrorMessage.Auth.LOGIN_FAIL);
 
-        // Generate Token
-        String token = jwtTokenUtil.generateToken(accountResult.get());
+        return Response.successfulResponse("Welcome "+accountResult.get().getUsername(),
+                account2Mapper.toLoginResponseDto(accountResult.get()));
 
-        LoginResponseDTO responseDTO = LoginResponseDTO.builder()
-                .authenticated(true)
-                .token(token)
-                .infor(AccountMapper.INSTANCE.toAccountResponseDto(accountResult.get()))
-                .build();
-
-        return Response.successfulResponse(
-                messageSourceUtil.getMessage(SuccessMessage.Auth.LOGIN_SUCCESS), responseDTO);
+//        // Generate Token
+//        String token = jwtTokenUtil.generateToken(accountResult.get());
+//
+//        LoginResponseDTO responseDTO = LoginResponseDTO.builder()
+//                .authenticated(true)
+//                .token(token)
+//                .infor(AccountMapper.INSTANCE.toAccountResponseDto(accountResult.get()))
+//                .build();
+//
+//        return Response.successfulResponse(
+//                messageSourceUtil.getMessage(SuccessMessage.Auth.LOGIN_SUCCESS), responseDTO);
     }
 
     @Override

@@ -13,9 +13,12 @@ import com.ducthong.TopCV.responses.MetaResponse;
 
 public interface JobService {
     Job isVerifiedJob(Integer jobId, Integer accountId);
+    Boolean isApply(Integer jobId, Integer accountId);
     DetailJobResponseDTO getDetailJob(Integer jobId);
     DetailJobPageResponseDTO getDetailJobPage(Integer jobId);
+    List<RelatedJobResponseDTO> searchJob(SearchJobRequestDTO requestDTO);
     MetaResponse<MetaResponseDTO, List<EmployerJobResponseDTO>> getListJobByCompany(MetaRequestDTO metaRequestDTO, Integer accountId);
+    MetaResponse<MetaResponseDTO, List<RelatedJobResponseDTO>> findListJobByCompany(MetaRequestDTO metaRequestDTO, Integer companyId, String name, String address);
     MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJobSpecification(MetaRequestDTO metaRequestDTO);
     MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJob(MetaRequestDTO metaRequestDTO);
     DetailJobResponseDTO addJob(JobRequestDTO requestDTO, Integer userId) throws IOException;

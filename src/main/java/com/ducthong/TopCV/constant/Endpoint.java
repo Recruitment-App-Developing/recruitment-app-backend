@@ -19,6 +19,8 @@ public class Endpoint {
 
         public static final class Candidate {
             public static final String BASE = V1.PREFIX + "/candidate";
+            public static final String GET_DETAIL = BASE + "/detail";
+            public static final String UPDATE = BASE + "/update";
             public static final String REGISTER_CANDIDATE = BASE + "/register";
             public static final String ROLE = PREFIX + "/candidate";
 
@@ -78,7 +80,9 @@ public class Endpoint {
         public static final class Job {
             public static final String BASE = V1.PREFIX + "/job";
             public static final String GET_LIST_JOB = BASE;
+            public static final String SEARCH_JOB = BASE + "/search-job";
             public static final String GET_LIST_BY_COMPANY = BASE + "/byCompany";
+            public static final String FIND_LIST_BY_COMPANY = BASE + "/findJobByCompany/{companyId}";
             public static final String GET_LIST_JOB_SPEC = BASE + "/spec";
             public static final String GET_DETAIL = BASE + "/{jobId}";
             public static final String GET_DETAIL_JOB_PAGE = BASE + "/job-page/{jobId}";
@@ -120,7 +124,14 @@ public class Endpoint {
             public static final String UPDATE_EDUCATION = BASE + "/education/update";
             public static final String DELETE_EDUCATION = BASE + "/education/delete/{educationId}";
         }
-
+        public static final class Statistic {
+            public static final String BASE = V1.PREFIX + "/statistic";
+            public static final String STATISTIC_GENERAL_JOB_BY_INDUSTRY = BASE + "/statistcGeneralJobByIndustry";
+            public static final String STATISTIC_GENERAL_JOB_BY_DAY = BASE + "/statisticGeneralJobByDay";
+            public static final String STATISTIC_COMPANY_JOB_BY_INDUSTRY = BASE + "/statisticCompanyJobByIndustry";
+            public static final String STATISTIC_APPLICATION_STATUS_BY_COMPANY = BASE + "/statisticApplicationStatusByCompany";
+            public static final String STATISTIC_APPLY_CANDIDATE_BY_DAY = BASE + "/statisticApplyCandidateByDay";
+        }
         public static final class Address {
             public static final String BASE = V1.PREFIX + "/address";
             public static final String GET_LIST_PROVINCE = BASE + "/provinces";

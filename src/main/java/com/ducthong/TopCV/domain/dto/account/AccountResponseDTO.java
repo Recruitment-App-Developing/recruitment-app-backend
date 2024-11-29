@@ -14,4 +14,5 @@ public class AccountResponseDTO {
     private String avatar;
     private String phoneNumber;
     private String email;
+    private String cvProfileId;
 }

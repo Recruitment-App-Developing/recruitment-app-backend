@@ -26,6 +26,7 @@ public class CvMapperImpl implements CvMapper {
     @Override
     public CV cvRequestDtoToEntity(CvRequestDTO requestDTO) {
         return CV.builder()
+                .name(requestDTO.name())
                 .cvType(CvType.valueOf(requestDTO.cvType()))
                 .whenCreated(TimeUtil.getDateTimeNow())
                 .lastUpdated(null)

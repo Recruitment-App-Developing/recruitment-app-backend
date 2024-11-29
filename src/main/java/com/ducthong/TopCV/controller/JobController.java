@@ -43,12 +43,30 @@ public class JobController {
             @ParameterObject MetaRequestDTO metaRequestDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(jobService.getListJob(metaRequestDTO));
     }
-
+    @GetMapping(Endpoint.V1.Job.SEARCH_JOB)
+    public ResponseEntity<Response<List<RelatedJobResponseDTO>>> searchJob(
+            @ParameterObject SearchJobRequestDTO requestDTO
+    ){
+        return ResponseEntity.status(HttpStatus.OK).body(Response.successfulResponse(
+                "",
+                jobService.searchJob(requestDTO)));
+    }
     @GetMapping(Endpoint.V1.Job.GET_LIST_BY_COMPANY)
     public ResponseEntity<MetaResponse<MetaResponseDTO, List<EmployerJobResponseDTO>>> getListJobByCompany(
-            @ParameterObject MetaRequestDTO metaRequestDTO) {
+            @ParameterObject MetaRequestDTO metaRequestDTO
+    ) {
         Integer accountId = AuthUtil.getRequestedUser().getId();
         return ResponseEntity.status(HttpStatus.OK).body(jobService.getListJobByCompany(metaRequestDTO, accountId));
+    }
+
+    @GetMapping(Endpoint.V1.Job.FIND_LIST_BY_COMPANY)
+    public ResponseEntity<MetaResponse<MetaResponseDTO, List<RelatedJobResponseDTO>>> findListJobByCompany(
+            @ParameterObject MetaRequestDTO metaRequestDTO,
+            @PathVariable(name = "companyId") Integer companyId,
+            @RequestParam(name = "job_name", required = false) String jobName,
+            @RequestParam(name = "address", required = false) String address
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(jobService.findListJobByCompany(metaRequestDTO, companyId, jobName, address));
     }
 
     @GetMapping(Endpoint.V1.Job.GET_LIST_JOB_SPEC)

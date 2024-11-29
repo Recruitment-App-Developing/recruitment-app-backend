@@ -52,6 +52,9 @@ public class Account2MapperImpl implements Account2Mapper {
         // Avatar
         String avatar = DEFAULT_AVATAR;
         if (account.getAvatar() != null) avatar = account.getAvatar().getImageUrl();
+        // CV Profile Id
+        String cvProfileId = null;
+        if (account instanceof Candidate) cvProfileId = ((Candidate) account).getCvProfile().getId();
 
         return LoginResponseDTO.builder()
                 .token(jwtTokenUtil.generateToken(account))
@@ -63,6 +66,7 @@ public class Account2MapperImpl implements Account2Mapper {
                         .avatar(avatar)
                         .phoneNumber(account.getPhoneNumber())
                         .email(account.getEmail())
+                        .cvProfileId(cvProfileId)
                         .build())
                 .build();
     }
@@ -74,10 +78,8 @@ public class Account2MapperImpl implements Account2Mapper {
         oldCandidate.setLastName(requestDTO.lastName());
         oldCandidate.setGender(requestDTO.gender());
         //oldCandidate.setDateOfBirth(requestDTO.dateOfBirth());
-        oldCandidate.setEmail(requestDTO.email());
         oldCandidate.setPhoneNumber(requestDTO.phoneNumber());
         //oldCandidate.setLastUpdated(new Date());
-        oldCandidate.setIsFindJob(requestDTO.isFindJob());
 
         return oldCandidate;
     }

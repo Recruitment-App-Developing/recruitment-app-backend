@@ -1,10 +1,7 @@
 package com.ducthong.TopCV.domain.mapper;
 
 import com.ducthong.TopCV.domain.dto.authentication.LoginResponseDTO;
-import com.ducthong.TopCV.domain.dto.employer.AddEmployerRequestDTO;
-import com.ducthong.TopCV.domain.dto.employer.DetailEmployerResponseDTO;
-import com.ducthong.TopCV.domain.dto.employer.EmployerResponseDTO;
-import com.ducthong.TopCV.domain.dto.employer.UpdEmployerRequestDTO;
+import com.ducthong.TopCV.domain.dto.employer.*;
 import com.ducthong.TopCV.domain.entity.account.Employer;
 
 public interface EmployerMapper {

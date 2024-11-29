@@ -11,6 +11,7 @@ import com.ducthong.TopCV.repository.CvProfileRepository;
 import com.ducthong.TopCV.repository.cv_profile.EducationRepository;
 import com.ducthong.TopCV.service.CvProfileService;
 import com.ducthong.TopCV.utility.GetRoleUtil;
+import com.ducthong.TopCV.utility.TimeUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -40,11 +41,16 @@ public class CvProfileServiceImpl implements CvProfileService {
         // Avatar
         String avatar = DEFAULT_AVATAR;
         if (cvProfile.getCandidate().getAvatar() != null) avatar = cvProfile.getCandidate().getAvatar().getImageUrl();
+        // Candidate
+        Candidate candidate = cvProfile.getCandidate();
 
         return CvProfileResponseDTO.builder()
                 .id(cvProfile.getId())
                 .avatar(avatar)
                 .candidateName(cvProfile.getCandidate().getFirstName() + cvProfile.getCandidate().getLastName())
+                .dateOfBirth(TimeUtil.toStringDate(candidate.getDateOfBirth()))
+                .phoneNumber(candidate.getPhoneNumber())
+                .email(candidate.getEmail())
                 .educations(cvProfile.getEducations())
                 .experiences(cvProfile.getExperiences())
                 .build();

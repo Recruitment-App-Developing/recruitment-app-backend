@@ -26,10 +26,14 @@ public class CompanyMapperImpl implements CompanyMapper {
     private String DEFAULT_COMPANY_LOGO;
     @Override
     public CompanyResponseDTO toCompanyResponseDto(Company entity) {
+        // Logo
+        String logo = DEFAULT_COMPANY_LOGO;
+        if (entity.getLogo() != null) logo = entity.getLogo().getImageUrl();
+
         return CompanyResponseDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())
-                .logo(entity.getLogo().getImageUrl())
+                .logo(logo)
                 .detailIntro(entity.getDetailIntro())
                 .urlCom(entity.getUrlCom())
                 .build();
@@ -132,18 +136,28 @@ public class CompanyMapperImpl implements CompanyMapper {
 
     @Override
     public DetailCompanyResponseDTO toDetailCompanyResponseDto(Company entity) {
+        // Logo
+        String logo = null;
+        if (entity.getLogo() != null) logo = entity.getLogo().getImageUrl();
+        // Address
+        Optional<CompanyAddress> companyAddress = entity.getAddressList().stream()
+                .filter(CompanyAddress::getIsMain).findFirst();
+        String headQuarters = companyAddress.map(value -> value.getDetail() + ", " + value.getWardName()
+                + ", " + value.getDistrictName() + ", " + value.getProvinceName()).orElse(null);
+        List<CompanyAddress> subAddressOp = entity.getAddressList().stream().filter(item -> !item.getIsMain()).toList();
+        List<String> subAddress = new ArrayList<>();
+        if (!subAddressOp.isEmpty()) subAddress = subAddressOp.stream().map(value -> value.getDetail() + ", " + value.getWardName()
+                + ", " + value.getDistrictName() + ", " + value.getProvinceName()).toList();
         // Active Fields
-        List<Map<String, String>> activeFields = new ArrayList<>();
-        if (entity.getActiveFields() != null)
+        List<String> activeFields = new ArrayList<>();
+        if (entity.getActiveFields() != null) {
             Arrays.stream(entity.getActiveFields().split(";")).forEach(
-                    item -> {
-                        Optional<Industry> industryOptional = industryRepo.findById(Integer.valueOf(item));
-                        activeFields.add(Map.of(
-                                "id", industryOptional.get().getId().toString(),
-                                "name", industryOptional.get().getName()
-                        ));
+                    item->{
+                        Optional<Industry> industry = industryRepo.findById(Integer.valueOf(item));
+                        industry.ifPresent(value -> activeFields.add(value.getName()));
                     }
             );
+        }
         return DetailCompanyResponseDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())
@@ -151,6 +165,9 @@ public class CompanyMapperImpl implements CompanyMapper {
                 .urlCom(entity.getUrlCom())
                 .employeeScale(entity.getEmployeeScale())
                 .numberOfFollow(entity.getNumberOfFollow())
+                .headQuaters(headQuarters)
+                .activeFields(activeFields)
+                .subAddress(subAddress)
                 .detailIntro(entity.getDetailIntro())
                 .build();
     }
