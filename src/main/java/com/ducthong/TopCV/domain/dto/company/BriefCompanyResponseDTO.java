@@ -1,9 +1,9 @@
 package com.ducthong.TopCV.domain.dto.company;
 
-import lombok.Builder;
-
 import java.util.List;
 import java.util.Map;
+
+import lombok.Builder;
 
 @Builder
 public record BriefCompanyResponseDTO(

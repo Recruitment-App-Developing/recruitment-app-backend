@@ -7,10 +7,6 @@ public record EducationRequestDTO(
         String educationId,
         String schoolName,
         String mainIndustry,
-        @JsonFormat(pattern = TimeFormatConstant.MONTH_YEAR)
-        String startTime,
-        @JsonFormat(pattern = TimeFormatConstant.MONTH_YEAR)
-        String endTime,
-        String detail
-) {
-}
+        @JsonFormat(pattern = TimeFormatConstant.MONTH_YEAR) String startTime,
+        @JsonFormat(pattern = TimeFormatConstant.MONTH_YEAR) String endTime,
+        String detail) {}

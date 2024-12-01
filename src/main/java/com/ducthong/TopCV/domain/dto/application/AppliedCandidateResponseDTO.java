@@ -1,9 +1,8 @@
 package com.ducthong.TopCV.domain.dto.application;
 
-import lombok.Builder;
-
 import java.util.List;
-import java.util.Map;
+
+import lombok.Builder;
 
 @Builder
 public record AppliedCandidateResponseDTO(
@@ -14,6 +13,4 @@ public record AppliedCandidateResponseDTO(
         List<String> experiences,
         List<String> education,
         String statusApplication,
-        String cvLink
-) {
-}
+        String cvLink) {}

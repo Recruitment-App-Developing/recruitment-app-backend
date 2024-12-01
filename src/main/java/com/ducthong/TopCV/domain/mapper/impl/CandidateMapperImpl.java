@@ -1,6 +1,11 @@
 package com.ducthong.TopCV.domain.mapper.impl;
 
+import java.util.Map;
+
+import org.springframework.stereotype.Component;
+
 import com.ducthong.TopCV.configuration.AppConfig;
+import com.ducthong.TopCV.domain.dto.account.CandidateResponseDTO;
 import com.ducthong.TopCV.domain.dto.account.UpdCandidateRequestDTO;
 import com.ducthong.TopCV.domain.dto.account.candidate.CandidateRequestDTO;
 import com.ducthong.TopCV.domain.dto.candidate.DetailCandidateResponseDTO;
@@ -8,15 +13,19 @@ import com.ducthong.TopCV.domain.entity.account.Account;
 import com.ducthong.TopCV.domain.entity.account.Candidate;
 import com.ducthong.TopCV.domain.mapper.CandidateMapper;
 import com.ducthong.TopCV.utility.TimeUtil;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class CandidateMapperImpl implements CandidateMapper {
     private final AppConfig appConfig;
+
+    @Override
+    public CandidateResponseDTO toCandidateResponseDto(Candidate entity) {
+        return CandidateResponseDTO.builder().build();
+    }
+
     @Override
     public DetailCandidateResponseDTO toDetailCandidateResponseDto(Candidate entity) {
         // Avatar
@@ -36,8 +45,8 @@ public class CandidateMapperImpl implements CandidateMapper {
                 .dateOfBirth(TimeUtil.toStringDate(entity.getDateOfBirth()))
                 .email(entity.getEmail())
                 .avatar(Map.of(
-                    "id", id,
-                    "url", avatar))
+                        "id", id,
+                        "url", avatar))
                 .phoneNumber(entity.getPhoneNumber())
                 .address(entity.getAddress())
                 .lastUpdated(TimeUtil.toStringFullDateTime(entity.getLastUpdated()))

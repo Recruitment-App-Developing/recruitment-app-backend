@@ -1,7 +1,6 @@
 package com.ducthong.TopCV.domain.dto.job;
 
 import java.util.List;
-import java.util.Map;
 
 import com.ducthong.TopCV.domain.dto.company.BriefCompanyResponseDTO;
 import com.ducthong.TopCV.domain.dto.image.ImageResponseDTO;

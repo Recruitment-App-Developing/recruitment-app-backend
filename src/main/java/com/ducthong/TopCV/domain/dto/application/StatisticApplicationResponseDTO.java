@@ -8,6 +8,4 @@ public record StatisticApplicationResponseDTO(
         Integer numberOfApplyCv,
         Integer numberOfOpenContactCv,
         Integer numberOfInterviewCv,
-        Integer numberOfFollowCv
-) {
-}
+        Integer numberOfFollowCv) {}

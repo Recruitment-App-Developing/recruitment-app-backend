@@ -17,5 +17,4 @@ public class StatisticJobByIndustryObject {
         this.name = name;
         this.numberOfJob = numberOfJob;
     }
-
 }

@@ -2,20 +2,19 @@ package com.ducthong.TopCV.domain.mapper.impl;
 
 import java.util.*;
 
+import org.springframework.stereotype.Component;
+
+import com.ducthong.TopCV.domain.dto.image.ImageResponseDTO;
 import com.ducthong.TopCV.domain.dto.job.*;
 import com.ducthong.TopCV.domain.dto.job.job_address.JobAddressResponseDTO;
 import com.ducthong.TopCV.domain.entity.*;
 import com.ducthong.TopCV.domain.entity.address.Address;
 import com.ducthong.TopCV.domain.entity.address.JobAddress;
-import com.ducthong.TopCV.domain.mapper.CompanyMapper;
-import com.ducthong.TopCV.repository.IndustryRepository;
-import org.springframework.stereotype.Component;
-
-import com.ducthong.TopCV.domain.dto.image.ImageResponseDTO;
 import com.ducthong.TopCV.domain.enums.ApplicationMethod;
 import com.ducthong.TopCV.domain.enums.Gender;
 import com.ducthong.TopCV.domain.enums.JobPosition;
 import com.ducthong.TopCV.domain.enums.WorkMethod;
+import com.ducthong.TopCV.domain.mapper.CompanyMapper;
 import com.ducthong.TopCV.domain.mapper.ImageMapper;
 import com.ducthong.TopCV.domain.mapper.JobMapper;
 import com.ducthong.TopCV.utility.TimeUtil;
@@ -57,7 +56,8 @@ public class JobMapperImpl implements JobMapper {
         // Address Job
         List<String> jobAddress =
                 entity.getAddresses().stream().map(JobAddress::toString).toList();
-        List<String> provinceList = entity.getAddresses().stream().map(Address::getProvinceName).toList();
+        List<String> provinceList =
+                entity.getAddresses().stream().map(Address::getProvinceName).toList();
         return RelatedJobResponseDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())
@@ -78,7 +78,7 @@ public class JobMapperImpl implements JobMapper {
                 .postingTime(TimeUtil.toStringDateTime(entity.getPostingTime()))
                 .numberOfView(entity.getNumberOfView())
                 .numberOfApplicated(entity.getNumberOfApplicated())
-                //.applicationRate((float) (entity.getNumberOfApplicated()/ entity.getNumberOfView()))
+                // .applicationRate((float) (entity.getNumberOfApplicated()/ entity.getNumberOfView()))
                 .build();
     }
 
@@ -92,7 +92,7 @@ public class JobMapperImpl implements JobMapper {
         // Industry
         Integer mainIndustry = 1;
         List<Integer> subIndustries = new ArrayList<>();
-        for (IndustryJob item : entity.getIndustries()){
+        for (IndustryJob item : entity.getIndustries()) {
             if (item.getIsMain()) mainIndustry = item.getIndustry().getId();
             else subIndustries.add(item.getIndustry().getId());
         }
@@ -136,29 +136,31 @@ public class JobMapperImpl implements JobMapper {
         // Address Job
         List<String> jobAddress =
                 entity.getAddresses().stream().map(JobAddress::toString).toList();
-        List<String> provinceList = entity.getAddresses().stream().map(Address::getProvinceName).toList();
+        List<String> provinceList =
+                entity.getAddresses().stream().map(Address::getProvinceName).toList();
         // Image
         List<String> imageList = new ArrayList<>();
         if (!entity.getImageList().isEmpty()) {
-            imageList = entity.getImageList().stream()
-                    .map(Image::getImageUrl)
-                    .toList();
+            imageList = entity.getImageList().stream().map(Image::getImageUrl).toList();
         }
         // Industry
-            // MainIndstry
+        // MainIndstry
         Map<String, String> mainIndustry = new HashMap<>();
-        Optional<IndustryJob> mainIndustryOptional = entity.getIndustries().stream().filter(IndustryJob::getIsMain).findFirst();
-        if (!mainIndustryOptional.isEmpty())  mainIndustry = Map.of(
-                "id", mainIndustryOptional.get().getIndustry().getId().toString(),
-                "name", mainIndustryOptional.get().getIndustry().getName());
-            // SubIndustry
+        Optional<IndustryJob> mainIndustryOptional =
+                entity.getIndustries().stream().filter(IndustryJob::getIsMain).findFirst();
+        if (!mainIndustryOptional.isEmpty())
+            mainIndustry = Map.of(
+                    "id", mainIndustryOptional.get().getIndustry().getId().toString(),
+                    "name", mainIndustryOptional.get().getIndustry().getName());
+        // SubIndustry
         List<Map<String, String>> subIndustry = new ArrayList<>();
-        List<IndustryJob> subIndustryOptional = entity.getIndustries().stream().filter(item -> !item.getIsMain()).toList();
+        List<IndustryJob> subIndustryOptional = entity.getIndustries().stream()
+                .filter(item -> !item.getIsMain())
+                .toList();
         if (!subIndustryOptional.isEmpty())
-            subIndustryOptional.
-                forEach(item -> subIndustry.add(Map.of(
-                        "id", item.getIndustry().getId().toString(),
-                        "name", item.getIndustry().getName())));
+            subIndustryOptional.forEach(item -> subIndustry.add(Map.of(
+                    "id", item.getIndustry().getId().toString(),
+                    "name", item.getIndustry().getName())));
         // Company
         Company company = entity.getCompany();
 
@@ -238,7 +240,7 @@ public class JobMapperImpl implements JobMapper {
         entity.setJobDescript(entity.getJobDescript());
         entity.setJobRequirement(entity.getJobRequirement());
         entity.setAddApplicationInfor(entity.getAddApplicationInfor());
-        return  entity;
+        return entity;
     }
 
     @Override

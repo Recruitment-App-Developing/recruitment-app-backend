@@ -9,6 +9,4 @@ public record EmployerJobResponseDTO(
         String postingTime,
         Integer numberOfView,
         Integer numberOfApplicated,
-        Float applicationRate
-) {
-}
+        Float applicationRate) {}

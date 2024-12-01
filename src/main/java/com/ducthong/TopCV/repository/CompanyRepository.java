@@ -9,8 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import com.ducthong.TopCV.domain.entity.Company;
 
-import java.util.List;
-
 @Repository
 public interface CompanyRepository extends JpaRepository<Company, Integer> {
     @Query("SELECT c FROM Company c WHERE :nameCom IS NULL OR c.name LIKE %:nameCom% ")

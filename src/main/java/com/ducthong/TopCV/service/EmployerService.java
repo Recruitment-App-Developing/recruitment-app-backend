@@ -11,8 +11,13 @@ import com.ducthong.TopCV.responses.Response;
 
 public interface EmployerService {
     EmployerHomePageResponseDTO homePageForEmployer(Integer accountId);
+
     Response<EmployerResponseDTO> getActiveEmployerAccount(Integer accountId);
+
     LoginResponseDTO registerEmployerAccount(AddEmployerRequestDTO requestDTO) throws IOException;
-    Response<EmployerResponseDTO> updEmployerAccount(Integer acountId, UpdEmployerRequestDTO requestDTO) throws IOException;
+
+    Response<EmployerResponseDTO> updEmployerAccount(Integer acountId, UpdEmployerRequestDTO requestDTO)
+            throws IOException;
+
     void registerCompany(Integer accountId, Integer companyId);
 }

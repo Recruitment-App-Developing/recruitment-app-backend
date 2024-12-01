@@ -1,18 +1,20 @@
 package com.ducthong.TopCV.domain.entity.CvProfile;
 
+import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.ducthong.TopCV.constant.TimeFormatConstant;
-import com.ducthong.TopCV.domain.entity.account.Candidate;
 import com.ducthong.TopCV.utility.TimeUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "educations")
@@ -21,24 +23,26 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Education {
-    @Id @GeneratedValue(strategy = GenerationType.UUID)
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "education_id")
     @JsonProperty("educationId")
     private String id;
+
     private String schoolName;
     private String mainIndustry;
 
     @DateTimeFormat(pattern = TimeFormatConstant.DATE_FORMAT)
     private LocalDateTime startTime;
 
-    public String getStartTime(){
+    public String getStartTime() {
         return TimeUtil.toMonthYear(this.startTime);
     }
 
     @DateTimeFormat(pattern = TimeFormatConstant.DATE_FORMAT)
     private LocalDateTime endTime;
 
-    public String getEndTime(){
+    public String getEndTime() {
         return TimeUtil.toMonthYear(this.endTime);
     }
 

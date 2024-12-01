@@ -1,5 +1,15 @@
 package com.ducthong.TopCV.service.impl;
 
+import java.io.IOException;
+import java.util.Objects;
+import java.util.Optional;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.ducthong.TopCV.configuration.AppConfig;
 import com.ducthong.TopCV.domain.dto.account.AccountResponseDTO;
 import com.ducthong.TopCV.domain.dto.account.UpdCandidateRequestDTO;
@@ -17,23 +27,13 @@ import com.ducthong.TopCV.domain.mapper.CandidateMapper;
 import com.ducthong.TopCV.exceptions.AppException;
 import com.ducthong.TopCV.repository.AccountRepository;
 import com.ducthong.TopCV.repository.CandidateRepository;
-import com.ducthong.TopCV.responses.Response;
 import com.ducthong.TopCV.service.CandidateService;
 import com.ducthong.TopCV.service.CloudinaryService;
 import com.ducthong.TopCV.utility.GetRoleUtil;
 import com.ducthong.TopCV.utility.JwtTokenUtil;
 import com.ducthong.TopCV.utility.TimeUtil;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.Objects;
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -57,7 +57,7 @@ public class CandidateServiceImpl implements CandidateService {
         try {
             Candidate candidate = GetRoleUtil.getCandidate(accountId);
             return candidateMapper.toDetailCandidateResponseDto(candidate);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new AppException("Lỗi");
         }
@@ -73,7 +73,7 @@ public class CandidateServiceImpl implements CandidateService {
         if (checkEmail.isPresent()) throw new AppException("This email is existed");
         // Check phone
 
-        //Candidate newCandidate = candidateMapper.candidateRequestDtoToCandidate(requestDTO);
+        // Candidate newCandidate = candidateMapper.candidateRequestDtoToCandidate(requestDTO);
         Candidate newCandidate = new Candidate();
         newCandidate.setUsername(requestDTO.username());
         newCandidate.setEmail(requestDTO.email());
@@ -101,7 +101,7 @@ public class CandidateServiceImpl implements CandidateService {
                 .infor(AccountResponseDTO.builder()
                         .id(saveCandidate.getId())
                         .username(saveCandidate.getUsername())
-                        .fullName(saveCandidate.getFirstName() + " "+ saveCandidate.getLastName())
+                        .fullName(saveCandidate.getFirstName() + " " + saveCandidate.getLastName())
                         .avatar(saveCandidate.getAvatar().getImageUrl())
                         .phoneNumber(saveCandidate.getPhoneNumber())
                         .email(saveCandidate.getEmail())
@@ -111,10 +111,11 @@ public class CandidateServiceImpl implements CandidateService {
 
     @Override
     @Transactional
-    public DetailCandidateResponseDTO updateCandidate(Integer accountId, UpdCandidateRequestDTO requestDTO) throws IOException {
+    public DetailCandidateResponseDTO updateCandidate(Integer accountId, UpdCandidateRequestDTO requestDTO)
+            throws IOException {
         Candidate oldCandidate = GetRoleUtil.getCandidate(accountId);
         Candidate newCandidate = candidateMapper.udpCandidateDtoToCandidate(oldCandidate, requestDTO);
-        //Avatar
+        // Avatar
         if (requestDTO.avatar() != null && !requestDTO.avatar().equals("")) {
             Image avatar = oldCandidate.getAvatar();
             if (!Objects.equals(avatar.getImageUrl(), appConfig.getDEFAULT_AVATAR())) {
@@ -124,8 +125,9 @@ public class CandidateServiceImpl implements CandidateService {
                     e.printStackTrace();
                 }
             }
-            CloudinaryResponseDTO uploadResponse = cloudinaryService.uploadFileBase64_v2(requestDTO.avatar(), appConfig.getFOLDER_AVATAR());
-            avatar.setName("The avatar of "+oldCandidate.getUsername());
+            CloudinaryResponseDTO uploadResponse =
+                    cloudinaryService.uploadFileBase64_v2(requestDTO.avatar(), appConfig.getFOLDER_AVATAR());
+            avatar.setName("The avatar of " + oldCandidate.getUsername());
             avatar.setImageUrl(uploadResponse.url());
             avatar.setImagePublicId(uploadResponse.public_id());
             newCandidate.setAvatar(avatar);
@@ -135,9 +137,9 @@ public class CandidateServiceImpl implements CandidateService {
         PersonAddress newPersonAddress = new PersonAddress();
         try {
             String[] address = requestDTO.address().split(";");
-            if (oldPersonAddress != null &&
-                    (!Objects.equals(oldPersonAddress.getWardCode(), address[1])
-                            || !Objects.equals(oldPersonAddress.getDetail(), address[0]))){
+            if (oldPersonAddress != null
+                    && (!Objects.equals(oldPersonAddress.getWardCode(), address[1])
+                            || !Objects.equals(oldPersonAddress.getDetail(), address[0]))) {
                 newPersonAddress = addressMapper.toPersonAddress(address[0], address[1]);
                 newPersonAddress.setId(oldPersonAddress.getId());
                 newCandidate.setAddress(newPersonAddress);
@@ -145,7 +147,7 @@ public class CandidateServiceImpl implements CandidateService {
         } catch (Exception e) {
             throw new AppException("Địa chỉ không hợp lệ");
         }
-        try{
+        try {
             return candidateMapper.toDetailCandidateResponseDto(candidateRepo.save(newCandidate));
         } catch (Exception e) {
             throw new AppException("Cập nhật thông tin cá nhân thất bại");

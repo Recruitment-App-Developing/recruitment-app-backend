@@ -1,5 +1,7 @@
 package com.ducthong.TopCV.exceptions;
 
+import java.util.*;
+
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.ValidationException;
 
@@ -13,8 +15,6 @@ import com.ducthong.TopCV.responses.Response;
 import com.ducthong.TopCV.utility.MessageSourceUtil;
 
 import lombok.RequiredArgsConstructor;
-
-import java.util.*;
 
 @RestControllerAdvice
 @RequiredArgsConstructor

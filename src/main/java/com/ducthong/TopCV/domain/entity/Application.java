@@ -1,16 +1,19 @@
 package com.ducthong.TopCV.domain.entity;
 
+import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.ducthong.TopCV.constant.TimeFormatConstant;
 import com.ducthong.TopCV.domain.entity.account.Candidate;
 import com.ducthong.TopCV.domain.enums.ApplicationStatus;
-import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDateTime;
 
 @Entity(name = "Application")
 @Table(name = "applications")

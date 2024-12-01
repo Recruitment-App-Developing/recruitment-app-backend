@@ -1,20 +1,16 @@
 package com.ducthong.TopCV.controller;
 
-import java.io.IOException;
 import java.util.List;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.*;
 
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.ducthong.TopCV.annotation.RestApiV1;
 import com.ducthong.TopCV.constant.Endpoint;
-import com.ducthong.TopCV.constant.messages.ErrorMessage;
 import com.ducthong.TopCV.domain.dto.account.*;
 import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaResponseDTO;
@@ -60,30 +56,18 @@ public class AccountController {
     //                .body(accountService.updCandidateAccount(updCandidateRequestDTO));
     //    }
     // CANDIDATE
-    @GetMapping(Endpoint.V1.Candidate.Account.GET_DETAIL)
-    public ResponseEntity<Response<CandidateResponseDTO>> getCandidateAccountForCandidate(
-            HttpServletRequest request, @PathVariable(name = "id") Integer id) {
-        Integer idToken = Integer.valueOf(jwtTokenUtil.getAccountId(request.getHeader(HttpHeaders.AUTHORIZATION)));
-        if (id != idToken)
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Response.failedResponse(
-                            HttpStatus.UNAUTHORIZED.value(), messageUtil.getMessage(ErrorMessage.Account.GET_DETAIL)));
-        return ResponseEntity.status(HttpStatus.OK).body(accountService.getActiveCandidateAccount(id));
-    }
-
-    @PostMapping(Endpoint.V1.Candidate.Account.UPDATE)
-    public ResponseEntity<Response<CandidateResponseDTO>> updCandidateAccount(
-            HttpServletRequest request,
-            @PathVariable(name = "id") Integer id,
-            @RequestBody UpdCandidateRequestDTO updCandidateRequestDTO) {
-        Integer idToken = Integer.valueOf(jwtTokenUtil.getAccountId(request.getHeader(HttpHeaders.AUTHORIZATION)));
-        if (id != idToken)
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Response.failedResponse(
-                            HttpStatus.UNAUTHORIZED.value(), messageUtil.getMessage(ErrorMessage.Account.UPDATE)));
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(accountService.updCandidateAccount(id, updCandidateRequestDTO));
-    }
+    //    @GetMapping(Endpoint.V1.Candidate.Account.GET_DETAIL)
+    //    public ResponseEntity<Response<CandidateResponseDTO>> getCandidateAccountForCandidate(
+    //            HttpServletRequest request, @PathVariable(name = "id") Integer id) {
+    //        Integer idToken =
+    // Integer.valueOf(jwtTokenUtil.getAccountId(request.getHeader(HttpHeaders.AUTHORIZATION)));
+    //        if (id != idToken)
+    //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+    //                    .body(Response.failedResponse(
+    //                            HttpStatus.UNAUTHORIZED.value(),
+    // messageUtil.getMessage(ErrorMessage.Account.GET_DETAIL)));
+    //        return ResponseEntity.status(HttpStatus.OK).body(accountService.getActiveCandidateAccount(id));
+    //    }
     // ADMIN
     @Operation(summary = "Get list active account", description = "Returns list active account")
     @GetMapping(Endpoint.V1.Admin.Account.GET_LIST_ACTIVE)

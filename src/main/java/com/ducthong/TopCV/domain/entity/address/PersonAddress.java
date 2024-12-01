@@ -21,6 +21,7 @@ public class PersonAddress extends Address {
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "address")
     private Account account;
+
     @Builder
     public PersonAddress(
             String detail,

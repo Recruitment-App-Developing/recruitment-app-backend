@@ -6,5 +6,6 @@ import com.ducthong.TopCV.domain.entity.Application;
 
 public interface ApplicationMapper {
     ApplicationResponseDTO toApplicationResponseDto(Application entity);
+
     AppliedCandidateResponseDTO toAppliedCandidateResponseDto(Application entity);
 }

@@ -3,31 +3,30 @@ package com.ducthong.TopCV.service.impl;
 import java.util.Map;
 import java.util.Optional;
 
-import com.ducthong.TopCV.constant.MailTemplate;
-import com.ducthong.TopCV.domain.dto.authentication.*;
-import com.ducthong.TopCV.domain.mapper.Account2Mapper;
-import com.ducthong.TopCV.utility.MailSenderUtil;
-import com.ducthong.TopCV.utility.TimeUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.ducthong.TopCV.constant.MailTemplate;
 import com.ducthong.TopCV.constant.messages.ErrorMessage;
 import com.ducthong.TopCV.constant.messages.SuccessMessage;
+import com.ducthong.TopCV.domain.dto.authentication.*;
 import com.ducthong.TopCV.domain.entity.account.Account;
-import com.ducthong.TopCV.domain.mapper.AccountMapper;
+import com.ducthong.TopCV.domain.mapper.Account2Mapper;
 import com.ducthong.TopCV.exceptions.AppException;
 import com.ducthong.TopCV.repository.AccountRepository;
 import com.ducthong.TopCV.responses.Response;
 import com.ducthong.TopCV.service.AuthenticationService;
 import com.ducthong.TopCV.utility.JwtTokenUtil;
+import com.ducthong.TopCV.utility.MailSenderUtil;
 import com.ducthong.TopCV.utility.MessageSourceUtil;
+import com.ducthong.TopCV.utility.TimeUtil;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +38,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     JwtTokenUtil jwtTokenUtil;
     MailSenderUtil mailSenderUtil;
     Account2Mapper account2Mapper;
+
     @Override
     @Transactional
     public Response<LoginResponseDTO> login(LoginRequestDTO requestDTO) {
@@ -50,20 +50,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 requestDTO.password(), accountResult.get().getPassword());
         if (authenticated == false) throw new AppException(ErrorMessage.Auth.LOGIN_FAIL);
 
-        return Response.successfulResponse("Welcome "+accountResult.get().getUsername(),
-                account2Mapper.toLoginResponseDto(accountResult.get()));
+        return Response.successfulResponse(
+                "Welcome " + accountResult.get().getUsername(), account2Mapper.toLoginResponseDto(accountResult.get()));
 
-//        // Generate Token
-//        String token = jwtTokenUtil.generateToken(accountResult.get());
-//
-//        LoginResponseDTO responseDTO = LoginResponseDTO.builder()
-//                .authenticated(true)
-//                .token(token)
-//                .infor(AccountMapper.INSTANCE.toAccountResponseDto(accountResult.get()))
-//                .build();
-//
-//        return Response.successfulResponse(
-//                messageSourceUtil.getMessage(SuccessMessage.Auth.LOGIN_SUCCESS), responseDTO);
+        //        // Generate Token
+        //        String token = jwtTokenUtil.generateToken(accountResult.get());
+        //
+        //        LoginResponseDTO responseDTO = LoginResponseDTO.builder()
+        //                .authenticated(true)
+        //                .token(token)
+        //                .infor(AccountMapper.INSTANCE.toAccountResponseDto(accountResult.get()))
+        //                .build();
+        //
+        //        return Response.successfulResponse(
+        //                messageSourceUtil.getMessage(SuccessMessage.Auth.LOGIN_SUCCESS), responseDTO);
     }
 
     @Override
@@ -84,8 +84,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Account account = findAccount.get();
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        boolean authenticated =
-                passwordEncoder.matches(requestDTO.oldPassword(), account.getPassword());
+        boolean authenticated = passwordEncoder.matches(requestDTO.oldPassword(), account.getPassword());
         if (!authenticated) throw new AppException("Mật khẩu hiện tại không hợp lệ");
 
         account.setPassword(passwordEncoder.encode(requestDTO.newPassword()));
@@ -101,7 +100,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     "newPassword", requestDTO.newPassword(),
                     "whenChange", TimeUtil.toStringFullDateTime(TimeUtil.getDateTimeNow()));
             mailSenderUtil.sendMailWithHTML(toMail, subject, template, variable);
-            return Response.successfulResponse("Thay đổi mật khẩu thành công. Hãy kiểm tra Email để nhận mật khẩu mới.");
+            return Response.successfulResponse(
+                    "Thay đổi mật khẩu thành công. Hãy kiểm tra Email để nhận mật khẩu mới.");
         } catch (Exception e) {
             throw new AppException("Thay đổi mật khẩu thất bại");
         }

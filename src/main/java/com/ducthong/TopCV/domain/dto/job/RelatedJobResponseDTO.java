@@ -1,10 +1,11 @@
 package com.ducthong.TopCV.domain.dto.job;
 
+import java.util.List;
+
 import com.ducthong.TopCV.domain.dto.company.CompanyResponseDTO;
+
 import lombok.Builder;
 
-import java.util.List;
-import java.util.Map;
 @Builder
 public record RelatedJobResponseDTO(
         Integer id,
@@ -14,6 +15,4 @@ public record RelatedJobResponseDTO(
         String salary,
         Integer applyTime,
         Integer lastUpdated,
-        Boolean isApply
-) {
-}
+        Boolean isApply) {}

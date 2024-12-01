@@ -1,12 +1,13 @@
 package com.ducthong.TopCV.domain.mapper.impl;
 
+import org.springframework.stereotype.Component;
+
 import com.ducthong.TopCV.domain.dto.cv_profile.EducationRequestDTO;
 import com.ducthong.TopCV.domain.dto.cv_profile.ExperienceRequestDTO;
 import com.ducthong.TopCV.domain.entity.CvProfile.Education;
 import com.ducthong.TopCV.domain.entity.CvProfile.Experience;
 import com.ducthong.TopCV.domain.mapper.CvProfileMapper;
 import com.ducthong.TopCV.utility.TimeUtil;
-import org.springframework.stereotype.Component;
 
 @Component
 public class CvProfileMapperImpl implements CvProfileMapper {
@@ -21,6 +22,7 @@ public class CvProfileMapperImpl implements CvProfileMapper {
                 .detail(requestDTO.detail())
                 .build();
     }
+
     @Override
     public Experience experienceRequestDtoToExperience(ExperienceRequestDTO requestDTO) {
         return Experience.builder()

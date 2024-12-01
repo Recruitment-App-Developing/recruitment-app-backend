@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +42,8 @@ public class CvController {
     }
 
     @PostMapping(Endpoint.V1.Cv.ADD_ONE)
-    public ResponseEntity<Response<CvResponseDTO>> addOneCv(@RequestBody @Valid CvRequestDTO requestDTO) throws IOException {
+    public ResponseEntity<Response<CvResponseDTO>> addOneCv(@RequestBody @Valid CvRequestDTO requestDTO)
+            throws IOException {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Response.successfulResponse(
                         "Thêm mới một CV thành công",

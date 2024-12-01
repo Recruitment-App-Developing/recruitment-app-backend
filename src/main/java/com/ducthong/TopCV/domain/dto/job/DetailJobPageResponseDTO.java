@@ -1,11 +1,11 @@
 package com.ducthong.TopCV.domain.dto.job;
 
-import com.ducthong.TopCV.domain.dto.company.BriefCompanyResponseDTO;
-import com.ducthong.TopCV.domain.dto.image.ImageResponseDTO;
-import lombok.Builder;
-
 import java.util.List;
 import java.util.Map;
+
+import com.ducthong.TopCV.domain.dto.company.BriefCompanyResponseDTO;
+
+import lombok.Builder;
 
 @Builder
 public record DetailJobPageResponseDTO(
@@ -35,6 +35,4 @@ public record DetailJobPageResponseDTO(
         Boolean isApply,
         List<String> imageList,
         Map<String, String> mainIndustry,
-        List<Map<String, String>> subIndustries
-) {
-}
+        List<Map<String, String>> subIndustries) {}

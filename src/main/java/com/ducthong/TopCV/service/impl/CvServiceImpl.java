@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.ducthong.TopCV.domain.entity.Application;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +13,7 @@ import com.ducthong.TopCV.domain.dto.cloudinary.CloudinaryResponseDTO;
 import com.ducthong.TopCV.domain.dto.cv.CvRequestDTO;
 import com.ducthong.TopCV.domain.dto.cv.CvResponseDTO;
 import com.ducthong.TopCV.domain.dto.cv.UpdCvRequestDTO;
+import com.ducthong.TopCV.domain.entity.Application;
 import com.ducthong.TopCV.domain.entity.CV;
 import com.ducthong.TopCV.domain.entity.account.Candidate;
 import com.ducthong.TopCV.domain.mapper.CvMapper;
@@ -59,7 +59,6 @@ public class CvServiceImpl implements CvService {
         Application latestApplication = applicationList.get(0);
         for (Application item : applicationList)
             if (item.getApplicationTime().isAfter(latestApplication.getApplicationTime())) latestApplication = item;
-
 
         List<CvResponseDTO> cvList = candidate.getCvs().stream()
                 .map(item -> cvMapper.toCvResponseDto(item))

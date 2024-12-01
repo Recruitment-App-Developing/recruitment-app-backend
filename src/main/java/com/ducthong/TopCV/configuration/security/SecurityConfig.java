@@ -2,6 +2,7 @@ package com.ducthong.TopCV.configuration.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,7 +15,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import com.ducthong.TopCV.constant.Endpoint;
-import com.ducthong.TopCV.repository.AccountRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,9 +22,8 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-
     private final JwtTokenFilter jwtTokenFilter;
+    private final Environment environment;
     private static final String CATCH_ALL_WILDCARDS = "/**";
     public static final String[] PUBLIC_ENDPOINTS = {
         "/test" + CATCH_ALL_WILDCARDS,
@@ -72,11 +71,12 @@ public class SecurityConfig {
 
     @Bean
     public CorsFilter corsFilter() {
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedOrigin("http://localhost:3001");
+        config.addAllowedOrigin(environment.getProperty("fontend.candidate.urls"));
+        config.addAllowedOrigin(environment.getProperty("fontend.employer.urls"));
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);

@@ -1,12 +1,11 @@
 package com.ducthong.TopCV.domain.dto.employer;
 
+import java.util.Map;
+
 import com.ducthong.TopCV.domain.entity.address.PersonAddress;
 import com.ducthong.TopCV.domain.enums.Gender;
-import lombok.Builder;
 
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Map;
+import lombok.Builder;
 
 @Builder
 public record DetailEmployerResponseDTO(
@@ -21,6 +20,4 @@ public record DetailEmployerResponseDTO(
         String phoneNumber,
         PersonAddress address,
         String whenCreated,
-        Integer verifiedLevel
-) {
-}
+        Integer verifiedLevel) {}

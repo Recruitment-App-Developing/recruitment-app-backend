@@ -19,7 +19,7 @@ public record JobRequestDTO(
         @Min(value = 1, message = "The number of vacancy must be greater than 0")
                 @Max(value = 100, message = "The number of vacancy must less than 100")
                 @PositiveOrZero(message = "The number of vacancy must be a positive integer")
-        Integer numberOfVacancy,
+                Integer numberOfVacancy,
         @EnumValid(name = "workMethod", enumClass = WorkMethod.class) String workMethod,
         @EnumValid(name = "sexRequired", enumClass = Gender.class) String sexRequired,
         String salary,

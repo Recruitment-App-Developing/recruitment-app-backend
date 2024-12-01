@@ -6,10 +6,4 @@ import com.ducthong.TopCV.annotation.PasswordMatching;
         password = "password",
         confirmPassword = "confirmPassword",
         message = "Password and Confirm password " + "don’t match. Please try again.")
-public record CandidateRequestDTO(
-        String username,
-        String password,
-        String confirmPassword,
-        String email
-) {
-}
+public record CandidateRequestDTO(String username, String password, String confirmPassword, String email) {}

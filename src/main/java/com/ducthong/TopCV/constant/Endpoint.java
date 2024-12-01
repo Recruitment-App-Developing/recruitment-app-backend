@@ -124,20 +124,24 @@ public class Endpoint {
             public static final String UPDATE_EDUCATION = BASE + "/education/update";
             public static final String DELETE_EDUCATION = BASE + "/education/delete/{educationId}";
         }
+
         public static final class Statistic {
             public static final String BASE = V1.PREFIX + "/statistic";
             public static final String STATISTIC_GENERAL_JOB_BY_INDUSTRY = BASE + "/statistcGeneralJobByIndustry";
             public static final String STATISTIC_GENERAL_JOB_BY_DAY = BASE + "/statisticGeneralJobByDay";
             public static final String STATISTIC_COMPANY_JOB_BY_INDUSTRY = BASE + "/statisticCompanyJobByIndustry";
-            public static final String STATISTIC_APPLICATION_STATUS_BY_COMPANY = BASE + "/statisticApplicationStatusByCompany";
+            public static final String STATISTIC_APPLICATION_STATUS_BY_COMPANY =
+                    BASE + "/statisticApplicationStatusByCompany";
             public static final String STATISTIC_APPLY_CANDIDATE_BY_DAY = BASE + "/statisticApplyCandidateByDay";
         }
+
         public static final class Address {
             public static final String BASE = V1.PREFIX + "/address";
             public static final String GET_LIST_PROVINCE = BASE + "/provinces";
             public static final String GET_LIST_DISTRICT_BY_PROVINCE = BASE + "/districts/{provinceId}";
             public static final String GET_LIST_WARD_BY_DISTRICT = BASE + "/wards/{districtId}";
         }
+
         public static final class HealthCheck {
             public static final String BASE = V1.PREFIX + "/actuator/health";
         }

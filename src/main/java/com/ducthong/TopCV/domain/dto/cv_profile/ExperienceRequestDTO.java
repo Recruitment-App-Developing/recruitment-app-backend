@@ -6,10 +6,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public record ExperienceRequestDTO(
         String companyName,
         String position,
-        @JsonFormat(pattern = TimeFormatConstant.MONTH_YEAR)
-        String startTime,
-        @JsonFormat(pattern = TimeFormatConstant.MONTH_YEAR)
-        String endTime,
-        String detail
-) {
-}
+        @JsonFormat(pattern = TimeFormatConstant.MONTH_YEAR) String startTime,
+        @JsonFormat(pattern = TimeFormatConstant.MONTH_YEAR) String endTime,
+        String detail) {}

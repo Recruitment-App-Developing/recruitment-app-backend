@@ -20,6 +20,7 @@ public class TimeUtil {
     public static LocalDateTime convertToDateTime(String timeStr) {
         return LocalDateTime.parse(timeStr, DATETIME_FORMATTER);
     }
+
     public static LocalDateTime convertToDate(String timeStr) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TimeFormatConstant.DATE_FORMAT);
@@ -28,6 +29,7 @@ public class TimeUtil {
             throw new AppException("Thời gian không hợp lệ");
         }
     }
+
     public static LocalDateTime monthYearToDate(String timeStr) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TimeFormatConstant.MONTH_YEAR);
         YearMonth yearMonth = YearMonth.parse(timeStr, formatter);
@@ -38,23 +40,26 @@ public class TimeUtil {
     public static String toMonthYear(LocalDateTime dateTime) {
         if (dateTime == null) return null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TimeFormatConstant.MONTH_YEAR);
-        return  dateTime.format(formatter);
+        return dateTime.format(formatter);
     }
 
     public static String toStringDateTime(LocalDateTime dateTime) {
         if (dateTime == null) return null;
         return dateTime.format(DATETIME_FORMATTER);
     }
+
     public static String toStringDate(LocalDateTime date) {
         if (date == null) return null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TimeFormatConstant.DATE_FORMAT);
-        return  date.format(formatter).toString();
+        return date.format(formatter).toString();
     }
+
     public static String toStringFullDateTime(LocalDateTime dateTime) {
         if (dateTime == null) return null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TimeFormatConstant.FULL_DATETIME_FORMAT);
-        return  dateTime.format(formatter).toString();
+        return dateTime.format(formatter).toString();
     }
+
     public static int getHoursDifferenceNow(LocalDateTime applyTime) {
         if (applyTime == null) return 0;
         LocalDateTime now = LocalDateTime.now();
@@ -63,6 +68,7 @@ public class TimeUtil {
         Duration duration = Duration.between(applyTime, now);
         return (int) duration.toHours();
     }
+
     public static int getHoursDifferenceUpdate(LocalDateTime updateTime) {
         if (updateTime == null) return 0;
         LocalDateTime now = LocalDateTime.now();

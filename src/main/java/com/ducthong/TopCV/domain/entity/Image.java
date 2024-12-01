@@ -1,13 +1,13 @@
 package com.ducthong.TopCV.domain.entity;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
-import com.ducthong.TopCV.constant.TimeFormatConstant;
-import com.ducthong.TopCV.utility.TimeUtil;
 import jakarta.persistence.*;
 
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.ducthong.TopCV.constant.TimeFormatConstant;
+import com.ducthong.TopCV.utility.TimeUtil;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,7 +35,7 @@ public class Image {
     @DateTimeFormat(pattern = TimeFormatConstant.FULL_DATETIME_FORMAT)
     private LocalDateTime whenCreated;
 
-    public Image(String name, String url){
+    public Image(String name, String url) {
         this.setName(name);
         this.setImageUrl(url);
         this.setWhenCreated(TimeUtil.getDateTimeNow());

@@ -36,8 +36,10 @@ public class CompanyAddress extends Address {
             String wardCode) {
         super(detail, provinceName, provinceCode, districtName, districtCode, wardName, wardCode);
     }
-    public CompanyAddress(String detail, Ward ward){
-        super(detail,
+
+    public CompanyAddress(String detail, Ward ward) {
+        super(
+                detail,
                 ward.getDistrict().getProvince().getName(),
                 ward.getDistrict().getProvince().getCode(),
                 ward.getDistrict().getName(),
@@ -50,7 +52,7 @@ public class CompanyAddress extends Address {
 
     @Override
     public String toString() {
-        return super.getDetail()+", "+super.getWardName()+", "
-                +super.getDistrictName()+", "+super.getProvinceName()+", "+super.getProvinceName();
+        return super.getDetail() + ", " + super.getWardName() + ", " + super.getDistrictName() + ", "
+                + super.getProvinceName() + ", " + super.getProvinceName();
     }
 }

@@ -11,6 +11,7 @@ import com.ducthong.TopCV.responses.Response;
 
 public interface CvService {
     CV isCvAccess(String cvId, Integer accoutId);
+
     List<CvResponseDTO> getListCvByAccountId(Integer candidateId);
 
     CvResponseDTO addCv(Integer candidateId, CvRequestDTO requestDTO) throws IOException;

@@ -11,6 +11,4 @@ public record JobAddressResponseDTO(
         String districtCode,
         String districtName,
         String wardCode,
-        String wardName
-) {
-}
+        String wardName) {}

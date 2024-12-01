@@ -1,11 +1,13 @@
 package com.ducthong.TopCV.validator;
 
-import com.ducthong.TopCV.annotation.PasswordMatching;
+import java.util.Objects;
+
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+
 import org.springframework.beans.BeanWrapperImpl;
 
-import java.util.Objects;
+import com.ducthong.TopCV.annotation.PasswordMatching;
 
 public class PasswordMatchingValidator implements ConstraintValidator<PasswordMatching, Object> {
     private String password;

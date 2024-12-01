@@ -2,15 +2,15 @@ package com.ducthong.TopCV.domain.mapper.impl;
 
 import java.util.Map;
 
-import com.ducthong.TopCV.domain.dto.employer.DetailEmployerResponseDTO;
-import com.ducthong.TopCV.utility.TimeUtil;
 import org.springframework.stereotype.Component;
 
 import com.ducthong.TopCV.domain.dto.employer.AddEmployerRequestDTO;
+import com.ducthong.TopCV.domain.dto.employer.DetailEmployerResponseDTO;
 import com.ducthong.TopCV.domain.dto.employer.EmployerResponseDTO;
 import com.ducthong.TopCV.domain.dto.employer.UpdEmployerRequestDTO;
 import com.ducthong.TopCV.domain.entity.account.Employer;
 import com.ducthong.TopCV.domain.mapper.EmployerMapper;
+import com.ducthong.TopCV.utility.TimeUtil;
 
 @Component
 public class EmployerMapperImpl implements EmployerMapper {
@@ -39,8 +39,7 @@ public class EmployerMapperImpl implements EmployerMapper {
                 .email(entity.getEmail())
                 .avatar(Map.of(
                         "id", entity.getAvatar().getId().toString(),
-                        "imageUrl", entity.getAvatar().getImageUrl()
-                        ))
+                        "imageUrl", entity.getAvatar().getImageUrl()))
                 .phoneNumber(entity.getPhoneNumber())
                 .address(entity.getAddress())
                 .lastUpdated(TimeUtil.toStringFullDateTime(entity.getLastUpdated()))
@@ -63,8 +62,7 @@ public class EmployerMapperImpl implements EmployerMapper {
                 .email(entity.getEmail())
                 .avatar(Map.of(
                         "id", entity.getAvatar().getId().toString(),
-                        "url", entity.getAvatar().getImageUrl()
-                ))
+                        "url", entity.getAvatar().getImageUrl()))
                 .phoneNumber(entity.getPhoneNumber())
                 .address(entity.getAddress())
                 .whenCreated(TimeUtil.toStringFullDateTime(entity.getWhenCreated()))

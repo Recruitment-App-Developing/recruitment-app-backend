@@ -1,8 +1,8 @@
 package com.ducthong.TopCV.domain.dto.company;
 
-import lombok.Builder;
-
 import java.util.List;
+
+import lombok.Builder;
 
 @Builder
 public record MyCompanyResponseDTO(
@@ -16,6 +16,4 @@ public record MyCompanyResponseDTO(
         String headQuaters,
         List<String> activeFields,
         List<String> subAddress,
-        String detailIntro
-) {
-}
+        String detailIntro) {}
