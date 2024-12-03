@@ -4,10 +4,7 @@ import com.ducthong.TopCV.constant.messages.ErrorMessage;
 import com.ducthong.TopCV.constant.messages.SuccessMessage;
 import com.ducthong.TopCV.constant.meta.MetaConstant;
 import com.ducthong.TopCV.domain.dto.account.AccountResponseDTO;
-import com.ducthong.TopCV.domain.dto.application.ApplicationRequestDTO;
-import com.ducthong.TopCV.domain.dto.application.ApplicationResponseDTO;
-import com.ducthong.TopCV.domain.dto.application.AppliedCandidateResponseDTO;
-import com.ducthong.TopCV.domain.dto.application.StatisticApplicationResponseDTO;
+import com.ducthong.TopCV.domain.dto.application.*;
 import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaResponseDTO;
 import com.ducthong.TopCV.domain.dto.meta.SortingDTO;
@@ -24,6 +21,8 @@ import com.ducthong.TopCV.exceptions.AppException;
 import com.ducthong.TopCV.repository.ApplicationRepository;
 import com.ducthong.TopCV.repository.CvRepository;
 import com.ducthong.TopCV.repository.JobRepository;
+import com.ducthong.TopCV.repository.dynamic_query.CustomApplicationRepository;
+import com.ducthong.TopCV.repository.dynamic_query.PagedResponse;
 import com.ducthong.TopCV.responses.MetaResponse;
 import com.ducthong.TopCV.service.ApplicationService;
 import com.ducthong.TopCV.service.CompanyService;
@@ -37,6 +36,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,8 +48,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final JobRepository jobRepo;
     private final ApplicationRepository applicationRepo;
     private final CvRepository cvRepo;
+    private final CustomApplicationRepository customApplicationRepo;
     // Service
-    private final CvService cvService;
     private final CompanyService companyService;
     private final JobService jobService;
     // Mapper
@@ -134,5 +134,27 @@ public class ApplicationServiceImpl implements ApplicationService {
                                 .build())
                         .build(),
                 li);
+    }
+
+    @Override
+    @Transactional
+    public MetaResponse<MetaResponseDTO, List<ApplicationForCandidateResponseDTO>> getHistoryApplication(Integer accountId, MetaRequestDTO metaRequestDTO, String status) {
+        Candidate candidate = GetRoleUtil.getCandidate(accountId);
+
+        ApplicationStatus statusTemp;
+        if (status != null && !status.equals("") && !status.equals("all")) statusTemp = ApplicationStatus.valueOf(status);
+        else statusTemp = null;
+        PagedResponse<Application> res = customApplicationRepo.
+                getListApplicationByAccountId(candidate.getId(), statusTemp, metaRequestDTO.pageSize(), metaRequestDTO.currentPage());
+        return MetaResponse.successfulResponse("",
+                MetaResponseDTO.builder()
+                        .totalItems((int) res.getTotalElements())
+                        .totalPages(res.getTotalPages())
+                        .currentPage(res.getPageNumber())
+                        .pageSize(res.getPageSize())
+                        .sorting(null)
+                        .build(),
+                    res.getContent().stream().map(applicationMapper::toApplicationForCandidateResponseDto).toList()
+                );
     }
 }

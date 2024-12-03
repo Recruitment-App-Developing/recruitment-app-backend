@@ -1,5 +1,6 @@
 package com.ducthong.TopCV.domain.mapper.impl;
 
+import com.ducthong.TopCV.domain.dto.application.ApplicationForCandidateResponseDTO;
 import com.ducthong.TopCV.domain.dto.application.ApplicationResponseDTO;
 import com.ducthong.TopCV.domain.dto.application.AppliedCandidateResponseDTO;
 import com.ducthong.TopCV.domain.entity.Application;
@@ -8,14 +9,18 @@ import com.ducthong.TopCV.domain.entity.CvProfile.CvProfile;
 import com.ducthong.TopCV.domain.entity.Job;
 import com.ducthong.TopCV.domain.entity.account.Candidate;
 import com.ducthong.TopCV.domain.mapper.ApplicationMapper;
+import com.ducthong.TopCV.domain.mapper.JobMapper;
 import com.ducthong.TopCV.utility.TimeUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 
 @Component
+@RequiredArgsConstructor
 public class ApplicationMapperImpl implements ApplicationMapper {
+    private final JobMapper jobMapper;
     @Override
     public ApplicationResponseDTO toApplicationResponseDto(Application entity) {
         Company company = entity.getJob().getCompany();
@@ -67,6 +72,17 @@ public class ApplicationMapperImpl implements ApplicationMapper {
                 .education(education)
                 .statusApplication(entity.getStatus().getTitle())
                 .cvLink(entity.getCvLink())
+                .build();
+    }
+
+    @Override
+    public ApplicationForCandidateResponseDTO toApplicationForCandidateResponseDto(Application entity) {
+        return ApplicationForCandidateResponseDTO.builder()
+                .cvLink(entity.getCvLink())
+                .status(entity.getStatus())
+                .applicationTime(TimeUtil.toStringFullDateTime(entity.getApplicationTime()))
+                .statusChangeTime(TimeUtil.toStringFullDateTime(entity.getStatusChangeTime()))
+                .jobInfor(jobMapper.toJobResponseDto(entity.getJob()))
                 .build();
     }
 }

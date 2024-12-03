@@ -2,12 +2,10 @@ package com.ducthong.TopCV.controller;
 
 import com.ducthong.TopCV.annotation.RestApiV1;
 import com.ducthong.TopCV.constant.Endpoint;
-import com.ducthong.TopCV.domain.dto.application.ApplicationRequestDTO;
-import com.ducthong.TopCV.domain.dto.application.ApplicationResponseDTO;
-import com.ducthong.TopCV.domain.dto.application.AppliedCandidateResponseDTO;
-import com.ducthong.TopCV.domain.dto.application.StatisticApplicationResponseDTO;
+import com.ducthong.TopCV.domain.dto.application.*;
 import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaResponseDTO;
+import com.ducthong.TopCV.domain.enums.ApplicationStatus;
 import com.ducthong.TopCV.responses.MetaResponse;
 import com.ducthong.TopCV.responses.Response;
 import com.ducthong.TopCV.service.ApplicationService;
@@ -20,10 +18,7 @@ import lombok.experimental.FieldDefaults;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -57,5 +52,14 @@ public class ApplicationController {
             @ParameterObject MetaRequestDTO metaRequestDTO
     ){
         return ResponseEntity.status(HttpStatus.OK).body(applicationService.getAppliedCandidateByJob(jobId, AuthUtil.getRequestedUser().getId(), metaRequestDTO));
+    }
+    @GetMapping(Endpoint.V1.Application.HISTORY_APPLICAITON)
+    public ResponseEntity<MetaResponse<MetaResponseDTO, List<ApplicationForCandidateResponseDTO>>> getApplicationHitory(
+            @ParameterObject MetaRequestDTO metaRequestDTO,
+            @RequestParam(name = "status", required = false) String status
+    ){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                applicationService.getHistoryApplication(AuthUtil.getRequestedUser().getId(), metaRequestDTO, status)
+        );
     }
 }
