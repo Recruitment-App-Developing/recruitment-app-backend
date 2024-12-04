@@ -53,10 +53,11 @@ public class JobController {
     }
     @GetMapping(Endpoint.V1.Job.GET_LIST_BY_COMPANY)
     public ResponseEntity<MetaResponse<MetaResponseDTO, List<EmployerJobResponseDTO>>> getListJobByCompany(
-            @ParameterObject MetaRequestDTO metaRequestDTO
+            @ParameterObject MetaRequestDTO metaRequestDTO,
+            @ParameterObject SearchJobByCompanyRequestDTO requestDTO
     ) {
         Integer accountId = AuthUtil.getRequestedUser().getId();
-        return ResponseEntity.status(HttpStatus.OK).body(jobService.getListJobByCompany(metaRequestDTO, accountId));
+        return ResponseEntity.status(HttpStatus.OK).body(jobService.getListJobByCompany(requestDTO, accountId, metaRequestDTO));
     }
 
     @GetMapping(Endpoint.V1.Job.FIND_LIST_BY_COMPANY)

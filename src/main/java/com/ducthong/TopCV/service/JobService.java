@@ -17,7 +17,7 @@ public interface JobService {
     DetailJobResponseDTO getDetailJob(Integer jobId);
     DetailJobPageResponseDTO getDetailJobPage(Integer jobId);
     List<RelatedJobResponseDTO> searchJob(SearchJobRequestDTO requestDTO);
-    MetaResponse<MetaResponseDTO, List<EmployerJobResponseDTO>> getListJobByCompany(MetaRequestDTO metaRequestDTO, Integer accountId);
+    MetaResponse<MetaResponseDTO, List<EmployerJobResponseDTO>> getListJobByCompany(SearchJobByCompanyRequestDTO requestDTO, Integer accountId, MetaRequestDTO metaRequestDTO);
     MetaResponse<MetaResponseDTO, List<RelatedJobResponseDTO>> findListJobByCompany(MetaRequestDTO metaRequestDTO, Integer companyId, String name, String address);
     MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJobSpecification(MetaRequestDTO metaRequestDTO);
     MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJob(MetaRequestDTO metaRequestDTO);

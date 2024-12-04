@@ -1,6 +1,8 @@
 package com.ducthong.TopCV.repository.dynamic_query.impl;
 
+import com.ducthong.TopCV.domain.dto.job.SearchJobByCompanyRequestDTO;
 import com.ducthong.TopCV.domain.dto.job.SearchJobRequestDTO;
+import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.entity.*;
 import com.ducthong.TopCV.domain.entity.address.JobAddress;
 import com.ducthong.TopCV.domain.enums.ApplicationStatus;
@@ -8,6 +10,7 @@ import com.ducthong.TopCV.domain.enums.JobPosition;
 import com.ducthong.TopCV.domain.enums.WorkMethod;
 import com.ducthong.TopCV.domain.mapper.JobMapper;
 import com.ducthong.TopCV.repository.dynamic_query.CustomJobRepository;
+import com.ducthong.TopCV.repository.dynamic_query.PagedResponse;
 import com.ducthong.TopCV.repository.objects.StatisticJobByIndustryObject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -86,6 +89,73 @@ public class CustomJobRepositoryImpl implements CustomJobRepository {
 
         List<Job> results = entityManager.createQuery(query).getResultList();
         return results;
+    }
+
+    @Override
+    public PagedResponse<Job> searchJobByCompany(SearchJobByCompanyRequestDTO requestDTO, Integer companyId, MetaRequestDTO metaRequestDTO) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Job> query = cb.createQuery(Job.class);
+        Root<Job> root = query.from(Job.class);
+
+        Join<Job, Company> job_company = root.join("company", JoinType.INNER);
+        Join<Job, JobAddress> job_JobAddress = root.join("addresses", JoinType.INNER);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        Predicate companyPredicate = cb.equal(job_company.get("id"), companyId);
+        predicates.add(companyPredicate);
+
+        if (!Objects.equals(requestDTO.keyword(), null) && !Objects.equals(requestDTO.keyword(), "")) {
+            String keywordParttern = "%"+ requestDTO.keyword().toLowerCase()+"%";
+            Predicate namePredicate = cb.like(cb.lower(root.get("name")), keywordParttern);
+            predicates.add(namePredicate);
+        }
+
+        if (!Objects.equals(requestDTO.address(), "") && !Objects.equals(requestDTO.address(), "all"))
+            predicates.add(cb.equal(job_JobAddress.get("provinceCode"), requestDTO.address()));
+
+        query.select(root).where(cb.and(predicates.toArray(new Predicate[0])))
+                .orderBy(cb.desc(root.get("postingTime"))).distinct(true);
+        TypedQuery<Job> typedQuery = entityManager.createQuery(query);
+        typedQuery.setFirstResult(metaRequestDTO.currentPage() * metaRequestDTO.pageSize());
+        typedQuery.setMaxResults(metaRequestDTO.pageSize());
+
+        List<Job> results = typedQuery.getResultList();
+
+        // Total Items
+        CriteriaQuery<Long> queryCount = cb.createQuery(Long.class);
+        Root<Job> rootCount = queryCount.from(Job.class);
+
+        Join<Job, Company> job_companyCount = rootCount.join("company", JoinType.INNER);
+        Join<Job, JobAddress> job_JobAddressCount = rootCount.join("addresses", JoinType.INNER);
+
+        List<Predicate> predicatesCount = new ArrayList<>();
+
+        Predicate companyPredicateCount = cb.equal(job_companyCount.get("id"), companyId);
+        predicatesCount.add(companyPredicateCount);
+
+        if (!Objects.equals(requestDTO.keyword(), null) && !Objects.equals(requestDTO.keyword(), "")) {
+            String keywordParttern = "%"+ requestDTO.keyword().toLowerCase()+"%";
+            Predicate namePredicate = cb.like(cb.lower(rootCount.get("name")), keywordParttern);
+            predicatesCount.add(namePredicate);
+        }
+
+        if (!Objects.equals(requestDTO.address(), "") && !Objects.equals(requestDTO.address(), "all"))
+            predicatesCount.add(cb.equal(job_JobAddressCount.get("provinceCode"), requestDTO.address()));
+
+        queryCount.select(cb.countDistinct(rootCount)).where(cb.and(predicatesCount.toArray(new Predicate[0])));
+
+        long totalItems = entityManager.createQuery(queryCount).getSingleResult();
+        int totalPages = (int) Math.ceil((double) totalItems / metaRequestDTO.pageSize());
+
+        return PagedResponse.<Job>builder()
+                .pageNumber(metaRequestDTO.currentPage())
+                .pageSize(metaRequestDTO.pageSize())
+                .totalPages(totalPages)
+                .totalElements(totalItems)
+                .content(results)
+                .build();
     }
 
     @Override

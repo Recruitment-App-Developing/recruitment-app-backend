@@ -15,6 +15,7 @@ import com.ducthong.TopCV.domain.entity.account.Candidate;
 import com.ducthong.TopCV.repository.*;
 import com.ducthong.TopCV.repository.address.JobAddressRepository;
 import com.ducthong.TopCV.repository.dynamic_query.CustomJobRepository;
+import com.ducthong.TopCV.repository.dynamic_query.PagedResponse;
 import com.ducthong.TopCV.utility.AuthUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -127,20 +128,23 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public MetaResponse<MetaResponseDTO, List<EmployerJobResponseDTO>> getListJobByCompany(MetaRequestDTO metaRequestDTO, Integer accountId) {
+    @Transactional
+    public MetaResponse<MetaResponseDTO, List<EmployerJobResponseDTO>> getListJobByCompany(SearchJobByCompanyRequestDTO requestDTO, Integer accountId, MetaRequestDTO metaRequestDTO) {
         Employer employer = GetRoleUtil.getEmployer(accountId);
         if (employer.getCompany().getId() == null) throw new AppException("This account doesn't register company");
 
-        Sort sort = metaRequestDTO.sortDir().equals(MetaConstant.Sorting.DEFAULT_DIRECTION)
-                ? Sort.by(metaRequestDTO.sortField()).ascending()
-                : Sort.by(metaRequestDTO.sortField()).descending();
-        Pageable pageable = PageRequest.of(metaRequestDTO.currentPage(), metaRequestDTO.pageSize(), sort);
+//        Sort sort = metaRequestDTO.sortDir().equals(MetaConstant.Sorting.DEFAULT_DIRECTION)
+//                ? Sort.by(metaRequestDTO.sortField()).ascending()
+//                : Sort.by(metaRequestDTO.sortField()).descending();
+//        Pageable pageable = PageRequest.of(metaRequestDTO.currentPage(), metaRequestDTO.pageSize(), sort);
+//
+//        Page<Job> page = jobRepo.getListJobByCompany(pageable, employer.getCompany().getId());
+//
+//        if (page.getContent().isEmpty()) throw new AppException("List job is empty");
+        PagedResponse<Job> page = customJobRepo.searchJobByCompany(requestDTO, employer.getCompany().getId(), metaRequestDTO);
 
-        Page<Job> page = jobRepo.getListJobByCompany(pageable, employer.getCompany().getId());
-
-        if (page.getContent().isEmpty()) throw new AppException("List job is empty");
         List<EmployerJobResponseDTO> li = page.getContent().stream()
-                .map(temp -> jobMapper.toEmployerJobResponseDto(temp))
+                .map(jobMapper::toEmployerJobResponseDto)
                 .toList();
         return MetaResponse.successfulResponse(
                 "Get list job success",
@@ -149,10 +153,7 @@ public class JobServiceImpl implements JobService {
                         .totalPages(page.getTotalPages())
                         .currentPage(metaRequestDTO.currentPage())
                         .pageSize(metaRequestDTO.pageSize())
-                        .sorting(SortingDTO.builder()
-                                .sortField(metaRequestDTO.sortField())
-                                .sortDir(metaRequestDTO.sortDir())
-                                .build())
+                        .sorting(null)
                         .build(),
                 li);
     }
