@@ -5,6 +5,7 @@ import com.ducthong.TopCV.constant.messages.SuccessMessage;
 import com.ducthong.TopCV.constant.meta.MetaConstant;
 import com.ducthong.TopCV.domain.dto.account.AccountResponseDTO;
 import com.ducthong.TopCV.domain.dto.application.*;
+import com.ducthong.TopCV.domain.dto.candidate.SearchCandidateRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaResponseDTO;
 import com.ducthong.TopCV.domain.dto.meta.SortingDTO;
@@ -156,5 +157,24 @@ public class ApplicationServiceImpl implements ApplicationService {
                         .build(),
                     res.getContent().stream().map(applicationMapper::toApplicationForCandidateResponseDto).toList()
                 );
+    }
+
+    @Override
+    public MetaResponse<MetaResponseDTO, List<AppliedCandidateResponseDTO>> searchAppliedCandidateByJob(
+            SearchCandidateRequestDTO requestDTO, Integer accountId, Integer jobId, MetaRequestDTO metaRequestDTO) {
+        Job job = jobService.isVerifiedJob(jobId, accountId);
+
+        PagedResponse<Application> page = customApplicationRepo.searchCandidateByJob(requestDTO, job.getId(), metaRequestDTO);
+
+        return MetaResponse.successfulResponse("",
+                MetaResponseDTO.builder()
+                        .totalItems((int) page.getTotalElements())
+                        .totalPages(page.getTotalPages())
+                        .currentPage(page.getPageNumber())
+                        .pageSize(page.getPageSize())
+                        .sorting(null)
+                        .build(),
+                page.getContent().stream().map(applicationMapper::toAppliedCandidateResponseDto).toList()
+        );
     }
 }

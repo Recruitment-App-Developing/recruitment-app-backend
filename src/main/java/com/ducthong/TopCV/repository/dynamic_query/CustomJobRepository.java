@@ -1,9 +1,11 @@
 package com.ducthong.TopCV.repository.dynamic_query;
 
+import com.ducthong.TopCV.domain.dto.candidate.SearchCandidateRequestDTO;
 import com.ducthong.TopCV.domain.dto.job.SearchJobByCompanyRequestDTO;
 import com.ducthong.TopCV.domain.dto.job.SearchJobRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.entity.Job;
+import com.ducthong.TopCV.domain.entity.account.Candidate;
 import com.ducthong.TopCV.domain.enums.ApplicationStatus;
 import com.ducthong.TopCV.repository.objects.StatisticJobByIndustryObject;
 

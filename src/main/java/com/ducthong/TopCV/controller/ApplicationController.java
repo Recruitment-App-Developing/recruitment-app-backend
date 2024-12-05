@@ -3,6 +3,7 @@ package com.ducthong.TopCV.controller;
 import com.ducthong.TopCV.annotation.RestApiV1;
 import com.ducthong.TopCV.constant.Endpoint;
 import com.ducthong.TopCV.domain.dto.application.*;
+import com.ducthong.TopCV.domain.dto.candidate.SearchCandidateRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaResponseDTO;
 import com.ducthong.TopCV.domain.enums.ApplicationStatus;
@@ -60,6 +61,16 @@ public class ApplicationController {
     ){
         return ResponseEntity.status(HttpStatus.OK).body(
                 applicationService.getHistoryApplication(AuthUtil.getRequestedUser().getId(), metaRequestDTO, status)
+        );
+    }
+    @GetMapping(Endpoint.V1.Application.SEARCH_CANDIDATE_BY_JOB)
+    public ResponseEntity<MetaResponse<MetaResponseDTO, List<AppliedCandidateResponseDTO>>> searchCandidateByJob(
+            @PathVariable(name = "jobId") Integer jobId,
+            @ParameterObject MetaRequestDTO metaRequestDTO,
+            @ParameterObject SearchCandidateRequestDTO requestDTO
+            ){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                applicationService.searchAppliedCandidateByJob(requestDTO, AuthUtil.getRequestedUser().getId(), jobId, metaRequestDTO)
         );
     }
 }

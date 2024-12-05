@@ -1,9 +1,11 @@
 package com.ducthong.TopCV.repository.dynamic_query.impl;
 
+import com.ducthong.TopCV.domain.dto.candidate.SearchCandidateRequestDTO;
 import com.ducthong.TopCV.domain.dto.job.SearchJobByCompanyRequestDTO;
 import com.ducthong.TopCV.domain.dto.job.SearchJobRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.entity.*;
+import com.ducthong.TopCV.domain.entity.account.Candidate;
 import com.ducthong.TopCV.domain.entity.address.JobAddress;
 import com.ducthong.TopCV.domain.enums.ApplicationStatus;
 import com.ducthong.TopCV.domain.enums.JobPosition;
@@ -157,7 +159,6 @@ public class CustomJobRepositoryImpl implements CustomJobRepository {
                 .content(results)
                 .build();
     }
-
     @Override
     public List<StatisticJobByIndustryObject> statisticGeneralJobByIndustry() {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
