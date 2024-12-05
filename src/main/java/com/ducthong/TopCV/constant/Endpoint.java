@@ -116,6 +116,8 @@ public class Endpoint {
             public static final String APPLY = BASE + "/apply";
             public static final String GET_APPLIED_CANDIDATE_BY_JOB = BASE + "/applied-candidate-by-job/{jobId}";
             public static final String STATISTIC_BY_COMPANY = BASE + "/statistic-cv-by-company";
+            public static final String HISTORY_APPLICAITON = BASE + "/application-history";
+            public static final String SEARCH_CANDIDATE_BY_JOB = BASE + "/search-candidate/{jobId}";
         }
 
         public static final class CvProfile {

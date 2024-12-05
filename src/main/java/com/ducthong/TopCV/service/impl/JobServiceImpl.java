@@ -6,6 +6,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.ducthong.TopCV.domain.dto.job.*;
+import com.ducthong.TopCV.domain.dto.job.job_address.JobAddressRequestDTO;
+import com.ducthong.TopCV.domain.dto.job.job_address.JobAddressResponseDTO;
+import com.ducthong.TopCV.domain.entity.*;
+import com.ducthong.TopCV.domain.entity.account.Account;
+import com.ducthong.TopCV.domain.entity.account.Candidate;
+import com.ducthong.TopCV.repository.*;
+import com.ducthong.TopCV.repository.address.JobAddressRepository;
+import com.ducthong.TopCV.repository.dynamic_query.CustomJobRepository;
+import com.ducthong.TopCV.repository.dynamic_query.PagedResponse;
+import com.ducthong.TopCV.utility.AuthUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,26 +27,17 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ducthong.TopCV.constant.meta.MetaConstant;
-import com.ducthong.TopCV.domain.dto.job.*;
-import com.ducthong.TopCV.domain.dto.job.job_address.JobAddressRequestDTO;
-import com.ducthong.TopCV.domain.dto.job.job_address.JobAddressResponseDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaResponseDTO;
 import com.ducthong.TopCV.domain.dto.meta.SortingDTO;
-import com.ducthong.TopCV.domain.entity.*;
-import com.ducthong.TopCV.domain.entity.account.Candidate;
 import com.ducthong.TopCV.domain.entity.account.Employer;
 import com.ducthong.TopCV.domain.entity.address.JobAddress;
 import com.ducthong.TopCV.domain.mapper.AddressMapper;
 import com.ducthong.TopCV.domain.mapper.JobMapper;
 import com.ducthong.TopCV.exceptions.AppException;
-import com.ducthong.TopCV.repository.*;
-import com.ducthong.TopCV.repository.address.JobAddressRepository;
-import com.ducthong.TopCV.repository.dynamic_query.CustomJobRepository;
 import com.ducthong.TopCV.responses.MetaResponse;
 import com.ducthong.TopCV.service.ImageService;
 import com.ducthong.TopCV.service.JobService;
-import com.ducthong.TopCV.utility.AuthUtil;
 import com.ducthong.TopCV.utility.GetRoleUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -70,8 +72,7 @@ public class JobServiceImpl implements JobService {
         if (findJob.isEmpty()) throw new AppException("This job is not existed");
         Job job = findJob.get();
 
-        if (job.getCompany().getId() != employer.getCompany().getId())
-            throw new AppException("This account does not have permissions");
+        if (job.getCompany().getId() != employer.getCompany().getId()) throw new AppException("This account does not have permissions");
         return job;
     }
 
@@ -94,9 +95,9 @@ public class JobServiceImpl implements JobService {
         if (findJob.isEmpty()) throw new AppException("This job is not existed");
 
         Boolean isApply = false;
-        if (AuthUtil.getRequestedUser() != null
-                && applicationRepo.checkAccountAppliedJob(
-                        jobId, AuthUtil.getRequestedUser().getId())) isApply = true;
+        if (AuthUtil.getRequestedUser() != null &&
+                applicationRepo.checkAccountAppliedJob(jobId, AuthUtil.getRequestedUser().getId()))
+            isApply = true;
 
         return jobMapper.toDetailJobResponseDto(findJob.get(), isApply);
     }
@@ -108,9 +109,9 @@ public class JobServiceImpl implements JobService {
         if (findJob.isEmpty()) throw new AppException("This job is not existed");
 
         Boolean isApply = false;
-        if (AuthUtil.getRequestedUser() != null
-                && applicationRepo.checkAccountAppliedJob(
-                        jobId, AuthUtil.getRequestedUser().getId())) isApply = true;
+        if (AuthUtil.getRequestedUser() != null &&
+                applicationRepo.checkAccountAppliedJob(jobId, AuthUtil.getRequestedUser().getId()))
+            isApply = true;
 
         return jobMapper.toDetailJobPageResponseDto(findJob.get(), isApply);
     }
@@ -119,36 +120,31 @@ public class JobServiceImpl implements JobService {
     public List<RelatedJobResponseDTO> searchJob(SearchJobRequestDTO requestDTO) {
         List<Job> res = customJobRepo.searchJob(requestDTO);
         if (AuthUtil.getRequestedUser() != null) {
-            return res.stream()
-                    .map(item -> jobMapper.toRelatedJobResponseDto(
-                            item,
-                            applicationRepo.checkAccountAppliedJob(
-                                    item.getId(), AuthUtil.getRequestedUser().getId())))
-                    .toList();
+            return res.stream().map(item -> jobMapper.toRelatedJobResponseDto(item,
+                    applicationRepo.checkAccountAppliedJob(item.getId(), AuthUtil.getRequestedUser().getId()))).toList();
         } else {
-            return res.stream()
-                    .map(item -> jobMapper.toRelatedJobResponseDto(item, false))
-                    .toList();
+            return res.stream().map(item -> jobMapper.toRelatedJobResponseDto(item, false)).toList();
         }
     }
 
     @Override
-    public MetaResponse<MetaResponseDTO, List<EmployerJobResponseDTO>> getListJobByCompany(
-            MetaRequestDTO metaRequestDTO, Integer accountId) {
+    @Transactional
+    public MetaResponse<MetaResponseDTO, List<EmployerJobResponseDTO>> getListJobByCompany(SearchJobByCompanyRequestDTO requestDTO, Integer accountId, MetaRequestDTO metaRequestDTO) {
         Employer employer = GetRoleUtil.getEmployer(accountId);
         if (employer.getCompany().getId() == null) throw new AppException("This account doesn't register company");
 
-        Sort sort = metaRequestDTO.sortDir().equals(MetaConstant.Sorting.DEFAULT_DIRECTION)
-                ? Sort.by(metaRequestDTO.sortField()).ascending()
-                : Sort.by(metaRequestDTO.sortField()).descending();
-        Pageable pageable = PageRequest.of(metaRequestDTO.currentPage(), metaRequestDTO.pageSize(), sort);
+//        Sort sort = metaRequestDTO.sortDir().equals(MetaConstant.Sorting.DEFAULT_DIRECTION)
+//                ? Sort.by(metaRequestDTO.sortField()).ascending()
+//                : Sort.by(metaRequestDTO.sortField()).descending();
+//        Pageable pageable = PageRequest.of(metaRequestDTO.currentPage(), metaRequestDTO.pageSize(), sort);
+//
+//        Page<Job> page = jobRepo.getListJobByCompany(pageable, employer.getCompany().getId());
+//
+//        if (page.getContent().isEmpty()) throw new AppException("List job is empty");
+        PagedResponse<Job> page = customJobRepo.searchJobByCompany(requestDTO, employer.getCompany().getId(), metaRequestDTO);
 
-        Page<Job> page =
-                jobRepo.getListJobByCompany(pageable, employer.getCompany().getId());
-
-        if (page.getContent().isEmpty()) throw new AppException("List job is empty");
         List<EmployerJobResponseDTO> li = page.getContent().stream()
-                .map(temp -> jobMapper.toEmployerJobResponseDto(temp))
+                .map(jobMapper::toEmployerJobResponseDto)
                 .toList();
         return MetaResponse.successfulResponse(
                 "Get list job success",
@@ -157,17 +153,13 @@ public class JobServiceImpl implements JobService {
                         .totalPages(page.getTotalPages())
                         .currentPage(metaRequestDTO.currentPage())
                         .pageSize(metaRequestDTO.pageSize())
-                        .sorting(SortingDTO.builder()
-                                .sortField(metaRequestDTO.sortField())
-                                .sortDir(metaRequestDTO.sortDir())
-                                .build())
+                        .sorting(null)
                         .build(),
                 li);
     }
 
     @Override
-    public MetaResponse<MetaResponseDTO, List<RelatedJobResponseDTO>> findListJobByCompany(
-            MetaRequestDTO metaRequestDTO, Integer companyId, String name, String address) {
+    public MetaResponse<MetaResponseDTO, List<RelatedJobResponseDTO>> findListJobByCompany(MetaRequestDTO metaRequestDTO, Integer companyId, String name, String address) {
         Optional<Company> companyOp = companyRepo.findById(companyId);
         if (companyOp.isEmpty()) throw new AppException("Công ty này không tồn tại");
 
@@ -180,15 +172,9 @@ public class JobServiceImpl implements JobService {
 
         List<RelatedJobResponseDTO> li = new ArrayList<>();
         if (AuthUtil.getRequestedUser() != null) {
-            li = page.getContent().stream()
-                    .map(item -> jobMapper.toRelatedJobResponseDto(
-                            item,
-                            isApply(item.getId(), AuthUtil.getRequestedUser().getId())))
-                    .toList();
+            li = page.getContent().stream().map(item -> jobMapper.toRelatedJobResponseDto(item, isApply(item.getId(), AuthUtil.getRequestedUser().getId()))).toList();
         } else {
-            li = page.getContent().stream()
-                    .map(item -> jobMapper.toRelatedJobResponseDto(item, false))
-                    .toList();
+            li = page.getContent().stream().map(item -> jobMapper.toRelatedJobResponseDto(item, false)).toList();
         }
 
         return MetaResponse.successfulResponse(
@@ -210,8 +196,9 @@ public class JobServiceImpl implements JobService {
     public MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJobSpecification(MetaRequestDTO metaRequestDTO) {
         List<Job> jobList = jobRepo.findAll();
 
-        List<JobResponseDTO> res =
-                jobList.stream().map(item -> jobMapper.toJobResponseDto(item)).toList();
+        List<JobResponseDTO> res = jobList.stream().map(
+                item -> jobMapper.toJobResponseDto(item)
+        ).toList();
         return MetaResponse.successfulResponse(
                 "Get list job success",
                 MetaResponseDTO.builder()
@@ -268,23 +255,25 @@ public class JobServiceImpl implements JobService {
                 .isMain(true)
                 .build();
         industryJobs.add(mainIndustryJob);
-        requestDTO.subIndustries().forEach(item -> {
-            Optional<Industry> temp = industryRepo.findById(item);
-            if (temp.isEmpty()) throw new AppException("This industry is not existed");
-            IndustryJob industryJob = IndustryJob.builder()
-                    .industry(temp.get())
-                    .job(newJob)
-                    .isMain(false)
-                    .build();
-            industryJobs.add(industryJob);
-        });
+        requestDTO.subIndustries().forEach(
+                item -> {
+                    Optional<Industry> temp = industryRepo.findById(item);
+                    if (temp.isEmpty()) throw new AppException("This industry is not existed");
+                    IndustryJob industryJob = IndustryJob.builder()
+                            .industry(temp.get())
+                            .job(newJob)
+                            .isMain(false)
+                            .build();
+                    industryJobs.add(industryJob);
+                }
+        );
         industryJobs.add(mainIndustryJob);
         newJob.setIndustries(industryJobs);
         // Company
         newJob.setCompany(employer.getCompany());
         // Job Image
-        List<Image> imageList = new ArrayList<>();
-        if (!requestDTO.imageList().isEmpty()) {
+        List<Image> imageList= new ArrayList<>();
+        if (!requestDTO.imageList().isEmpty()){
             imageList = imageService.uploadListBase64Image(requestDTO.imageList(), JOB_FOLDER);
         }
         newJob.setImageList(imageList);
@@ -320,32 +309,30 @@ public class JobServiceImpl implements JobService {
         List<Integer> updIndustryRequest = requestDTO.subIndustries();
         updIndustryRequest.add(requestDTO.mainIndustry());
         List<IndustryJob> oldIndustryJobs = job.getIndustries();
-        // Sub Industry
+            // Sub Industry
         int oldIndustryJobs_Size = oldIndustryJobs.size();
         if (oldIndustryJobs_Size > updIndustryRequest.size())
-            for (int i = updIndustryRequest.size(); i < oldIndustryJobs_Size; i++) {
+            for (int i=updIndustryRequest.size(); i<oldIndustryJobs_Size; i++){
                 industryJobRepo.deleteById(oldIndustryJobs.getLast().getId());
                 oldIndustryJobs.remove(oldIndustryJobs.getLast());
             }
-        for (int i = 0; i < oldIndustryJobs.size(); i++) {
-            if (oldIndustryJobs.get(i).getIndustry().getId() != updIndustryRequest.get(i)) {
-                Industry industry =
-                        industryRepo.findById(updIndustryRequest.get(i)).get();
+        for (int i=0; i<oldIndustryJobs.size(); i++){
+            if (oldIndustryJobs.get(i).getIndustry().getId() != updIndustryRequest.get(i)){
+                Industry industry = industryRepo.findById(updIndustryRequest.get(i)).get();
                 oldIndustryJobs.get(i).setIndustry(industry);
             }
             oldIndustryJobs.get(i).setIsMain(false);
         }
-        if (oldIndustryJobs.size() < updIndustryRequest.size()) {
-            for (int i = oldIndustryJobs.size(); i < updIndustryRequest.size(); i++) {
-                Industry industry =
-                        industryRepo.findById(updIndustryRequest.get(i)).get();
+        if (oldIndustryJobs.size() < updIndustryRequest.size()){
+            for (int i=oldIndustryJobs.size(); i<updIndustryRequest.size(); i++){
+                Industry industry = industryRepo.findById(updIndustryRequest.get(i)).get();
                 oldIndustryJobs.add(new IndustryJob(industry, updJob, false));
             }
         }
         updJob.setIndustries(oldIndustryJobs);
-        // Main Industry
+            // Main Industry
         for (IndustryJob item : updJob.getIndustries())
-            if (item.getIndustry().getId() == requestDTO.mainIndustry()) {
+            if (item.getIndustry().getId() == requestDTO.mainIndustry()){
                 item.setIsMain(true);
                 break;
             }
@@ -358,14 +345,12 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public List<JobAddressResponseDTO> updateJobAddress(
-            JobAddressRequestDTO requestDTO, Integer accountId, Integer jobId) {
+    public List<JobAddressResponseDTO> updateJobAddress(JobAddressRequestDTO requestDTO, Integer accountId, Integer jobId) {
         Job job = isVerifiedJob(jobId, accountId);
         JobAddress newJobAddress = addressMapper.toJobAddress(requestDTO.detail(), requestDTO.wardCode());
         if (requestDTO.jobAddressId() != null) {
             Optional<JobAddress> jobAddressFind = job.getAddresses().stream()
-                    .filter(item -> item.getId() == requestDTO.jobAddressId())
-                    .findFirst();
+                    .filter(item -> item.getId() == requestDTO.jobAddressId()).findFirst();
             if (jobAddressFind.isEmpty()) throw new AppException("This address does not found");
             newJobAddress.setId(jobAddressFind.get().getId());
         }
@@ -373,31 +358,30 @@ public class JobServiceImpl implements JobService {
 
         jobAddressRepo.save(newJobAddress);
 
-        return jobRepo.findById(jobId).get().getAddresses().stream()
-                .map(jobMapper::toJobAddressResponseDto)
-                .toList();
+        return jobRepo.findById(jobId).get().getAddresses().stream().map(
+                jobMapper::toJobAddressResponseDto
+        ).toList();
     }
 
     @Override
     public List<JobAddressResponseDTO> getListJobAddressByJob(Integer accountId, Integer jobId) {
         Job job = isVerifiedJob(jobId, accountId);
 
-        return job.getAddresses().stream()
-                .map(jobMapper::toJobAddressResponseDto)
-                .toList();
+        return job.getAddresses().stream().map(
+                jobMapper::toJobAddressResponseDto
+        ).toList();
     }
 
     @Override
     public List<JobAddressResponseDTO> deleteJobAddressId(Integer accountId, Integer jobId, Integer jobAddressId) {
         Job job = isVerifiedJob(jobId, accountId);
         Optional<JobAddress> jobAddressFind = job.getAddresses().stream()
-                .filter(item -> item.getId() == jobAddressId)
-                .findFirst();
+                .filter(item -> item.getId() == jobAddressId).findFirst();
         if (jobAddressFind.isEmpty()) throw new AppException("This address does not found");
         jobAddressRepo.deleteById(jobAddressId);
 
-        return jobRepo.findById(jobId).get().getAddresses().stream()
-                .map(jobMapper::toJobAddressResponseDto)
-                .toList();
+        return jobRepo.findById(jobId).get().getAddresses().stream().map(
+                jobMapper::toJobAddressResponseDto
+        ).toList();
     }
 }

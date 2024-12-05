@@ -1,32 +1,33 @@
 package com.ducthong.TopCV.repository.dynamic_query.impl;
 
-import java.time.LocalDate;
-import java.util.*;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.*;
-
-import org.springframework.stereotype.Repository;
-
+import com.ducthong.TopCV.domain.dto.candidate.SearchCandidateRequestDTO;
+import com.ducthong.TopCV.domain.dto.job.SearchJobByCompanyRequestDTO;
 import com.ducthong.TopCV.domain.dto.job.SearchJobRequestDTO;
+import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.entity.*;
+import com.ducthong.TopCV.domain.entity.account.Candidate;
 import com.ducthong.TopCV.domain.entity.address.JobAddress;
 import com.ducthong.TopCV.domain.enums.ApplicationStatus;
 import com.ducthong.TopCV.domain.enums.JobPosition;
 import com.ducthong.TopCV.domain.enums.WorkMethod;
 import com.ducthong.TopCV.domain.mapper.JobMapper;
 import com.ducthong.TopCV.repository.dynamic_query.CustomJobRepository;
+import com.ducthong.TopCV.repository.dynamic_query.PagedResponse;
 import com.ducthong.TopCV.repository.objects.StatisticJobByIndustryObject;
-
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDate;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
 public class CustomJobRepositoryImpl implements CustomJobRepository {
     private final EntityManager entityManager;
     private final JobMapper jobMapper;
-
     @Override
     public List<Job> searchJob(SearchJobRequestDTO requestDTO) {
         // todo
@@ -44,7 +45,7 @@ public class CustomJobRepositoryImpl implements CustomJobRepository {
 
         System.out.println(requestDTO.keyword());
         if (!Objects.equals(requestDTO.keyword(), null) && !Objects.equals(requestDTO.keyword(), "")) {
-            String keywordParttern = "%" + requestDTO.keyword().toLowerCase() + "%";
+            String keywordParttern = "%"+ requestDTO.keyword().toLowerCase()+"%";
             Predicate namePredicate = cb.like(cb.lower(root.get("name")), keywordParttern);
             Predicate nameCompanyPredicate = cb.like(cb.lower(job_company.get("name")), keywordParttern);
             predicates.add(cb.or(namePredicate, nameCompanyPredicate));
@@ -57,8 +58,7 @@ public class CustomJobRepositoryImpl implements CustomJobRepository {
         }
 
         System.out.println(requestDTO.experienceRequired().toString());
-        if (!Objects.equals(requestDTO.experienceRequired(), "")
-                && !Objects.equals(requestDTO.experienceRequired(), "all")) {
+        if (!Objects.equals(requestDTO.experienceRequired(), "") && !Objects.equals(requestDTO.experienceRequired(), "all")) {
             predicates.add(cb.equal(root.get("workMethod"), WorkMethod.valueOf(requestDTO.workMethod())));
             System.out.println("Work method");
         }
@@ -76,25 +76,89 @@ public class CustomJobRepositoryImpl implements CustomJobRepository {
         }
 
         System.out.println(requestDTO.workField());
-        if (requestDTO.workField() != null
-                && !Objects.equals(requestDTO.workField(), "")
-                && !Objects.equals(requestDTO.workField(), "all")) {
+        if (requestDTO.workField() != null && !Objects.equals(requestDTO.workField(), "") && !Objects.equals(requestDTO.workField(), "all")) {
             predicates.add(cb.equal(industryJob_Industry.get("id"), requestDTO.workField()));
             System.out.println("Work Field");
         }
 
-        query.select(root)
-                .where(cb.and(predicates.toArray(new Predicate[0])))
-                .groupBy(
-                        root.get("id"),
-                        root.get("name"),
-                        job_JobAddress.get("provinceCode"),
-                        industryJob_Industry.get("id"));
+        query.select(root).where(cb.and(predicates.toArray(new Predicate[0])))
+            .groupBy(
+                root.get("id"),
+                root.get("name"),
+                job_JobAddress.get("provinceCode"),
+                industryJob_Industry.get("id")
+            );
 
         List<Job> results = entityManager.createQuery(query).getResultList();
         return results;
     }
 
+    @Override
+    public PagedResponse<Job> searchJobByCompany(SearchJobByCompanyRequestDTO requestDTO, Integer companyId, MetaRequestDTO metaRequestDTO) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<Job> query = cb.createQuery(Job.class);
+        Root<Job> root = query.from(Job.class);
+
+        Join<Job, Company> job_company = root.join("company", JoinType.INNER);
+        Join<Job, JobAddress> job_JobAddress = root.join("addresses", JoinType.INNER);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        Predicate companyPredicate = cb.equal(job_company.get("id"), companyId);
+        predicates.add(companyPredicate);
+
+        if (!Objects.equals(requestDTO.keyword(), null) && !Objects.equals(requestDTO.keyword(), "")) {
+            String keywordParttern = "%"+ requestDTO.keyword().toLowerCase()+"%";
+            Predicate namePredicate = cb.like(cb.lower(root.get("name")), keywordParttern);
+            predicates.add(namePredicate);
+        }
+
+        if (!Objects.equals(requestDTO.address(), "") && !Objects.equals(requestDTO.address(), "all"))
+            predicates.add(cb.equal(job_JobAddress.get("provinceCode"), requestDTO.address()));
+
+        query.select(root).where(cb.and(predicates.toArray(new Predicate[0])))
+                .orderBy(cb.desc(root.get("postingTime"))).distinct(true);
+        TypedQuery<Job> typedQuery = entityManager.createQuery(query);
+        typedQuery.setFirstResult(metaRequestDTO.currentPage() * metaRequestDTO.pageSize());
+        typedQuery.setMaxResults(metaRequestDTO.pageSize());
+
+        List<Job> results = typedQuery.getResultList();
+
+        // Total Items
+        CriteriaQuery<Long> queryCount = cb.createQuery(Long.class);
+        Root<Job> rootCount = queryCount.from(Job.class);
+
+        Join<Job, Company> job_companyCount = rootCount.join("company", JoinType.INNER);
+        Join<Job, JobAddress> job_JobAddressCount = rootCount.join("addresses", JoinType.INNER);
+
+        List<Predicate> predicatesCount = new ArrayList<>();
+
+        Predicate companyPredicateCount = cb.equal(job_companyCount.get("id"), companyId);
+        predicatesCount.add(companyPredicateCount);
+
+        if (!Objects.equals(requestDTO.keyword(), null) && !Objects.equals(requestDTO.keyword(), "")) {
+            String keywordParttern = "%"+ requestDTO.keyword().toLowerCase()+"%";
+            Predicate namePredicate = cb.like(cb.lower(rootCount.get("name")), keywordParttern);
+            predicatesCount.add(namePredicate);
+        }
+
+        if (!Objects.equals(requestDTO.address(), "") && !Objects.equals(requestDTO.address(), "all"))
+            predicatesCount.add(cb.equal(job_JobAddressCount.get("provinceCode"), requestDTO.address()));
+
+        queryCount.select(cb.countDistinct(rootCount)).where(cb.and(predicatesCount.toArray(new Predicate[0])));
+
+        long totalItems = entityManager.createQuery(queryCount).getSingleResult();
+        int totalPages = (int) Math.ceil((double) totalItems / metaRequestDTO.pageSize());
+
+        return PagedResponse.<Job>builder()
+                .pageNumber(metaRequestDTO.currentPage())
+                .pageSize(metaRequestDTO.pageSize())
+                .totalPages(totalPages)
+                .totalElements(totalItems)
+                .content(results)
+                .build();
+    }
     @Override
     public List<StatisticJobByIndustryObject> statisticGeneralJobByIndustry() {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -109,11 +173,11 @@ public class CustomJobRepositoryImpl implements CustomJobRepository {
         query.groupBy(root.get("id"), root.get("name"));
 
         query.select(cb.construct(
-                        StatisticJobByIndustryObject.class,
-                        root.get("id"),
-                        root.get("name"),
-                        cb.count(industryJob_Job.get("id"))))
-                .where(isMain);
+                StatisticJobByIndustryObject.class,
+                root.get("id"),
+                root.get("name"),
+                cb.count(industryJob_Job.get("id"))
+        )).where(isMain);
 
         return entityManager.createQuery(query).getResultList();
     }
@@ -139,7 +203,7 @@ public class CustomJobRepositoryImpl implements CustomJobRepository {
         // Create list day
         List<LocalDate> dateRange = new LinkedList<>();
         LocalDate today = LocalDate.now();
-        for (long i = n - 1; i >= 0; i--) dateRange.add(today.minusDays(i));
+        for (long i=n-1; i>=0; i--) dateRange.add(today.minusDays(i));
 
         List<AbstractMap.SimpleEntry<LocalDate, Integer>> finalResults = new ArrayList<>();
         for (LocalDate date : dateRange) {
@@ -176,18 +240,17 @@ public class CustomJobRepositoryImpl implements CustomJobRepository {
         query.groupBy(root.get("id"), root.get("name"));
 
         query.select(cb.construct(
-                        StatisticJobByIndustryObject.class,
-                        root.get("id"),
-                        root.get("name"),
-                        cb.count(industryJob_Job.get("id"))))
-                .where(cb.and(isMain, company));
+                StatisticJobByIndustryObject.class,
+                root.get("id"),
+                root.get("name"),
+                cb.count(industryJob_Job.get("id"))
+        )).where(cb.and(isMain, company));
 
         return entityManager.createQuery(query).getResultList();
     }
 
     @Override
-    public List<AbstractMap.SimpleEntry<ApplicationStatus, Integer>> statisticApplicationStatusByCompany(
-            Integer companyId) {
+    public List<AbstractMap.SimpleEntry<ApplicationStatus, Integer>> statisticApplicationStatusByCompany(Integer companyId) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
@@ -207,7 +270,8 @@ public class CustomJobRepositoryImpl implements CustomJobRepository {
 
         List<AbstractMap.SimpleEntry<ApplicationStatus, Integer>> finalResults = new ArrayList<>();
         for (Object[] item : results)
-            finalResults.add(new AbstractMap.SimpleEntry<>((ApplicationStatus) item[0], ((Long) item[1]).intValue()));
+            finalResults.add(
+                    new AbstractMap.SimpleEntry<>((ApplicationStatus) item[0], ((Long) item[1]).intValue()));
 
         return finalResults;
     }
@@ -228,9 +292,7 @@ public class CustomJobRepositoryImpl implements CustomJobRepository {
         Expression<LocalDate> applicationDate = cb.function("DATE", LocalDate.class, root.get("applicationTime"));
         Expression<Long> applicationCount = cb.count(root.get("id"));
 
-        query.multiselect(applicationDate, applicationCount)
-                .groupBy(applicationDate)
-                .where(company);
+        query.multiselect(applicationDate, applicationCount).groupBy(applicationDate).where(company);
 
         TypedQuery<Object[]> typedQuery = entityManager.createQuery(query);
         typedQuery.setMaxResults(n);
@@ -240,7 +302,7 @@ public class CustomJobRepositoryImpl implements CustomJobRepository {
 
         List<LocalDate> dateRange = new LinkedList<>();
         LocalDate today = LocalDate.now();
-        for (long i = n - 1; i >= 0; i--) dateRange.add(today.minusDays(i));
+        for (long i=n-1; i>=0; i--) dateRange.add(today.minusDays(i));
 
         List<AbstractMap.SimpleEntry<LocalDate, Integer>> finalResults = new ArrayList<>();
 
