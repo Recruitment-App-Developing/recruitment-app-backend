@@ -9,5 +9,6 @@ public interface ApplicationMapper {
     ApplicationResponseDTO toApplicationResponseDto(Application entity);
 
     AppliedCandidateResponseDTO toAppliedCandidateResponseDto(Application entity);
+
     ApplicationForCandidateResponseDTO toApplicationForCandidateResponseDto(Application entity);
 }

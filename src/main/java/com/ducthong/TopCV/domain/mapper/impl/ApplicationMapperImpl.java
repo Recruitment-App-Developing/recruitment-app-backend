@@ -1,5 +1,10 @@
 package com.ducthong.TopCV.domain.mapper.impl;
 
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Component;
+
 import com.ducthong.TopCV.domain.dto.application.ApplicationForCandidateResponseDTO;
 import com.ducthong.TopCV.domain.dto.application.ApplicationResponseDTO;
 import com.ducthong.TopCV.domain.dto.application.AppliedCandidateResponseDTO;
@@ -11,16 +16,14 @@ import com.ducthong.TopCV.domain.entity.account.Candidate;
 import com.ducthong.TopCV.domain.mapper.ApplicationMapper;
 import com.ducthong.TopCV.domain.mapper.JobMapper;
 import com.ducthong.TopCV.utility.TimeUtil;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class ApplicationMapperImpl implements ApplicationMapper {
     private final JobMapper jobMapper;
+
     @Override
     public ApplicationResponseDTO toApplicationResponseDto(Application entity) {
         Company company = entity.getJob().getCompany();
@@ -31,13 +34,11 @@ public class ApplicationMapperImpl implements ApplicationMapper {
                         "id", company.getId().toString(),
                         "logo", company.getLogo().getImageUrl(),
                         "urlCom", company.getUrlCom(),
-                        "name", company.getName()
-                        ))
+                        "name", company.getName()))
                 .job(Map.of(
                         "id", job.getId().toString(),
                         "name", job.getName(),
-                        "salary", job.getSalary()
-                        ))
+                        "salary", job.getSalary()))
                 .cvLink(entity.getCvLink())
                 .applicationTime(TimeUtil.toStringDateTime(entity.getApplicationTime()))
                 .applicationStatus(entity.getStatus().getTitle())
@@ -50,18 +51,18 @@ public class ApplicationMapperImpl implements ApplicationMapper {
         Candidate candidate = entity.getCandidate();
         CvProfile cvProfile = entity.getCandidate().getCvProfile();
 
-        List<String> experiences = cvProfile.getExperiences().stream().map(
-                item -> item.getPosition() + " - "+ item.getCompanyName()
-        ).toList();
+        List<String> experiences = cvProfile.getExperiences().stream()
+                .map(item -> item.getPosition() + " - " + item.getCompanyName())
+                .toList();
 
-        List<String> education = cvProfile.getEducations().stream().map(
-                item -> item.getMainIndustry() + " - "+ item.getSchoolName()
-        ).toList();
+        List<String> education = cvProfile.getEducations().stream()
+                .map(item -> item.getMainIndustry() + " - " + item.getSchoolName())
+                .toList();
 
         // Name
         String name = candidate.getUsername();
-//        if (!candidate.getFirstName().isEmpty() || !candidate.getLastName().isEmpty())
-//            name = candidate.getFirstName() + " " + candidate.getLastName();
+        //        if (!candidate.getFirstName().isEmpty() || !candidate.getLastName().isEmpty())
+        //            name = candidate.getFirstName() + " " + candidate.getLastName();
 
         return AppliedCandidateResponseDTO.builder()
                 .name(name)

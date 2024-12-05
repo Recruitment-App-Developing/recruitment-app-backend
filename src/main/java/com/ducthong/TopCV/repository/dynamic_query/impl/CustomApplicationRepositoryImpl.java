@@ -1,5 +1,16 @@
 package com.ducthong.TopCV.repository.dynamic_query.impl;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
+
+import org.springframework.stereotype.Repository;
+
 import com.ducthong.TopCV.domain.dto.candidate.SearchCandidateRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.entity.Application;
@@ -9,17 +20,8 @@ import com.ducthong.TopCV.domain.enums.ApplicationStatus;
 import com.ducthong.TopCV.exceptions.AppException;
 import com.ducthong.TopCV.repository.dynamic_query.CustomApplicationRepository;
 import com.ducthong.TopCV.repository.dynamic_query.PagedResponse;
-import com.ducthong.TopCV.utility.TimeUtil;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.*;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
@@ -27,7 +29,8 @@ public class CustomApplicationRepositoryImpl implements CustomApplicationReposit
     private final EntityManager entityManager;
 
     @Override
-    public PagedResponse<Application> searchCandidateByJob(SearchCandidateRequestDTO requestDTO, Integer jobId, MetaRequestDTO metaRequestDTO) {
+    public PagedResponse<Application> searchCandidateByJob(
+            SearchCandidateRequestDTO requestDTO, Integer jobId, MetaRequestDTO metaRequestDTO) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Application> query = cb.createQuery(Application.class);
@@ -40,13 +43,15 @@ public class CustomApplicationRepositoryImpl implements CustomApplicationReposit
         Predicate jobPredicate = cb.equal(application_job.get("id"), jobId);
         predicates.add(jobPredicate);
 
-        if (requestDTO.username() != null && !requestDTO.username().equals("")){
+        if (requestDTO.username() != null && !requestDTO.username().equals("")) {
             String usernameParttern = "%" + requestDTO.username().toLowerCase() + "%";
             Predicate usernamePredicate = cb.like(application_candidate.get("username"), usernameParttern);
             predicates.add(usernamePredicate);
         }
 
-        if (requestDTO.status() != null && !requestDTO.status().equals("") && !Objects.equals(requestDTO.status(), "all")) {
+        if (requestDTO.status() != null
+                && !requestDTO.status().equals("")
+                && !Objects.equals(requestDTO.status(), "all")) {
             try {
                 ApplicationStatus status = ApplicationStatus.valueOf(requestDTO.status());
                 Predicate statusPredicate = cb.equal(root.get("status"), status);
@@ -56,11 +61,15 @@ public class CustomApplicationRepositoryImpl implements CustomApplicationReposit
             }
         }
 
-        if (requestDTO.startTime() != null && requestDTO.startTime() != "" && requestDTO.endTime() != null && requestDTO.endTime() != "") {
+        if (requestDTO.startTime() != null
+                && requestDTO.startTime() != ""
+                && requestDTO.endTime() != null
+                && requestDTO.endTime() != "") {
             try {
                 LocalDate startTime = LocalDate.parse(requestDTO.startTime());
                 LocalDate endTime = LocalDate.parse(requestDTO.endTime());
-                Expression<LocalDate> applicationDate = cb.function("DATE", LocalDate.class, root.get("applicationTime"));
+                Expression<LocalDate> applicationDate =
+                        cb.function("DATE", LocalDate.class, root.get("applicationTime"));
                 Predicate applicationTimePre = cb.between(applicationDate, startTime, endTime);
                 predicates.add(applicationTimePre);
             } catch (Exception e) {
@@ -76,7 +85,8 @@ public class CustomApplicationRepositoryImpl implements CustomApplicationReposit
 
         List<Application> results = typedQuery.getResultList();
         for (Application item : results)
-            System.out.println(item.getId() +" | "+item.getCandidate().getId() + " | "+item.getCandidate().getUsername());
+            System.out.println(item.getId() + " | " + item.getCandidate().getId() + " | "
+                    + item.getCandidate().getUsername());
         // totalItems
         CriteriaQuery<Long> query1 = cb.createQuery(Long.class);
         Root<Application> root1 = query1.from(Application.class);
@@ -88,13 +98,15 @@ public class CustomApplicationRepositoryImpl implements CustomApplicationReposit
         Predicate jobPredicate1 = cb.equal(application_job1.get("id"), jobId);
         predicates1.add(jobPredicate1);
 
-        if (requestDTO.username() != null && !requestDTO.username().equals("")){
+        if (requestDTO.username() != null && !requestDTO.username().equals("")) {
             String usernameParttern = "%" + requestDTO.username().toLowerCase() + "%";
             Predicate usernamePredicate1 = cb.like(application_candidate1.get("username"), usernameParttern);
             predicates1.add(usernamePredicate1);
         }
 
-        if (requestDTO.status() != null && !requestDTO.status().equals("") && !Objects.equals(requestDTO.status(), "all")) {
+        if (requestDTO.status() != null
+                && !requestDTO.status().equals("")
+                && !Objects.equals(requestDTO.status(), "all")) {
             try {
                 ApplicationStatus status = ApplicationStatus.valueOf(requestDTO.status());
                 Predicate statusPredicate1 = cb.equal(root1.get("status"), status);
@@ -104,11 +116,15 @@ public class CustomApplicationRepositoryImpl implements CustomApplicationReposit
             }
         }
 
-        if (requestDTO.startTime() != null && requestDTO.startTime() != "" && requestDTO.endTime() != null && requestDTO.endTime() != "") {
+        if (requestDTO.startTime() != null
+                && requestDTO.startTime() != ""
+                && requestDTO.endTime() != null
+                && requestDTO.endTime() != "") {
             try {
                 LocalDate startTime = LocalDate.parse(requestDTO.startTime());
                 LocalDate endTime = LocalDate.parse(requestDTO.endTime());
-                Expression<LocalDate> applicationDate1 = cb.function("DATE", LocalDate.class, root1.get("applicationTime"));
+                Expression<LocalDate> applicationDate1 =
+                        cb.function("DATE", LocalDate.class, root1.get("applicationTime"));
                 Predicate applicationTimePre1 = cb.between(applicationDate1, startTime, endTime);
                 predicates1.add(applicationTimePre1);
             } catch (Exception e) {
@@ -130,7 +146,8 @@ public class CustomApplicationRepositoryImpl implements CustomApplicationReposit
     }
 
     @Override
-    public PagedResponse<Application> getListApplicationByAccountId(Integer accountId, ApplicationStatus applicationStatus, Integer pageSize, Integer pageNumber) {
+    public PagedResponse<Application> getListApplicationByAccountId(
+            Integer accountId, ApplicationStatus applicationStatus, Integer pageSize, Integer pageNumber) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Application> query = cb.createQuery(Application.class);
@@ -142,10 +159,10 @@ public class CustomApplicationRepositoryImpl implements CustomApplicationReposit
         Predicate accountIdPredicate = cb.equal(application_candidate.get("id"), accountId);
         predicates.add(accountIdPredicate);
 
-        if (applicationStatus != null)
-            predicates.add(cb.equal(root.get("status"), applicationStatus));
+        if (applicationStatus != null) predicates.add(cb.equal(root.get("status"), applicationStatus));
 
-        query.select(root).where(cb.and(predicates.toArray(new Predicate[0])))
+        query.select(root)
+                .where(cb.and(predicates.toArray(new Predicate[0])))
                 .orderBy(cb.desc(root.get("applicationTime")));
         TypedQuery<Application> typedQuery = entityManager.createQuery(query);
         typedQuery.setFirstResult(pageNumber * pageSize);
@@ -162,8 +179,7 @@ public class CustomApplicationRepositoryImpl implements CustomApplicationReposit
         Predicate accountIdPredicateCount = cb.equal(application_candidateCount.get("id"), accountId);
         predicatesCount.add(accountIdPredicateCount);
 
-        if (applicationStatus != null)
-            predicatesCount.add(cb.equal(rootCount.get("status"), applicationStatus));
+        if (applicationStatus != null) predicatesCount.add(cb.equal(rootCount.get("status"), applicationStatus));
 
         countQuery.select(cb.count(rootCount)).where(cb.and(predicatesCount.toArray(new Predicate[0])));
         long totalItems = entityManager.createQuery(countQuery).getSingleResult();
