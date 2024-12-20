@@ -10,6 +10,7 @@ import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaResponseDTO;
 import com.ducthong.TopCV.domain.entity.Job;
 import com.ducthong.TopCV.responses.MetaResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public interface JobService {
     Job isVerifiedJob(Integer jobId, Integer accountId);
@@ -30,7 +31,7 @@ public interface JobService {
 
     MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJobSpecification(MetaRequestDTO metaRequestDTO);
 
-    MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJob(MetaRequestDTO metaRequestDTO);
+    MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJob(MetaRequestDTO metaRequestDTO) throws JsonProcessingException;
 
     DetailJobResponseDTO addJob(JobRequestDTO requestDTO, Integer userId) throws IOException;
 

@@ -3,6 +3,8 @@ package com.ducthong.TopCV.controller;
 import java.io.IOException;
 import java.util.List;
 
+import com.ducthong.TopCV.service.redis_service.JobRedisService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 
 import org.springdoc.core.annotations.ParameterObject;
@@ -36,11 +38,14 @@ import lombok.experimental.FieldDefaults;
 @SecurityRequirement(name = "bearerAuth")
 public class JobController {
     private final JobService jobService;
+    private final JobRedisService jobRedisService;
 
     @GetMapping(Endpoint.V1.Job.GET_LIST_JOB)
     public ResponseEntity<MetaResponse<MetaResponseDTO, List<JobResponseDTO>>> getListJob(
-            @ParameterObject MetaRequestDTO metaRequestDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(jobService.getListJob(metaRequestDTO));
+            @ParameterObject MetaRequestDTO metaRequestDTO) throws JsonProcessingException {
+        MetaResponse<MetaResponseDTO, List<JobResponseDTO>> res = jobRedisService.getListJob(metaRequestDTO);
+        if (res == null) res = jobService.getListJob(metaRequestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
     @GetMapping(Endpoint.V1.Job.SEARCH_JOB)

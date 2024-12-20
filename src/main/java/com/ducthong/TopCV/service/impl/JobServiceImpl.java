@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.ducthong.TopCV.service.redis_service.JobRedisService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,6 +58,7 @@ public class JobServiceImpl implements JobService {
     private final CustomJobRepository customJobRepo;
     // Service
     private final ImageService imageService;
+    private final JobRedisService jobRedisService;
     // Mapper
     private final JobMapper jobMapper;
     private final AddressMapper addressMapper;
@@ -226,7 +229,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJob(MetaRequestDTO metaRequestDTO) {
+    public MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJob(MetaRequestDTO metaRequestDTO) throws JsonProcessingException {
         Sort sort = metaRequestDTO.sortDir().equals(MetaConstant.Sorting.DEFAULT_DIRECTION)
                 ? Sort.by(metaRequestDTO.sortField()).ascending()
                 : Sort.by(metaRequestDTO.sortField()).descending();
@@ -236,7 +239,7 @@ public class JobServiceImpl implements JobService {
         List<JobResponseDTO> li = page.getContent().stream()
                 .map(temp -> jobMapper.toJobResponseDto(temp))
                 .toList();
-        return MetaResponse.successfulResponse(
+        MetaResponse<MetaResponseDTO, List<JobResponseDTO>> res = MetaResponse.successfulResponse(
                 "Get list job success",
                 MetaResponseDTO.builder()
                         .totalItems((int) page.getTotalElements())
@@ -249,6 +252,10 @@ public class JobServiceImpl implements JobService {
                                 .build())
                         .build(),
                 li);
+        // Cache in Redis
+        jobRedisService.saveListJob(metaRequestDTO, res);
+
+        return res;
     }
 
     @Override
