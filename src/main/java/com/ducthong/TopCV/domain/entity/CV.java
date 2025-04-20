@@ -2,6 +2,7 @@ package com.ducthong.TopCV.domain.entity;
 
 import java.time.LocalDateTime;
 
+import com.ducthong.TopCV.domain.entity.account.Employer;
 import jakarta.persistence.*;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -47,4 +48,9 @@ public class CV {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "candidate_id")
     private Candidate candidate;
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "employer_id")
+//    private Employer employer;
+    private Integer employerId;
 }

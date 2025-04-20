@@ -2,6 +2,7 @@ package com.ducthong.TopCV.domain.entity.CvProfile;
 
 import java.time.LocalDateTime;
 
+import com.ducthong.TopCV.extract_data.entity.CvInfor;
 import jakarta.persistence.*;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -42,6 +43,8 @@ public class Education {
     @DateTimeFormat(pattern = TimeFormatConstant.DATE_FORMAT)
     private LocalDateTime endTime;
 
+    private String timeStr;
+
     public String getEndTime() {
         return TimeUtil.toMonthYear(this.endTime);
     }
@@ -54,4 +57,8 @@ public class Education {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cv_profile_id")
     private CvProfile cvProfile;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cv_infor_id")
+    private CvInfor cvInfor;
 }

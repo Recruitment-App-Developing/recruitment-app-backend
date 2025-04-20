@@ -5,10 +5,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import com.ducthong.TopCV.constant.TimeFormatConstant;
 import com.ducthong.TopCV.exceptions.AppException;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class TimeUtil {
     private static final DateTimeFormatter DATETIME_FORMATTER =
             DateTimeFormatter.ofPattern(TimeFormatConstant.DATETIME_FORMAT);
@@ -26,8 +29,25 @@ public class TimeUtil {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TimeFormatConstant.DATE_FORMAT);
             return LocalDate.parse(timeStr, formatter).atStartOfDay();
         } catch (Exception e) {
-            throw new AppException("Thời gian không hợp lệ");
+            log.error("Thời gian không hợp lệ");
+            return null;
         }
+    }
+
+    public static LocalDateTime convertStringToDoB(String timeStr) {
+        if (StringUtils.isNullOrEmpty(timeStr)) return null;
+        List<DateTimeFormatter> formatters = List.of(
+                DateTimeFormatter.ofPattern("dd-MM-yyyy"),
+                DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        );
+        for (DateTimeFormatter formatter : formatters) {
+            try {
+                return LocalDate.parse(timeStr, formatter).atStartOfDay();
+            } catch (Exception ex) {
+            }
+        }
+        log.error("Thời gian không hợp lệ: {}", timeStr);
+        return null;
     }
 
     public static LocalDateTime monthYearToDate(String timeStr) {
