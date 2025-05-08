@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.ducthong.TopCV.utility.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,7 @@ import com.ducthong.TopCV.utility.MessageSourceUtil;
 
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @EnableTransactionManagement
@@ -115,10 +118,14 @@ public class EmployerServiceImpl implements EmployerService {
         Employer oldEmployer = GetRoleUtil.getEmployer(accountId);
         Employer newEmployer = employerMapper.updEmployerDtoToEmployerEntity(oldEmployer, requestDTO);
         // Avatar
-        if (requestDTO.avatar() != null && !requestDTO.avatar().equals("")) {
+        if (!StringUtils.isNullOrEmpty(requestDTO.avatar()) && !requestDTO.avatar().contains("http://res.cloudinary.com/dtcokd0bb")) {
             Image avatar = oldEmployer.getAvatar();
-            if (!Objects.equals(avatar.getImageUrl(), appConfig.getDEFAULT_AVATAR())) {
-                cloudinaryService.delete(avatar.getImagePublicId());
+            try {
+                if (!Objects.equals(avatar.getImageUrl(), appConfig.getDEFAULT_AVATAR())) {
+                    cloudinaryService.delete(avatar.getImagePublicId());
+                }
+            } catch (Exception e) {
+                log.error("[ERROR_UPDATE_ACCOUNT] Error when deleting avatar id: {}", avatar.getId());
             }
             CloudinaryResponseDTO uploadResponse =
                     cloudinaryService.uploadFileBase64_v2(requestDTO.avatar(), appConfig.getFOLDER_AVATAR());

@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.ducthong.TopCV.constant.TimeFormatConstant;
@@ -16,11 +17,6 @@ import com.ducthong.TopCV.domain.enums.ApplicationMethod;
 import com.ducthong.TopCV.domain.enums.Gender;
 import com.ducthong.TopCV.domain.enums.JobPosition;
 import com.ducthong.TopCV.domain.enums.WorkMethod;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "jobs")
@@ -62,6 +58,14 @@ public class Job {
 
     @NotBlank(message = "The salary of job cannot blank")
     private String salary;
+
+    private String salaryType;
+
+    private String salaryUnit;
+
+    private Integer salaryFrom;
+
+    private Integer salaryTo;
 
     @Lob
     @Column(columnDefinition = "LONGTEXT")

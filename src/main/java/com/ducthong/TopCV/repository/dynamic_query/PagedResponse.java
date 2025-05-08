@@ -17,4 +17,8 @@ public class PagedResponse<T> {
     private int pageSize;
     private int totalPages;
     private long totalElements;
+
+    public static int calTotalPage(int totalElements, int pageSize) {
+        return (int) Math.ceil((double) totalElements / pageSize);
+    }
 }

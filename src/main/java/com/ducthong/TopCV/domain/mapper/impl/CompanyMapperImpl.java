@@ -2,6 +2,10 @@ package com.ducthong.TopCV.domain.mapper.impl;
 
 import java.util.*;
 
+import com.ducthong.TopCV.constant.Constants;
+import com.ducthong.TopCV.domain.entity.Image;
+import com.ducthong.TopCV.repository.ImageRepository;
+import com.ducthong.TopCV.utility.Common;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class CompanyMapperImpl implements CompanyMapper {
     private final ImageMapper imageMapper;
     private final IndustryRepository industryRepo;
+    private final ImageRepository imageRepo;
     // Variant
     @Value("${cloudinary.folder.default-company-logo}")
     private String DEFAULT_COMPANY_LOGO;
@@ -165,6 +170,11 @@ public class CompanyMapperImpl implements CompanyMapper {
                 industry.ifPresent(value -> activeFields.add(value.getName()));
             });
         }
+        // Banner
+        String banner = null;
+        Optional<Image> imageOpt = imageRepo.findByRefId(String.valueOf(entity.getId()));
+        if (imageOpt.isPresent())
+            banner = Common.getFileToBase64(Constants.BANNER_FOLDER, imageOpt.get().getRefId() + Constants.IMAGE_TYPE);
         return DetailCompanyResponseDTO.builder()
                 .id(entity.getId())
                 .name(entity.getName())

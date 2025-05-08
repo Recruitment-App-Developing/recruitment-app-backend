@@ -3,6 +3,8 @@ package com.ducthong.TopCV.service.impl;
 import java.util.List;
 import java.util.Optional;
 
+import com.ducthong.TopCV.responses.Response;
+import com.ducthong.TopCV.utility.AuthUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -54,6 +56,19 @@ public class ApplicationServiceImpl implements ApplicationService {
     // Variant
     private final String CV_LINK = "http://localhost:3000/cv-profile/";
 
+    @Transactional
+    protected Application accessApplication(String applicationId, Integer accountId) {
+        Optional<Application> applicationOpt = applicationRepo.findById(applicationId);
+        if (applicationOpt.isPresent()) {
+            Application application = applicationOpt.get();
+            Job job = application.getJob();
+            Company company = job.getCompany();
+            if (company.getId().equals(GetRoleUtil.getEmployer(accountId).getCompany().getId())) return application;
+            throw new AppException("Tài khoản không có quyền chỉnh sửa trạng thái hồ sơ");
+        }
+        throw new AppException("Không tìm thấy hồ sơ ứng tuyển");
+    }
+
     @Override
     public ApplicationResponseDTO addApplication(Integer accountId, ApplicationRequestDTO requestDTO) {
         // Candidate
@@ -96,11 +111,11 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         int numerOfCv = applicationRepo.statisticByStatus(company.getId(), null);
         int numberOfApplyCv = applicationRepo.statisticByStatus(company.getId(), ApplicationStatus.NEW);
-        int numberOfOpenContactCv = applicationRepo.statisticByStatus(company.getId(), ApplicationStatus.CONTACT_ALLOW);
+        int numberOfOpenContactCv = applicationRepo.statisticByStatus(company.getId(), ApplicationStatus.VIEWED);
         int numberOfInterviewCv =
                 applicationRepo.statisticByStatus(company.getId(), ApplicationStatus.INTERVIEW_APPOINTMENT);
-        int numberOfFollowCv = applicationRepo.statisticByStatus(company.getId(), ApplicationStatus.FOLLOWING);
-
+        int numberOfFollowCv = applicationRepo.statisticByStatus(company.getId(), ApplicationStatus.SKIP);
+        // todo: sua lai thong ke theo trang thai
         return StatisticApplicationResponseDTO.builder()
                 .numberOfCv(numerOfCv)
                 .numberOfApplyCv(numberOfApplyCv)
@@ -184,5 +199,17 @@ public class ApplicationServiceImpl implements ApplicationService {
                 page.getContent().stream()
                         .map(applicationMapper::toAppliedCandidateResponseDto)
                         .toList());
+    }
+
+    @Override
+    public Response updateStatus(String applicationId, String status) {
+        Application application = accessApplication(applicationId, AuthUtil.getRequestedUser().getId());
+        ApplicationStatus newStatus = ApplicationStatus.valueOf(status);
+        if (!application.getStatus().equals(ApplicationStatus.SKIP)) {
+            application.setStatus(newStatus);
+            applicationRepo.save(application);
+            return Response.successfulResponse("Cập nhật trạng thái hồ sơ thành công");
+        }
+        throw new AppException("Hồ sơ đã ở trạng thái bỏ qua. Không thể chỉnh sửa.");
     }
 }

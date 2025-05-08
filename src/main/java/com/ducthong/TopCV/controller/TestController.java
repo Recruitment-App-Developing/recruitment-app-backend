@@ -29,7 +29,7 @@ public class TestController {
         //        List<AbstractMap.SimpleEntry<LocalDate, Integer>> temp = repo.statisticGeneralJobByDay();
         //        List<StatisticJobByIndustryObject> temp = repo.statisticCompanyJobByIndustry(1);
         //        List<AbstractMap.SimpleEntry<LocalDate, Integer>> temp = repo.statisticApplyCandidateByDay(1);
-        List<Job> jobs = repo.searchJob(requestDTO);
+//        List<Job> jobs = repo.searchJob(requestDTO);
         System.out.println("ok1");
         //        for (Job item : jobs){
         //            System.out.println(item.getId() + " | "+ item.getName() + " | "+item.getCompany().getName());

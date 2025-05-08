@@ -6,8 +6,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.ducthong.TopCV.responses.Response;
 import com.ducthong.TopCV.service.redis_service.JobRedisService;
+import com.ducthong.TopCV.utility.Common;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -120,20 +123,23 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public List<RelatedJobResponseDTO> searchJob(SearchJobRequestDTO requestDTO) {
-        List<Job> res = customJobRepo.searchJob(requestDTO);
+    public PagedResponse searchJob(SearchJobRequestDTO requestDTO, MetaRequestDTO metaRequestDTO) {
+        PagedResponse<Job> res = customJobRepo.searchJob(requestDTO, metaRequestDTO);
+        PagedResponse<RelatedJobResponseDTO> response = new PagedResponse<>();
+        BeanUtils.copyProperties(res, response);
         if (AuthUtil.getRequestedUser() != null) {
-            return res.stream()
+            response.setContent(res.getContent().stream()
                     .map(item -> jobMapper.toRelatedJobResponseDto(
                             item,
                             applicationRepo.checkAccountAppliedJob(
                                     item.getId(), AuthUtil.getRequestedUser().getId())))
-                    .toList();
+                    .toList());
         } else {
-            return res.stream()
+            response.setContent(res.getContent().stream()
                     .map(item -> jobMapper.toRelatedJobResponseDto(item, false))
-                    .toList();
+                    .toList());
         }
+        return response;
     }
 
     @Override
@@ -269,7 +275,7 @@ public class JobServiceImpl implements JobService {
         List<IndustryJob> industryJobs = new ArrayList<>();
 
         Optional<Industry> mainIndustryFind = industryRepo.findById(requestDTO.mainIndustry());
-        if (mainIndustryFind.isEmpty()) throw new AppException("This main industry is not existed");
+        if (mainIndustryFind.isEmpty()) throw new AppException("Ngành nghề chính này không tồn tại");
         IndustryJob mainIndustryJob = IndustryJob.builder()
                 .industry(mainIndustryFind.get())
                 .job(newJob)
@@ -278,7 +284,7 @@ public class JobServiceImpl implements JobService {
         industryJobs.add(mainIndustryJob);
         requestDTO.subIndustries().forEach(item -> {
             Optional<Industry> temp = industryRepo.findById(item);
-            if (temp.isEmpty()) throw new AppException("This industry is not existed");
+            if (temp.isEmpty()) throw new AppException("Ngành nghề này không tồn tại");
             IndustryJob industryJob = IndustryJob.builder()
                     .industry(temp.get())
                     .job(newJob)
@@ -305,16 +311,20 @@ public class JobServiceImpl implements JobService {
                         jobAddress.setJob(newJob);
                         return jobAddress;
                     } catch (Exception e) {
-                        throw new AppException("This address is not valid");
+                        throw new AppException("Địa chỉ này không đúng");
                     }
                 })
                 .toList();
         newJob.setAddresses(jobAddressList);
+        // Salary
+        ProcessSalaryRequest salaryRequest =
+                new ProcessSalaryRequest(requestDTO.salaryType(), requestDTO.salaryUnit(), requestDTO.salaryFrom(), requestDTO.salaryTo());
+        newJob.setSalary(Common.convertToSalry(salaryRequest));
         try {
             Job saveJob = jobRepo.save(newJob);
             return jobMapper.toDetailJobResponseDto(saveJob, false);
         } catch (Exception e) {
-            throw new AppException("Add new job is failed");
+            throw new AppException("Thêm mới tin tuyển dụng thất bại");
         }
     }
 
@@ -363,6 +373,16 @@ public class JobServiceImpl implements JobService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public Response hiddenJob(List<Integer> jobIds) {
+        Employer employer = GetRoleUtil.getEmployer(AuthUtil.getRequestedUser().getId());
+        Company company = employer.getCompany();
+        List<Job> jobList = jobRepo.findJobByComIdAndListIds(company.getId(), jobIds);
+        jobList.forEach(item -> item.setIsActive(false));
+        jobRepo.saveAll(jobList);
+        return Response.successfulResponse("Ẩn tin tuyển dụng thành công");
     }
 
     @Override

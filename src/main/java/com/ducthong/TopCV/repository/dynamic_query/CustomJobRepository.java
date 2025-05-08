@@ -12,7 +12,7 @@ import com.ducthong.TopCV.domain.enums.ApplicationStatus;
 import com.ducthong.TopCV.repository.objects.StatisticJobByIndustryObject;
 
 public interface CustomJobRepository {
-    List<Job> searchJob(SearchJobRequestDTO requestDTO);
+    PagedResponse searchJob(SearchJobRequestDTO requestDTO, MetaRequestDTO metaRequestDTO);
 
     PagedResponse<Job> searchJobByCompany(
             SearchJobByCompanyRequestDTO requestDTO, Integer companyId, MetaRequestDTO metaRequestDTO);

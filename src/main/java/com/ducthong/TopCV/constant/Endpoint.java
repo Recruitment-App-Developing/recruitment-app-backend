@@ -88,6 +88,7 @@ public class Endpoint {
             public static final String GET_DETAIL_JOB_PAGE = BASE + "/job-page/{jobId}";
             public static final String ADD_ONE = BASE;
             public static final String UPDATE_ONE = BASE + "/update/{jobId}";
+            public static final String HIDDEN_ONE = BASE + "/hidden/{jobId}";
             public static final String GET_LIST_JOB_ADDRESS = BASE + "/job-address/{jobId}";
             public static final String UPDATE_JOB_ADDRESS = BASE + "/job-address/update/{jobId}";
             public static final String DELETE_JOB_ADDRESS = BASE + "/job-address/delete/{jobId}";
@@ -95,6 +96,7 @@ public class Endpoint {
 
         public static final class Cv {
             public static final String BASE = V1.PREFIX + "/cv";
+            public static final String GET_ONE_CV = BASE + "/get-one/{cvId}";
             public static final String GET_LIST_BY_ACCOUNT_ID = BASE + "/my-cv";
             public static final String ADD_ONE = BASE + "/add";
             public static final String UPDATE_CV = BASE + "/update";
@@ -118,6 +120,7 @@ public class Endpoint {
             public static final String STATISTIC_BY_COMPANY = BASE + "/statistic-cv-by-company";
             public static final String HISTORY_APPLICAITON = BASE + "/application-history";
             public static final String SEARCH_CANDIDATE_BY_JOB = BASE + "/search-candidate/{jobId}";
+            public static final String UPDATE_STATUS = BASE + "/update-status";
         }
 
         public static final class CvProfile {
@@ -135,6 +138,7 @@ public class Endpoint {
             public static final String STATISTIC_APPLICATION_STATUS_BY_COMPANY =
                     BASE + "/statisticApplicationStatusByCompany";
             public static final String STATISTIC_APPLY_CANDIDATE_BY_DAY = BASE + "/statisticApplyCandidateByDay";
+            public static final String STATISTIC_RECRUITMENT_EFFECTIVE = BASE + "/statisticRecruitmentEffective";
         }
 
         public static final class Address {

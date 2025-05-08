@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.ducthong.TopCV.constant.Constants;
+import com.ducthong.TopCV.exceptions.AppException;
+import com.ducthong.TopCV.utility.Common;
+import com.ducthong.TopCV.utility.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.ducthong.TopCV.domain.entity.Image;
@@ -18,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
     private final CloudinaryService cloudinaryService;
-    // TODO
+    private final String BANNER_FOLDER = "static";
     @Override
     public List<Image> uploadListBase64Image(List<String> base64StringList, String folder) throws IOException {
         List<Image> res = new ArrayList<>();
@@ -33,5 +37,13 @@ public class ImageServiceImpl implements ImageService {
             res.add(imageUpload);
         }
         return res;
+    }
+
+    @Override
+    public String getOneImageById(String id) {
+        String result = Common.getFileToBase64(BANNER_FOLDER, id + Constants.IMAGE_TYPE);
+        if (StringUtils.isNullOrEmpty(result))
+            throw new AppException("Không tìm thấy ảnh");
+        return result;
     }
 }

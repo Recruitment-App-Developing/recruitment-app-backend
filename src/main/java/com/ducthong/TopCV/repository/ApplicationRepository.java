@@ -24,4 +24,6 @@ public interface ApplicationRepository extends JpaRepository<Application, String
             + "JOIN FETCH c.cvProfile "
             + " WHERE a.job.id = :jobId")
     Page<Application> getApplicationByJobId(@Param("jobId") Integer jobId, Pageable pageable);
+    @Query(value = "select count(a.application_id) from applications a join jobs j on j.company_id = ?1 and a.job_id = j.job_id and (?2 is null or a.status = ?2)", nativeQuery = true)
+    Integer countApplicationByStstus(Integer comId, String status);
 }

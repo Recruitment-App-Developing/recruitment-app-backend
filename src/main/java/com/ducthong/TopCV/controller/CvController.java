@@ -3,8 +3,10 @@ package com.ducthong.TopCV.controller;
 import java.io.IOException;
 import java.util.List;
 
+import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import jakarta.validation.Valid;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,17 +34,21 @@ import lombok.experimental.FieldDefaults;
 public class CvController {
     private final CvService cvService;
 
+    @GetMapping(Endpoint.V1.Cv.GET_ONE_CV)
+    public ResponseEntity getOneCv(@PathVariable(name = "cvId") String cvId) {
+        return ResponseEntity.ok(cvService.getCvById(cvId));
+    }
+
     @GetMapping(Endpoint.V1.Cv.GET_LIST_BY_ACCOUNT_ID)
-    public ResponseEntity<Response<List<CvResponseDTO>>> getListByAccountId() {
+    public ResponseEntity getListByAccountId(@ParameterObject MetaRequestDTO metaRequestDTO) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Response.successfulResponse(
                         "Get my CV successful",
-                        cvService.getListCvByAccountId(
-                                AuthUtil.getRequestedUser().getId())));
+                        cvService.getListCvByAccountId(metaRequestDTO)));
     }
 
     @PostMapping(Endpoint.V1.Cv.ADD_ONE)
-    public ResponseEntity<Response<CvResponseDTO>> addOneCv(@RequestBody @Valid CvRequestDTO requestDTO)
+    public ResponseEntity<Response<CvResponseDTO>> addOneCv(@ModelAttribute CvRequestDTO requestDTO)
             throws IOException {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Response.successfulResponse(

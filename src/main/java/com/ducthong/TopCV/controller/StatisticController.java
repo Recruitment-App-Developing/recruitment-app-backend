@@ -64,4 +64,9 @@ public class StatisticController {
                         statisticService.statisticApplyCandidateByDay(
                                 AuthUtil.getRequestedUser().getId())));
     }
+
+    @GetMapping(Endpoint.V1.Statistic.STATISTIC_RECRUITMENT_EFFECTIVE)
+    public ResponseEntity<Response> statisticRecruitmentEffective() {
+        return ResponseEntity.ok(Response.successfulResponse("", statisticService.statisticRecruitmentEffective()));
+    }
 }

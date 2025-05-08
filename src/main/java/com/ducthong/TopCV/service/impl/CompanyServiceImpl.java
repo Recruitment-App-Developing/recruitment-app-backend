@@ -1,8 +1,12 @@
 package com.ducthong.TopCV.service.impl;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
+import com.ducthong.TopCV.constant.Constants;
+import com.ducthong.TopCV.repository.ImageRepository;
+import com.ducthong.TopCV.utility.Common;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -46,12 +50,14 @@ public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepo;
     private final IndustryRepository industryRepo;
     private final WardRepository wardRepo;
+    private final ImageRepository imageRepo;
     // Service
     private final CloudinaryService cloudinaryService;
     // Mapper
     private final CompanyMapper companyMapper;
     // Varient
     private final AppConfig appConfig;
+    private final String BANNER_FOLER = "opt/banner";
 
     @Override
     public Company isVerifyCompanyByAccountId(Integer accountId) {
@@ -214,6 +220,14 @@ public class CompanyServiceImpl implements CompanyService {
                     .build();
         }
         company.setLogo(logo);
+        // Banner
+        String bannerId = Common.generateId();
+        Image banner = new Image();
+        banner.setImagePublicId(bannerId);
+        banner.setRefId(String.valueOf(company.getId()));
+        banner.setWhenCreated(LocalDateTime.now());
+//        imageRepo.save(banner);
+        Common.saveBase64Image(requestDTO.banner(), BANNER_FOLER, bannerId, Constants.IMAGE_TYPE);
         try {
             Company companySave = companyRepo.save(company);
             // Register Company for Employer

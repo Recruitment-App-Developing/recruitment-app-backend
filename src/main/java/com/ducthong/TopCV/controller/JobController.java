@@ -3,6 +3,7 @@ package com.ducthong.TopCV.controller;
 import java.io.IOException;
 import java.util.List;
 
+import com.ducthong.TopCV.repository.dynamic_query.PagedResponse;
 import com.ducthong.TopCV.service.redis_service.JobRedisService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
@@ -49,10 +50,10 @@ public class JobController {
     }
 
     @GetMapping(Endpoint.V1.Job.SEARCH_JOB)
-    public ResponseEntity<Response<List<RelatedJobResponseDTO>>> searchJob(
-            @ParameterObject SearchJobRequestDTO requestDTO) {
+    public ResponseEntity<Response<PagedResponse>> searchJob(
+            @ParameterObject SearchJobRequestDTO requestDTO, @ParameterObject MetaRequestDTO metaRequestDTO) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Response.successfulResponse("", jobService.searchJob(requestDTO)));
+                .body(Response.successfulResponse("", jobService.searchJob(requestDTO, metaRequestDTO)));
     }
 
     @GetMapping(Endpoint.V1.Job.GET_LIST_BY_COMPANY)
@@ -98,7 +99,7 @@ public class JobController {
         Account account = AuthUtil.getRequestedUser();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Response.successfulResponse(
-                        "Add new job successfull", jobService.addJob(requestDTO, account.getId())));
+                        "Thêm mới tin tuyển dụng thành công", jobService.addJob(requestDTO, account.getId())));
     }
 
     @PostMapping(Endpoint.V1.Job.UPDATE_ONE)
@@ -109,6 +110,11 @@ public class JobController {
                         "Update a job successfull",
                         jobService.updateJob(
                                 requestDTO, AuthUtil.getRequestedUser().getId(), jobId)));
+    }
+
+    @PutMapping(Endpoint.V1.Job.HIDDEN_ONE)
+    public ResponseEntity<Response> hiddenJob(@RequestBody HiddenJobRequestDTO requestDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(jobService.hiddenJob(requestDTO.getJobIds()));
     }
 
     @GetMapping(Endpoint.V1.Job.GET_LIST_JOB_ADDRESS)

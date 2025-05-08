@@ -7,6 +7,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 import com.ducthong.TopCV.domain.dto.job.SearchJobByCompanyRequestDTO;
@@ -28,12 +29,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomJobRepositoryImpl implements CustomJobRepository {
     private final EntityManager entityManager;
-    private final JobMapper jobMapper;
+    private CriteriaBuilder cb;
 
     @Override
-    public List<Job> searchJob(SearchJobRequestDTO requestDTO) {
-        // todo
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    @Transactional
+    public PagedResponse<Job> searchJob(SearchJobRequestDTO requestDTO, MetaRequestDTO metaRequestDTO) {
+        cb = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Job> query = cb.createQuery(Job.class);
         Root<Job> root = query.from(Job.class);
@@ -43,59 +44,97 @@ public class CustomJobRepositoryImpl implements CustomJobRepository {
         Join<IndustryJob, Industry> industryJob_Industry = job_IndustryJob.join("industry", JoinType.INNER);
         Join<Job, JobAddress> job_JobAddress = root.join("addresses", JoinType.INNER);
 
+        List<Predicate> predicates = searchJobPredicates(root, job_company, job_IndustryJob, industryJob_Industry, job_JobAddress, requestDTO);
+
+        query.select(root)
+                .where(cb.and(predicates.toArray(new Predicate[0]))).distinct(true);
+//                .groupBy(
+//                        root.get("id"),
+//                        root.get("name"),
+//                        job_JobAddress.get("provinceCode"),
+//                        industryJob_Industry.get("id"));
+
+        TypedQuery<Job> typedQuery = entityManager.createQuery(query);
+        typedQuery.setFirstResult(metaRequestDTO.currentPage() * metaRequestDTO.pageSize());
+        typedQuery.setMaxResults(metaRequestDTO.pageSize());
+
+        List<Job> results = typedQuery.getResultList();
+        // Count
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<Job> countRoot = countQuery.from(Job.class);
+
+        Join<Job, Company> companyJoin = countRoot.join("company", JoinType.INNER);
+        Join<Job, IndustryJob> industryJobJoin = countRoot.join("industries", JoinType.INNER);
+        Join<IndustryJob, Industry> industryJoin = industryJobJoin.join("industry", JoinType.INNER);
+        Join<Job, JobAddress> addressJoin = countRoot.join("addresses", JoinType.INNER);
+
+        List<Predicate> predicatesCount = searchJobPredicates(countRoot, companyJoin, industryJobJoin, industryJoin, addressJoin, requestDTO);
+
+        countQuery.select(cb.countDistinct(countRoot)).where(cb.and(predicatesCount.toArray(new Predicate[0])));
+        Long total = entityManager.createQuery(countQuery).getSingleResult();
+
+        PagedResponse<Job> response = PagedResponse.<Job>builder()
+                .totalElements(total)
+                .pageNumber(metaRequestDTO.currentPage())
+                .pageSize(metaRequestDTO.pageSize())
+                .totalPages(PagedResponse.calTotalPage(Math.toIntExact(total), metaRequestDTO.pageSize()))
+                .content(results)
+                .build();
+        return response;
+    }
+
+    public List<Predicate> searchJobPredicates(Root<Job> root,
+                                               Join<Job, Company> jobCompany,
+                                               Join<Job, IndustryJob> jobIndustryJob,
+                                               Join<IndustryJob, Industry> industryJobIndustry,
+                                               Join<Job, JobAddress> jobJobAddress, SearchJobRequestDTO requestDTO) {
         List<Predicate> predicates = new ArrayList<>();
 
-        System.out.println(requestDTO.keyword());
         if (!Objects.equals(requestDTO.keyword(), null) && !Objects.equals(requestDTO.keyword(), "")) {
             String keywordParttern = "%" + requestDTO.keyword().toLowerCase() + "%";
             Predicate namePredicate = cb.like(cb.lower(root.get("name")), keywordParttern);
-            Predicate nameCompanyPredicate = cb.like(cb.lower(job_company.get("name")), keywordParttern);
+            Predicate nameCompanyPredicate = cb.like(cb.lower(jobCompany.get("name")), keywordParttern);
             predicates.add(cb.or(namePredicate, nameCompanyPredicate));
         }
 
-        System.out.println(requestDTO.address().toString());
         if (!Objects.equals(requestDTO.address(), "") && !Objects.equals(requestDTO.address(), "all")) {
-            predicates.add(cb.equal(job_JobAddress.get("provinceCode"), requestDTO.address()));
-            System.out.println("Address");
+            predicates.add(cb.equal(jobJobAddress.get("provinceCode"), requestDTO.address()));
         }
 
-        System.out.println(requestDTO.experienceRequired().toString());
         if (!Objects.equals(requestDTO.experienceRequired(), "")
                 && !Objects.equals(requestDTO.experienceRequired(), "all")) {
             predicates.add(cb.equal(root.get("workMethod"), WorkMethod.valueOf(requestDTO.workMethod())));
-            System.out.println("Work method");
         }
 
-        System.out.println(requestDTO.workMethod().toString());
         if (!Objects.equals(requestDTO.workMethod(), "") && !Objects.equals(requestDTO.workMethod(), "all")) {
             predicates.add(cb.equal(root.get("workMethod"), WorkMethod.valueOf(requestDTO.workMethod())));
-            System.out.println("Work method");
         }
 
-        System.out.println(requestDTO.jobPosition().toString());
         if (!Objects.equals(requestDTO.jobPosition(), "") && !Objects.equals(requestDTO.jobPosition(), "all")) {
             predicates.add(cb.equal(root.get("jobPosition"), JobPosition.valueOf(requestDTO.jobPosition())));
-            System.out.println("Job Position");
         }
 
-        System.out.println(requestDTO.workField());
         if (requestDTO.workField() != null
                 && !Objects.equals(requestDTO.workField(), "")
                 && !Objects.equals(requestDTO.workField(), "all")) {
-            predicates.add(cb.equal(industryJob_Industry.get("id"), requestDTO.workField()));
-            System.out.println("Work Field");
+            predicates.add(cb.equal(industryJobIndustry.get("id"), requestDTO.workField()));
         }
 
-        query.select(root)
-                .where(cb.and(predicates.toArray(new Predicate[0])))
-                .groupBy(
-                        root.get("id"),
-                        root.get("name"),
-                        job_JobAddress.get("provinceCode"),
-                        industryJob_Industry.get("id"));
+        // salary
+        if (requestDTO.salaryFrom() != null) {
+            Expression<Integer> salaryFrom = root.get("salaryFrom");
+            Predicate salaryFromPre = cb.and(cb.greaterThanOrEqualTo(salaryFrom, requestDTO.salaryFrom()), cb.lessThanOrEqualTo(salaryFrom, requestDTO.salaryTo()));
+            Predicate salaryFromNullPre = cb.isNull(salaryFrom);
+            predicates.add(cb.or(salaryFromPre, salaryFromNullPre));
+        }
+        if (requestDTO.salaryTo() != null) {
+            Expression<Integer> salaryTo = root.get("salaryTo");
+            Predicate salaryToPre = cb.and(cb.greaterThanOrEqualTo(salaryTo, requestDTO.salaryFrom()), cb.lessThanOrEqualTo(salaryTo, requestDTO.salaryTo()));
+            Predicate salaryToNullPre = cb.isNull(salaryTo);
+            predicates.add(cb.or(salaryToPre, salaryToNullPre));
+        }
 
-        List<Job> results = entityManager.createQuery(query).getResultList();
-        return results;
+        return predicates;
     }
 
     @Override

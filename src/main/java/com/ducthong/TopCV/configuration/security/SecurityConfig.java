@@ -30,6 +30,7 @@ public class SecurityConfig {
         "/api-docs" + CATCH_ALL_WILDCARDS,
         "/swagger-ui" + CATCH_ALL_WILDCARDS,
         "/v3/api-docs" + CATCH_ALL_WILDCARDS,
+        Endpoint.V1.PREFIX + "/p" + CATCH_ALL_WILDCARDS,
         Endpoint.V1.HealthCheck.BASE + CATCH_ALL_WILDCARDS,
         Endpoint.V1.Authentication.BASE + CATCH_ALL_WILDCARDS,
         Endpoint.V1.Candidate.REGISTER_CANDIDATE,

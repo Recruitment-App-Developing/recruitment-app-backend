@@ -65,13 +65,14 @@ public class ApplicationMapperImpl implements ApplicationMapper {
         //            name = candidate.getFirstName() + " " + candidate.getLastName();
 
         return AppliedCandidateResponseDTO.builder()
+                .id(entity.getId())
                 .name(name)
                 .email(candidate.getEmail())
                 .phoneNumber(candidate.getPhoneNumber())
                 .applyDay(TimeUtil.toStringDateTime(entity.getApplicationTime()))
                 .experiences(experiences)
                 .education(education)
-                .statusApplication(entity.getStatus().getTitle())
+                .statusApplication(String.valueOf(entity.getStatus()))
                 .cvLink(entity.getCvLink())
                 .build();
     }

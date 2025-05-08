@@ -8,6 +8,8 @@ public record SearchJobRequestDTO(
         @RequestParam(name = "keyword", required = false) String keyword,
         @RequestParam(name = "address", required = false) String address,
         @RequestParam(name = "experienceRequired", required = false) String experienceRequired,
+        @RequestParam(name = "salaryFrom", required = false) Integer salaryFrom,
+        @RequestParam(name = "salaryTo", required = false) Integer salaryTo,
         @RequestParam(name = "workField", required = false) String workField,
         @RequestParam(name = "jobPosition", required = false) String jobPosition,
         @RequestParam(name = "workMethod", required = false) String workMethod) {

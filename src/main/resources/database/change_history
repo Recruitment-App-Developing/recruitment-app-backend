@@ -1,0 +1,12 @@
+-- add column 'salary_type', 'salary_unit', 'salary_from', 'salary_to' in table 'jobs'
+alter table jobs
+    add salary_type VARCHAR(50) null;
+
+alter table jobs
+    add salary_from INTEGER null;
+
+alter table jobs
+    add salary_to int null;
+
+alter table jobs
+    add salary_unit VARCHAR(50) null;

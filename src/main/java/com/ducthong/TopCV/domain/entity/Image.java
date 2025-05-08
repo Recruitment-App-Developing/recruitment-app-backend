@@ -32,6 +32,9 @@ public class Image {
 
     private String imagePublicId;
 
+    @Column(name = "ref_id")
+    private String refId;
+
     @DateTimeFormat(pattern = TimeFormatConstant.FULL_DATETIME_FORMAT)
     private LocalDateTime whenCreated;
 

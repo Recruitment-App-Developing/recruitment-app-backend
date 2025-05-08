@@ -22,7 +22,11 @@ public record JobRequestDTO(
                 Integer numberOfVacancy,
         @EnumValid(name = "workMethod", enumClass = WorkMethod.class) String workMethod,
         @EnumValid(name = "sexRequired", enumClass = Gender.class) String sexRequired,
-        String salary,
+//        String salary,
+        String salaryType,
+        String salaryUnit,
+        Integer salaryFrom,
+        Integer salaryTo,
         String jobExp,
         @NotBlank(message = "The application due time cannot blank")
                 @JsonFormat(pattern = TimeFormatConstant.DATETIME_FORMAT)

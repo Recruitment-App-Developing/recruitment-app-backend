@@ -7,6 +7,7 @@ import com.ducthong.TopCV.domain.dto.candidate.SearchCandidateRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaResponseDTO;
 import com.ducthong.TopCV.responses.MetaResponse;
+import com.ducthong.TopCV.responses.Response;
 
 public interface ApplicationService {
     ApplicationResponseDTO addApplication(Integer accountId, ApplicationRequestDTO requestDTO);
@@ -21,4 +22,5 @@ public interface ApplicationService {
 
     MetaResponse<MetaResponseDTO, List<AppliedCandidateResponseDTO>> searchAppliedCandidateByJob(
             SearchCandidateRequestDTO requestDTO, Integer accountId, Integer jobId, MetaRequestDTO metaRequestDTO);
+    Response updateStatus(String applicationId, String status);
 }
