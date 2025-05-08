@@ -9,8 +9,9 @@ public enum ApplicationStatus {
     NEW("Mới"),
     VIEWED("Đã xem"),
     INTERVIEW_APPOINTMENT("Hẹn phỏng vấn"),
-    CONTACT_ALLOW("Cho phép liên hệ"),
-    FOLLOWING("Đang theo dõi"),
+    INTERVIEWED("Đã phỏng vấn"),
+    OFFERED("Đã gửi offer"),
+    HIRED("Đã nhận việc"),
     SKIP("Bỏ qua");
 
     private final String title;

@@ -6,6 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record AppliedCandidateResponseDTO(
+        String id,
         String name,
         String email,
         String phoneNumber,

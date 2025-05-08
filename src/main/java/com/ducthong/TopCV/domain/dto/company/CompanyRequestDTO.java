@@ -8,6 +8,7 @@ import lombok.Builder;
 public record CompanyRequestDTO(
         String name,
         String logo,
+        String banner,
         String urlCom,
         String email,
         String phoneNumber,

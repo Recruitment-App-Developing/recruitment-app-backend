@@ -23,7 +23,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CV {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "cv_id")
     private String id;
 

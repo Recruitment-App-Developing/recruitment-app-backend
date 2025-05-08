@@ -77,4 +77,10 @@ public class ApplicationController {
                 .body(applicationService.searchAppliedCandidateByJob(
                         requestDTO, AuthUtil.getRequestedUser().getId(), jobId, metaRequestDTO));
     }
+
+    @PutMapping(Endpoint.V1.Application.UPDATE_STATUS)
+    public ResponseEntity<Response> updateStatus(@RequestBody UpdateStatusRequestDTO requestDTO) {
+        Response result = applicationService.updateStatus(requestDTO.getApplicationId(), requestDTO.getStatus());
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 }

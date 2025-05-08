@@ -11,6 +11,7 @@ public record DetailCompanyResponseDTO(
         Integer id,
         String name,
         ImageResponseDTO logo,
+        String banner,
         String urlCom,
         String employeeScale,
         Integer numberOfFollow,

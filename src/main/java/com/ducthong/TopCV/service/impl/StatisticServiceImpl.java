@@ -3,6 +3,10 @@ package com.ducthong.TopCV.service.impl;
 import java.time.LocalDate;
 import java.util.*;
 
+import com.ducthong.TopCV.domain.dto.statistic.RecruitmentEffectiveDTO;
+import com.ducthong.TopCV.repository.ApplicationRepository;
+import com.ducthong.TopCV.repository.JobRepository;
+import com.ducthong.TopCV.utility.AuthUtil;
 import org.springframework.stereotype.Service;
 
 import com.ducthong.TopCV.domain.entity.Company;
@@ -19,6 +23,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class StatisticServiceImpl implements StatisticService {
     private final CustomJobRepository customJobRepo;
+    private final JobRepository jobRepo;
+    private final ApplicationRepository applicationRepo;
 
     @Override
     public Map<String, Object> statisticGeneralJobByIndustry() {
@@ -139,5 +145,18 @@ public class StatisticServiceImpl implements StatisticService {
         results.put("data", data);
 
         return results;
+    }
+
+    @Override
+    public RecruitmentEffectiveDTO statisticRecruitmentEffective() {
+        Employer employer = GetRoleUtil.getEmployer(AuthUtil.getRequestedUser().getId());
+        if (employer.getCompany() == null) return null;
+        Company company = employer.getCompany();
+        Integer jobActive = jobRepo.countJobByIsActive(company.getId(), true);
+        Integer jobInactive = jobRepo.countJobByIsActive(company.getId(), false);
+        Integer cvSum = applicationRepo.countApplicationByStstus(company.getId(), null);
+        Integer cvNew = applicationRepo.countApplicationByStstus(company.getId(), String.valueOf(ApplicationStatus.NEW));
+
+        return new RecruitmentEffectiveDTO(jobActive, jobInactive, cvSum, cvNew);
     }
 }

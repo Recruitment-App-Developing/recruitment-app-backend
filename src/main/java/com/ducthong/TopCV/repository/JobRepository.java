@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 
 import com.ducthong.TopCV.domain.entity.Job;
 
+import java.util.List;
+
 @Repository
 public interface JobRepository extends JpaRepository<Job, Integer> {
     @Query(
@@ -29,6 +31,10 @@ public interface JobRepository extends JpaRepository<Job, Integer> {
             @Param("companyId") Integer companyId,
             @Param("companyName") String companyName,
             @Param("address") String address);
+    @Query(value = "select count(j.job_id) from jobs j where j.company_id = ?1 and j.is_active = ?2", nativeQuery = true)
+    Integer countJobByIsActive(Integer comId, Boolean isActive);
+    @Query(value = "select * from jobs j where j.company_id = ?1 and j.job_id in ?2", nativeQuery = true)
+    List<Job> findJobByComIdAndListIds(Integer comId, List<Integer> jobIds);
     //    @Query(value = "SELECT new com.ducthong.TopCV.repository.objects.StatisticGeneralJobByIndustryObject( i.id,
     // i.name, COUNT(j.id)) " +
     //            "FROM Industry i JOIN i.jobs ij JOIN ij.job j " +

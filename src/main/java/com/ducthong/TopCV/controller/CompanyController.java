@@ -3,6 +3,7 @@ package com.ducthong.TopCV.controller;
 import java.io.IOException;
 import java.util.List;
 
+import com.ducthong.TopCV.service.ImageService;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,7 @@ import lombok.experimental.FieldDefaults;
 @SecurityRequirement(name = "bearerAuth")
 public class CompanyController {
     private final CompanyService companyService;
+    private final ImageService imageService;
 
     @GetMapping(Endpoint.V1.Company.GET_LIST)
     public ResponseEntity<MetaResponse<MetaResponseDTO, List<CompanyResponseDTO>>> getListCompany(
@@ -76,5 +78,12 @@ public class CompanyController {
                 .body(Response.successfulResponse(
                         "Đăng kí công ty thành công",
                         companyService.addCompany(AuthUtil.getRequestedUser().getId(), requestDTO)));
+    }
+
+    @GetMapping(Endpoint.V1.PREFIX + "/p/get-one-image/{id}")
+    public ResponseEntity<Response> getOneImage(@PathVariable(name = "id") String id) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.successfulResponse("Lấy chi tiết một ảnh thành công",
+                        imageService.getOneImageById(id)));
     }
 }

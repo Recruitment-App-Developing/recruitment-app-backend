@@ -9,7 +9,9 @@ import com.ducthong.TopCV.domain.dto.job.job_address.JobAddressResponseDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaResponseDTO;
 import com.ducthong.TopCV.domain.entity.Job;
+import com.ducthong.TopCV.repository.dynamic_query.PagedResponse;
 import com.ducthong.TopCV.responses.MetaResponse;
+import com.ducthong.TopCV.responses.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 public interface JobService {
@@ -21,7 +23,7 @@ public interface JobService {
 
     DetailJobPageResponseDTO getDetailJobPage(Integer jobId);
 
-    List<RelatedJobResponseDTO> searchJob(SearchJobRequestDTO requestDTO);
+    PagedResponse searchJob(SearchJobRequestDTO requestDTO, MetaRequestDTO metaRequestDTO);
 
     MetaResponse<MetaResponseDTO, List<EmployerJobResponseDTO>> getListJobByCompany(
             SearchJobByCompanyRequestDTO requestDTO, Integer accountId, MetaRequestDTO metaRequestDTO);
@@ -36,6 +38,8 @@ public interface JobService {
     DetailJobResponseDTO addJob(JobRequestDTO requestDTO, Integer userId) throws IOException;
 
     DetailJobResponseDTO updateJob(UpdJobRequestDTO requestDTO, Integer userId, Integer jobId);
+
+    Response hiddenJob(List<Integer> jobIds);
 
     List<JobAddressResponseDTO> updateJobAddress(JobAddressRequestDTO requestDTO, Integer accountId, Integer jobId);
 
