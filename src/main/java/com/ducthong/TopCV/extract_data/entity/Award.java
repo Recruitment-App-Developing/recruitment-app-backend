@@ -1,5 +1,6 @@
 package com.ducthong.TopCV.extract_data.entity;
 
+import com.ducthong.TopCV.domain.entity.Auditable;
 import com.ducthong.TopCV.utility.StringUtils;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Award {
+public class Award extends Auditable {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private String time;

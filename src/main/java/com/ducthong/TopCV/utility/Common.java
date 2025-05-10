@@ -27,9 +27,14 @@ import java.util.UUID;
 
 @Log4j2
 public class Common {
-    public static String toJsonString(Object object) throws JsonProcessingException {
+    public static String toJsonString(Object object) {
         ObjectMapper ob = new ObjectMapper();
-        return ob.writeValueAsString(object);
+        try {
+            return ob.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            log.error("[ERROR_COMMON] Error when write Object");
+            return null;
+        }
     }
     public static String generateUUID() {
         return UUID.randomUUID().toString();

@@ -43,10 +43,10 @@ public class TimeUtil {
         for (DateTimeFormatter formatter : formatters) {
             try {
                 return LocalDate.parse(timeStr, formatter).atStartOfDay();
-            } catch (Exception ex) {
+            } catch (Exception ignored) {
             }
         }
-        log.error("Thời gian không hợp lệ: {}", timeStr);
+        log.error("[ERROR_COMMON] Error convert string to Date of birth: {}", timeStr);
         return null;
     }
 

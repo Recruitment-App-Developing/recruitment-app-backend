@@ -9,10 +9,7 @@ import com.ducthong.TopCV.extract_data.entity.Award;
 import com.ducthong.TopCV.extract_data.entity.CvInfor;
 import com.ducthong.TopCV.extract_data.repository.CvInforRepository;
 import com.ducthong.TopCV.extract_data.service.ExtractDataService;
-import com.ducthong.TopCV.utility.Common;
-import com.ducthong.TopCV.utility.ListUtils;
-import com.ducthong.TopCV.utility.StringUtils;
-import com.ducthong.TopCV.utility.TimeUtil;
+import com.ducthong.TopCV.utility.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -44,8 +41,9 @@ public class ExtractDataServiceImpl implements ExtractDataService {
         if (StringUtils.isNullOrEmpty(cvInfor)) return "Chuỗi rỗng";
         CvInforDTO cvInforResponse = callToDeepSeekService(cvInfor);
         CvInfor cvInforResult = convertToCv(cvInforResponse, cvId);
+        cvInforResult.setCreator(AuthUtil.getRequestedUser().getId());
         try {
-//            cvInforRepo.save(cvInforResult);
+            cvInforRepo.save(cvInforResult);
         } catch (Exception e) {
             log.error("Error when save CvInfor");
         }
@@ -129,15 +127,12 @@ public class ExtractDataServiceImpl implements ExtractDataService {
 
             String jsonBody = getJsonBody(cvInfor);
 
-            // Tạo headers
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("Authorization", ExtractDataConstant.API_KEY);
 
-            // Tạo request body
             HttpEntity<String> requestEntity = new HttpEntity<>(jsonBody, headers);
 
-            // Gửi request
             ResponseEntity<DeepSeekResponse> responseEntity = restTemplate.exchange(
                     ExtractDataConstant.API_URL,
                     HttpMethod.POST,
@@ -145,7 +140,6 @@ public class ExtractDataServiceImpl implements ExtractDataService {
                     DeepSeekResponse.class
             );
 
-            // Lấy nội dung phản hồi và in ra
             ObjectMapper ob = new ObjectMapper();
 
             String cvInforFormat = formatCvInfor(responseEntity.getBody().getChoices().get(0).getMessage().getContent());

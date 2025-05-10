@@ -2,6 +2,7 @@ package com.ducthong.TopCV.domain.entity.CvProfile;
 
 import java.time.LocalDateTime;
 
+import com.ducthong.TopCV.domain.entity.Auditable;
 import com.ducthong.TopCV.extract_data.entity.CvInfor;
 import jakarta.persistence.*;
 
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Experience {
+public class Experience extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "experience_id")

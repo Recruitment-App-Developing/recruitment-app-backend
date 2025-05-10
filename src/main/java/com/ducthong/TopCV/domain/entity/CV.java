@@ -51,5 +51,6 @@ public class CV {
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "employer_id")
 //    private Employer employer;
-    private Integer employerId;
+    @Column(name = "creator")
+    private Integer creator;
 }
