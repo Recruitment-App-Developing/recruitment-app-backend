@@ -14,6 +14,7 @@ import com.ducthong.TopCV.domain.dto.job.JobResponseDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import com.ducthong.TopCV.domain.dto.meta.MetaResponseDTO;
 import com.ducthong.TopCV.domain.dto.meta.SortingDTO;
+import com.ducthong.TopCV.extract_data.service.ExtractDataService;
 import com.ducthong.TopCV.responses.MetaResponse;
 import com.ducthong.TopCV.utility.*;
 import lombok.extern.slf4j.Slf4j;
@@ -57,6 +58,7 @@ public class CvServiceImpl implements CvService {
     private final CvRepository cvRepo;
     // Service
     private final CloudinaryService cloudinaryService;
+    private final ExtractDataService extractDataService;
     // Mapper
     private final CvMapper cvMapper;
     // Variant
@@ -150,6 +152,9 @@ public class CvServiceImpl implements CvService {
             if (Objects.equals(item.getName(), requestDTO.name())) throw new AppException("Tên CV này đã tồn tại");
         // Save file
         String cvId = Common.generateId();
+
+        extractDataService.extractData(requestDTO.cvFile(), cvId);
+
         Path filePath = cvFileFolder.resolve(CV_NAME_PREFIX + cvId + CV_NAME_SUFFIX);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         // Save infor

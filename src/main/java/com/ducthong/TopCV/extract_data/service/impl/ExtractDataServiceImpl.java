@@ -18,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,9 +37,10 @@ public class ExtractDataServiceImpl implements ExtractDataService {
     // Repository
     private final CvInforRepository cvInforRepo;
 
-    public String extractData(MultipartFile cvFile, String cvId) {
+    @Async
+    public void extractData(MultipartFile cvFile, String cvId) {
         String cvInfor = getTextFromPdf(cvFile);
-        if (StringUtils.isNullOrEmpty(cvInfor)) return "Chuỗi rỗng";
+        if (StringUtils.isNullOrEmpty(cvInfor)) log.error("Chuỗi rỗng");
         CvInforDTO cvInforResponse = callToDeepSeekService(cvInfor);
         CvInfor cvInforResult = convertToCv(cvInforResponse, cvId);
         cvInforResult.setCreator(AuthUtil.getRequestedUser().getId());
@@ -48,7 +50,7 @@ public class ExtractDataServiceImpl implements ExtractDataService {
             log.error("Error when save CvInfor");
         }
 
-        return "Thành công";
+        log.info("Thành công");
     }
 
     private CvInfor convertToCv(CvInforDTO cvInforDTO, String cvId) {
@@ -82,10 +84,6 @@ public class ExtractDataServiceImpl implements ExtractDataService {
             cvInforDTO.getEducation().forEach(item -> {
                 if (!CvInforDTO.Education.checkAllNull(item)) {
                     Education education = new Education();
-//                    education.setSchool(item.getSchool());
-//                    education.setIndustry(item.getIndustry());
-//                    education.setTime(item.getTime());
-//                    education.setDescription(item.getDescription());
                     education.setSchoolName(item.getSchool());
                     education.setMainIndustry(item.getIndustry());
                     education.setTimeStr(item.getTime());
@@ -102,10 +100,6 @@ public class ExtractDataServiceImpl implements ExtractDataService {
             cvInforDTO.getExperience().forEach(item -> {
                 if (!CvInforDTO.Experience.checkAllNull(item)) {
                     Experience experience = new Experience();
-//                    experience.setCompany(item.getCompany());
-//                    experience.setTime(item.getTime());
-//                    experience.setPosition(item.getPosition());
-//                    experience.setDescription(item.getDescription());
                     experience.setCompanyName(item.getCompany());
                     experience.setTimeStr(item.getTime());
                     experience.setPosition(item.getPosition());

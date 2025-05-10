@@ -15,12 +15,12 @@ public class ExtractDataController {
     private final ExtractDataService extractDataService;
 
     @PostMapping("/api/v1/upload-pdf")
-    public ResponseEntity<String> extractData(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity extractData(@RequestParam("file") MultipartFile file) {
         if (!file.getContentType().equals("application/pdf")) {
             return ResponseEntity.badRequest().body("Chỉ chấp nhận tệp PDF.");
         }
         String cvId = Common.generateUUID();
-        String result = extractDataService.extractData(file, cvId);
-        return ResponseEntity.ok().body(result);
+        extractDataService.extractData(file, cvId);
+        return ResponseEntity.ok().body("Thành công");
     }
 }
