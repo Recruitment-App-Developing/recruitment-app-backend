@@ -51,7 +51,8 @@ public class SecurityConfig {
         Endpoint.V1.Statistic.STATISTIC_GENERAL_JOB_BY_DAY,
         Endpoint.V1.Address.GET_LIST_PROVINCE,
         Endpoint.V1.Address.GET_LIST_DISTRICT_BY_PROVINCE,
-        Endpoint.V1.Address.GET_LIST_WARD_BY_DISTRICT
+        Endpoint.V1.Address.GET_LIST_WARD_BY_DISTRICT,
+        Endpoint.V1.Cv.GET_ONE_CV
     };
 
     @Bean

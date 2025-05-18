@@ -148,6 +148,12 @@ public class Endpoint {
             public static final String GET_LIST_WARD_BY_DISTRICT = BASE + "/wards/{districtId}";
         }
 
+        public static final class CvInfor {
+            public static final String BASE = V1.PREFIX + "/cv-info";
+            public static final String GET_LIST = BASE + "/get-list";
+            public static final String GET_DETAIL = BASE + "/get-detail/{inforId}";
+        }
+
         public static final class HealthCheck {
             public static final String BASE = V1.PREFIX + "/actuator/health";
         }

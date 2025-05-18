@@ -7,6 +7,7 @@ import com.ducthong.TopCV.domain.dto.job.ProcessSalaryRequest;
 import com.ducthong.TopCV.exceptions.AppException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.Query;
 import lombok.extern.log4j.Log4j2;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -21,9 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.UUID;
+import java.util.*;
 
 @Log4j2
 public class Common {
@@ -160,6 +159,17 @@ public class Common {
         } catch (IOException e) {
             log.error("[ERROR_COMMON] Error when get file: {}", folder + "/" + name);
             return null;
+        }
+    }
+
+    public static void setParams(Query query, Map<String, Object> params) {
+        if (params != null && !params.isEmpty()) {
+            Set<Map.Entry<String, Object>> set = params.entrySet();
+            for (Map.Entry<String, Object> obj : set) {
+                if (obj.getValue() == null) query.setParameter(obj.getKey(), "");
+                    //                else if ((obj.getKey().equals("propertyParam") && !addParam));
+                else query.setParameter(obj.getKey(), obj.getValue());
+            }
         }
     }
 }

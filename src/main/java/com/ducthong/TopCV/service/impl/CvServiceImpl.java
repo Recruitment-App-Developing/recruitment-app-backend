@@ -79,8 +79,9 @@ public class CvServiceImpl implements CvService {
 
     @Override
     public InputStreamResource getCvById(String cvId) {
-        CV cv = isCvAccess(cvId, AuthUtil.getRequestedUser().getId());
-
+//        CV cv = isCvAccess(cvId, AuthUtil.getRequestedUser().getId());
+        // todo: sửa get one cv
+        CV cv = cvRepo.findById(cvId).get();
         String path = CV_FOLDER + CV_NAME_PREFIX + cv.getId() + CV_NAME_SUFFIX;
         File file = new File(path);
         try {

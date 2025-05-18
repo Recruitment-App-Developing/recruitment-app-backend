@@ -7,7 +7,9 @@ import com.ducthong.TopCV.domain.dto.meta.MetaRequestDTO;
 import jakarta.validation.Valid;
 
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +38,8 @@ public class CvController {
 
     @GetMapping(Endpoint.V1.Cv.GET_ONE_CV)
     public ResponseEntity getOneCv(@PathVariable(name = "cvId") String cvId) {
-        return ResponseEntity.ok(cvService.getCvById(cvId));
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=cv.pdf")
+                .contentType(MediaType.APPLICATION_PDF).body(cvService.getCvById(cvId));
     }
 
     @GetMapping(Endpoint.V1.Cv.GET_LIST_BY_ACCOUNT_ID)
