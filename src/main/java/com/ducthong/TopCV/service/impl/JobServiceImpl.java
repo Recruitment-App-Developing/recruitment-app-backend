@@ -10,6 +10,7 @@ import com.ducthong.TopCV.responses.Response;
 import com.ducthong.TopCV.service.redis_service.JobRedisService;
 import com.ducthong.TopCV.utility.Common;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -46,6 +47,7 @@ import com.ducthong.TopCV.utility.GetRoleUtil;
 
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @EnableTransactionManagement
@@ -259,7 +261,11 @@ public class JobServiceImpl implements JobService {
                         .build(),
                 li);
         // Cache in Redis
-        jobRedisService.saveListJob(metaRequestDTO, res);
+        try {
+            jobRedisService.saveListJob(metaRequestDTO, res);
+        } catch (Exception e) {
+            log.error("Error save redis");
+        }
 
         return res;
     }

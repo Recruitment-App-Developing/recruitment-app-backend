@@ -9,6 +9,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
@@ -18,6 +21,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "cv_infors")
+@Audited(targetAuditMode = RelationTargetAuditMode.AUDITED)
+@AuditTable(value = "cv_infor_audit")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -55,15 +60,18 @@ public class CvInfor extends Auditable implements Serializable{
 
     private String cvId;
 
-    @OneToMany(mappedBy = "cvInfor", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "cvInfor",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
     private List<Award> awards = new ArrayList<>();
 //    @OneToMany(mappedBy = "cvInfor", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 //    private List<Education> educations = new ArrayList<>();
 //    @OneToMany(mappedBy = "cvInfor", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 //    private List<Experience> experiences = new ArrayList<>();
-    @OneToMany(mappedBy = "cvInfor", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "cvInfor", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Education> educations = new ArrayList<>();
-    @OneToMany(mappedBy = "cvInfor", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "cvInfor", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Experience> experiences = new ArrayList<>();
 
     @Column(name = "creator")

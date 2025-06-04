@@ -7,9 +7,7 @@ import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
@@ -26,7 +24,8 @@ public class CvInforRepositoryCustomImpl implements CvInforRepositoryCustom {
                 " left join awards a on a.cv_infor_id = ci.cv_infor_id " +
                 " left join educations e on e.cv_infor_id = ci.cv_infor_id " +
                 " left join experiences ex on ex.cv_infor_id = ci.cv_infor_id ");
-        sqlBuilder.append(" group by ci.cv_infor_id, ci.full_name, cv.name, ci.application_postion, ci.address ");
+        sqlBuilder.append(" group by ci.cv_infor_id, ci.full_name, cv.name, ci.application_postion, ci.address, ci.created_at ");
+        sqlBuilder.append(" order by ci.created_at desc ");
         Query query = entityManager.createNativeQuery(sqlBuilder.toString(), "CvInforItem");
 
         List<CvInforItem> results = query.getResultList();

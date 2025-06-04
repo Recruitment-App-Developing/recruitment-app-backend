@@ -8,7 +8,9 @@ import com.ducthong.TopCV.extract_data.dto.DeepSeekResponse;
 import com.ducthong.TopCV.extract_data.entity.Award;
 import com.ducthong.TopCV.extract_data.entity.CvInfor;
 import com.ducthong.TopCV.extract_data.repository.CvInforRepository;
+import com.ducthong.TopCV.extract_data.service.CvTrackingService;
 import com.ducthong.TopCV.extract_data.service.ExtractDataService;
+import com.ducthong.TopCV.extract_data.service.WebSocketService;
 import com.ducthong.TopCV.utility.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +22,9 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +42,9 @@ public class ExtractDataServiceImpl implements ExtractDataService {
 
     // Repository
     private final CvInforRepository cvInforRepo;
+    // Service
+    private final CvTrackingService trackingService;
+    private final WebSocketService webSocketService;
 
     @Async
     public void extractData(MultipartFile cvFile, String cvId) {
@@ -45,12 +54,44 @@ public class ExtractDataServiceImpl implements ExtractDataService {
         CvInfor cvInforResult = convertToCv(cvInforResponse, cvId);
         cvInforResult.setCreator(AuthUtil.getRequestedUser().getId());
         try {
-            cvInforRepo.save(cvInforResult);
+            log.info("[EXTRACT_DATA_SERVICE] Save cv infor with cvId: {}", cvId);
+//            cvInforRepo.save(cvInforResult);
         } catch (Exception e) {
             log.error("Error when save CvInfor");
         }
 
         log.info("Thành công");
+    }
+
+    @Async
+    public CompletableFuture<Void> extractDataWithWebSocket(MultipartFile file, String cvId, String sessionId) {
+        try {
+            String content = getTextFromPdf(file);
+            if (content == null || content.trim().isEmpty()) {
+                throw new IllegalStateException("PDF rỗng");
+            }
+
+            CvInforDTO dto = callToDeepSeekService(content);
+            CvInfor cv = convertToCv(dto, cvId);
+            cv.setCreator(AuthUtil.getRequestedUser().getId());
+            Thread.sleep(2000);
+            cvInforRepo.save(cv);
+
+            int done = trackingService.increment(sessionId);
+            int total = trackingService.getTotal(sessionId);
+            webSocketService.sendProgress(cvId, "DONE", sessionId, total, done);
+
+            if (done == total) {
+                trackingService.clear(sessionId);
+            }
+
+        } catch (Exception e) {
+            int done = trackingService.increment(sessionId);
+            webSocketService.sendProgress(cvId, "FAILED", sessionId,
+                    trackingService.getTotal(sessionId), done);
+        }
+
+        return CompletableFuture.completedFuture(null);
     }
 
     private CvInfor convertToCv(CvInforDTO cvInforDTO, String cvId) {
@@ -133,17 +174,23 @@ public class ExtractDataServiceImpl implements ExtractDataService {
                     requestEntity,
                     DeepSeekResponse.class
             );
-
+            log.info("[DEEPSEEK_SERVICE] Data from deepseek: {}", Common.toJsonString(responseEntity));
             ObjectMapper ob = new ObjectMapper();
-
             String cvInforFormat = formatCvInfor(responseEntity.getBody().getChoices().get(0).getMessage().getContent());
             cvInforResult = ob.readValue(cvInforFormat, CvInforDTO.class);
-            log.info(cvInforResult);
             return cvInforResult;
+        } catch (HttpClientErrorException e) {
+            log.error("[DEEPSEEK_SERVICE] Client error while calling DeepSeek API: {}", e.getResponseBodyAsString(), e);
+        } catch (HttpServerErrorException e) {
+            log.error("[DEEPSEEK_SERVICE] Server error while calling DeepSeek API: {}", e.getResponseBodyAsString(), e);
+        } catch (RestClientException e) {
+            log.error("[DEEPSEEK_SERVICE] RestClientException when calling DeepSeek API", e);
+        } catch (JsonProcessingException e) {
+            log.error("[DEEPSEEK_SERVICE] Error processing JSON response from DeepSeek", e);
         } catch (Exception e) {
-            log.error("Lỗi khi extract data from cv");
-            return cvInforResult;
+            log.error("[DEEPSEEK_SERVICE] Unexpected error in DeepSeek service", e);
         }
+        return cvInforResult;
     }
     private String getTextFromPdf(MultipartFile cvFile) {
         String result = "";

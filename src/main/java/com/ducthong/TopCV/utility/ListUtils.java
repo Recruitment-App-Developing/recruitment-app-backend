@@ -4,6 +4,7 @@ import java.util.List;
 
 public class ListUtils {
     public static String listToString(List<String> list) {
+        if (ListUtils.isNullOrEmpty(list)) return null;
         return String.join(",", list);
     }
     public static boolean isNullOrEmpty(List<?> list) {

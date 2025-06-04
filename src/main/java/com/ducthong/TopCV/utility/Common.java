@@ -22,6 +22,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Log4j2
@@ -171,5 +175,15 @@ public class Common {
                 else query.setParameter(obj.getKey(), obj.getValue());
             }
         }
+    }
+
+    public static String convertTimestampToDate(long millis) {
+        LocalDateTime dateTime = Instant.ofEpochMilli(millis)
+                .atZone(ZoneId.of("Asia/Ho_Chi_Minh"))
+                .toLocalDateTime();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        return dateTime.format(formatter);
     }
 }

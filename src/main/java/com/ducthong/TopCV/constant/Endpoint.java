@@ -152,6 +152,9 @@ public class Endpoint {
             public static final String BASE = V1.PREFIX + "/cv-info";
             public static final String GET_LIST = BASE + "/get-list";
             public static final String GET_DETAIL = BASE + "/get-detail/{inforId}";
+            public static final String UPDATE = BASE + "/update";
+            public static final String AUDIT_BY_ID = BASE + "/audit/{type}/{id}";
+            public static final String AUDIT_BY_CV_INFO_ID = BASE + "/audit/by-cv-info/{type}/{cvInfoId}";
         }
 
         public static final class HealthCheck {

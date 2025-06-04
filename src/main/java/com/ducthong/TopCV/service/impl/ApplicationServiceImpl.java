@@ -83,11 +83,12 @@ public class ApplicationServiceImpl implements ApplicationService {
                 throw new AppException("You have applied for this job before");
         // CV
         // CV cv = cvService.isCvAccess(requestDTO.cvId(), accountId);
-        String cvLink = CV_LINK + candidate.getCvProfile().getId();
+//        String cvLink = CV_LINK + candidate.getCvProfile().getId();
+        String cvLink = null;
         if (requestDTO.cvId() != null && !requestDTO.cvId().equals("")) {
             Optional<CV> cv = cvRepo.findById(requestDTO.cvId());
             if (cv.isEmpty()) throw new AppException("CV này không tồn tại");
-            cvLink = cv.get().getCvLink();
+            cvLink = cv.get().getId();
         }
 
         Application applicationNew = Application.builder()
@@ -96,7 +97,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .status(ApplicationStatus.NEW)
                 .applicationTime(TimeUtil.getDateTimeNow())
                 .lastUpdated(null)
-                .statusChangeTime(null)
+                .statusChangeTime(TimeUtil.getDateTimeNow())
                 .candidate(candidate)
                 .job(job)
                 .build();

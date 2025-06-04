@@ -10,6 +10,6 @@ import java.util.List;
 
 public interface JobRedisService {
     void clear();
-    public MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJob(MetaRequestDTO metaRequestDTO) throws JsonProcessingException;
+    MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJob(MetaRequestDTO metaRequestDTO) throws JsonProcessingException;
     void saveListJob(MetaRequestDTO metaRequestDTO, MetaResponse<MetaResponseDTO, List<JobResponseDTO>> saveObject) throws JsonProcessingException;
 }

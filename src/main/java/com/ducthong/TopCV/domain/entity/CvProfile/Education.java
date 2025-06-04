@@ -6,6 +6,9 @@ import com.ducthong.TopCV.domain.entity.Auditable;
 import com.ducthong.TopCV.extract_data.entity.CvInfor;
 import jakarta.persistence.*;
 
+import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.ducthong.TopCV.constant.TimeFormatConstant;
@@ -20,6 +23,8 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "educations")
+@Audited(targetAuditMode = RelationTargetAuditMode.AUDITED)
+@AuditTable(value = "education_audit")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -57,6 +62,7 @@ public class Education extends Auditable {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cv_profile_id")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private CvProfile cvProfile;
 
     @ManyToOne(fetch = FetchType.LAZY)

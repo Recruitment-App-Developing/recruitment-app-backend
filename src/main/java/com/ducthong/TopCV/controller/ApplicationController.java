@@ -37,7 +37,7 @@ public class ApplicationController {
             @RequestBody ApplicationRequestDTO requestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Response.successfulResponse(
-                        "Apply successful",
+                        "Ứng tuyển thành công",
                         applicationService.addApplication(
                                 AuthUtil.getRequestedUser().getId(), requestDTO)));
     }

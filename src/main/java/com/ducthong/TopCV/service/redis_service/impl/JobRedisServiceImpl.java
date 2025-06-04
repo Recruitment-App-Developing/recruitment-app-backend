@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class JobRedisServiceImpl implements JobRedisService {
@@ -40,7 +42,12 @@ public class JobRedisServiceImpl implements JobRedisService {
     @Override
     public MetaResponse<MetaResponseDTO, List<JobResponseDTO>> getListJob(MetaRequestDTO metaRequestDTO) throws JsonProcessingException {
         String key = getKey(metaRequestDTO);
-        String json = (String) redisTemplate.opsForValue().get(key);
+        String json = null;
+        try {
+            json = (String) redisTemplate.opsForValue().get(key);
+        } catch (Exception e) {
+            log.error("Error get redis with key: {}", key);
+        }
         MetaResponse<MetaResponseDTO, List<JobResponseDTO>> res = json != null
                 ? redisObjectMapper.readValue(json, new TypeReference<MetaResponse<MetaResponseDTO, List<JobResponseDTO>>>() {
                 }) : null;
